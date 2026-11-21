@@ -6,11 +6,11 @@ Come passare da un progetto che usa LIMET 1.0 a LIMET 2.0.
 
 | Azione | LIMET 1.0 | LIMET 2.0 |
 |---|---|---|
-| Attivare LIMET | `limet.ps1` / `limet.sh` | `claude plugin install limet` + `/limet:new` |
-| Nuova feature | riempire CHANGE_PROPOSAL + SPEC + PLAN + TASK_LIST a mano | `/limet:new <idea>` |
-| Implementare | riempire TASK + change log a mano | `/limet:task <n>` (change log automatico) |
-| Verificare | riempire TEST_PLAN + TEST_EXECUTION a mano | `/limet:test` |
-| Archiviare | spostare i file a mano | `/limet:archive` |
+| Attivare LIMET | `limet.ps1` / `limet.sh` | `claude plugin install limet` + `/limet-new` |
+| Nuova feature | riempire CHANGE_PROPOSAL + SPEC + PLAN + TASK_LIST a mano | `/limet-new <idea>` |
+| Implementare | riempire TASK + change log a mano | `/limet-task <n>` (change log automatico) |
+| Verificare | riempire TEST_PLAN + TEST_EXECUTION a mano | `/limet-test` |
+| Archiviare | spostare i file a mano | `/limet-archive` |
 | Contestualizzare | leggere il CLAUDE.md con blocchi CEREBRO/GRAPHIFY | MCP `cerebro` + `graphify` (tool nativi) |
 
 ## Passi di migrazione
@@ -30,11 +30,11 @@ Come passare da un progetto che usa LIMET 1.0 a LIMET 2.0.
 
 - Gli script `limet.ps1`/`limet.sh` → sostituiti dal plugin.
 - La skill-guida CEREBRO → sostituita dal MCP `cerebro` (stessi script, **spostati dentro** `mcp/cerebro/`).
-- Il CLI Graphify → sostituito dal MCP `graphify` (sorgente **portato dentro** `mcp/graphify/`).
+- Il CLI Graphify → sostituito dal MCP `graphify` (nativo `graphify-mcp`, package `graphifyy`).
 
 ## Self-contained
 
-LIMET 2.0 è **un solo repo**: niente `C:\Progetti\CEREBRO` esterno, niente Graphify da installare a parte. I motori vivono in `mcp/`. Restano esterni solo Qdrant + Ollama (infra via docker-compose).
+LIMET 2.0 è **un solo repo**: niente `<repo-cerebro>` esterno. Cerebro e DB vivono in `mcp/`, Graphify è un MCP nativo (`graphify-mcp`). Restano esterni solo Qdrant + Ollama + Postgres (infra).
 
 ## Rollback
 

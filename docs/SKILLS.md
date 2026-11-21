@@ -2,7 +2,7 @@
 
 Le skill sono il **ciclo di vita** di LIMET. **NON vanno lanciate a mano**: si attivano **automaticamente** dal CLAUDE.md (policy always-on) e dall'hook `UserPromptSubmit` (rilevamento intento). L'utente **parla normalmente** ("voglio aggiungere una feature X" / "c'è un bug Y") e Claude avvia il flusso da solo — **come LIMET 1.0, nessun comando da digitare**.
 
-I comandi `/limet:*` esistono solo come **scorciatoie opzionali** per il controllo esplicito, non sono il modo primario di interazione.
+I comandi `/limet-*` esistono solo come **scorciatoie opzionali** per il controllo esplicito, non sono il modo primario di interazione.
 
 Frontmatter standard (AgentSkills.io): `name`, `description`, `allowed-tools`, `user-invocable`. Progressive disclosure: metadata → SKILL.md body → file reference.
 
@@ -10,22 +10,22 @@ Frontmatter standard (AgentSkills.io): `name`, `description`, `allowed-tools`, `
 
 | Skill | Cosa fa | Input | Output |
 |---|---|---|---|
-| `/limet:new` | ciclo completo: proposta + spec + plan + task + test + e2e | `$ARGUMENTS` = idea/feature | `limet/` con tutti i doc |
-| `/limet:task` | esegue un task + change log | `$1` = id task (es. `task3`) | codice + change log |
-| `/limet:test` | genera/esegue il piano test | — | TEST_PLAN + TEST_EXECUTION |
-| `/limet:archive` | archivia il lavoro concluso | — | `limet/archive/<data-slug>/` |
-| `/limet:bug` | report bug strutturato | `$ARGUMENTS` = descrizione | BUG_REPORT.md |
+| `/limet-new` | ciclo completo: proposta + spec + plan + task + test + e2e | `$ARGUMENTS` = idea/feature | `limet/` con tutti i doc |
+| `/limet-task` | esegue un task + change log | `$1` = id task (es. `task3`) | codice + change log |
+| `/limet-test` | genera/esegue il piano test | — | TEST_PLAN + TEST_EXECUTION |
+| `/limet-archive` | archivia il lavoro concluso | — | `limet/archive/<data-slug>/` |
+| `/limet-bug` | report bug strutturato | `$ARGUMENTS` = descrizione | BUG_REPORT.md |
 
-I template di supporto (glossary, conventions, codebase-analysis, architecture, module-map, summary, **decisions**) si generano **ad hoc** dentro `/limet:new`, non come skill separate.
+I template di supporto (glossary, conventions, codebase-analysis, architecture, module-map, summary, **decisions**) si generano **ad hoc** dentro `/limet-new`, non come skill separate.
 
 **`decisions.md` = ADR-lite** (idea da ECC): le decisioni **hard-to-reverse** ("perché usiamo l'universo point-in-time?") meritano un record dedicato datato con stato (*accepted / superseded*), separato da spec/plan. Non il lifecycle ADR completo — solo un log leggero.
 
-## Esempio SKILL.md — `/limet:new`
+## Esempio SKILL.md — `/limet-new`
 
 ```markdown
 ---
 name: limet-new
-description: Avvia un ciclo LIMET per una nuova feature. Genera Change Proposal, SPEC, PLAN, TASK_LIST, TEST_PLAN e E2E_VERIFICATION. Usa quando l'utente chiede una nuova feature o dice "/limet:new <idea>".
+description: Avvia un ciclo LIMET per una nuova feature. Genera Change Proposal, SPEC, PLAN, TASK_LIST, TEST_PLAN e E2E_VERIFICATION. Usa quando l'utente chiede una nuova feature o dice "/limet-new <idea>".
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Write
 ---
@@ -63,4 +63,4 @@ Regole (binding):
 
 ## Perché 5 e non 18
 
-I 18 template 1.0 erano "documenti da riempire a mano". In 2.0, il **flusso** li genera insieme (`/limet:new`), il **change log** è automatico (hook), l'**archivio** è una skill, il **bug** è una skill. Il resto è supporto generato a richiesta. Meno attrito, stessa tracciabilità.
+I 18 template 1.0 erano "documenti da riempire a mano". In 2.0, il **flusso** li genera insieme (`/limet-new`), il **change log** è automatico (hook), l'**archivio** è una skill, il **bug** è una skill. Il resto è supporto generato a richiesta. Meno attrito, stessa tracciabilità.

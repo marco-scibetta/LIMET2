@@ -12,7 +12,7 @@
 
 - LIMET 1.0 esiste come file di framework in `C:\Progetti\LIMET2\limet\` (template 18, manuale,
   checklist, script `limet-index.ps1/sh`, `limet_related.py`).
-- CEREBRO è un repo separato `C:\Progetti\CEREBRO` con script Python (`ingest_docs.py`,
+- CEREBRO è un repo separato `<repo-cerebro>` con script Python (`ingest_docs.py`,
   `doc_to_markdown.py`, `query_qdrant.py`, `register_project.py`, `serve_images.py`) e `projects.json`.
 - Il design 2.0 è interamente in `docs/` (ARCHITECTURE, SKILLS, HOOKS, SUBAGENTS, MCP, PLUGIN,
   OPTIMIZATIONS, MIGRATION). Non esiste ancora codice 2.0.

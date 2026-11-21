@@ -6,8 +6,8 @@ I subagent sono **contesti isolati** per ruoli specifici. LIMET 2.0 ne usa **2**
 
 | Subagent | Ruolo | Tools | Quando |
 |---|---|---|---|
-| `limet-writer` | scrive i documenti (proposal/spec/plan/test) con contesto isolato | Read, Grep, Glob, Write | dentro `/limet:new` |
-| `limet-gate` | **validatore**: verifica §1.5 + **fresh-eyes review** + **drift report** (doc ↔ codice) | Read, Grep, Glob | prima di `/limet:archive` e a fine task |
+| `limet-writer` | scrive i documenti (proposal/spec/plan/test) con contesto isolato | Read, Grep, Glob, Write | dentro `/limet-new` |
+| `limet-gate` | **validatore**: verifica §1.5 + **fresh-eyes review** + **drift report** (doc ↔ codice) | Read, Grep, Glob | prima di `/limet-archive` e a fine task |
 
 ## Esempio `agents/limet-gate.md`
 
@@ -57,7 +57,7 @@ Mai assumere: scelte ambigue → riportale come domande aperte.
 
 `/goal` (feature nativa Claude Code) imposta una **condizione di completamento** e un **fast evaluator** (modello leggero separato) verifica **oggettivamente** se è soddisfatta, ogni volta che l'agente prova a fermarsi. È l'enforcement di §1.5 che oggi è solo auto-dichiarato.
 
-**Dove usarlo (1 punto, non di più):** a fine task (`/limet:task`):
+**Dove usarlo (1 punto, non di più):** a fine task (`/limet-task`):
 ```
 /goal "tutti gli unit + e2e test del task passano, type checker zero errori"
 ```

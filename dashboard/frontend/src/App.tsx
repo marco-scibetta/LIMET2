@@ -1,23 +1,48 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Icon from './components/Icon'
+import { post } from './api'
 import StatusPage from './pages/StatusPage'
 import InitPage from './pages/InitPage'
 import ProjectsPage from './pages/ProjectsPage'
 import ReindexPage from './pages/ReindexPage'
-import DbPage from './pages/DbPage'
+import SetupPage from './pages/SetupPage'
+import { T, Lang } from './i18n'
 
 const NAV = [
-  { id: 'status', label: 'Status', desc: 'Stato di Qdrant, Ollama e progetti registrati.' },
-  { id: 'init', label: 'Init', desc: 'Registra un nuovo progetto in CEREBRO.' },
-  { id: 'projects', label: 'Progetti', desc: 'Progetti registrati e percorsi docs.' },
-  { id: 'reindex', label: 'Re-index', desc: 'Re-indicizzazione incrementale, forzata o pulizia.' },
-  { id: 'db', label: 'Config DB', desc: 'Connessione read-only e schema del database.' },
+  { id: 'status', label: 'status', desc: 'descStatus' },
+  { id: 'init', label: 'init', desc: 'descInit' },
+  { id: 'projects', label: 'projects', desc: 'descProjects' },
+  { id: 'reindex', label: 'reindex', desc: 'descReindex' },
+  { id: 'setup', label: 'setup', desc: 'descSetup' },
 ] as const
 
 type PageId = (typeof NAV)[number]['id']
 
 export default function App() {
   const [page, setPage] = useState<PageId>('status')
+  const [lang, setLang] = useState<Lang>(() => {
+    try {
+      return (localStorage.getItem('limet-lang') as Lang) || 'it'
+    } catch {
+      return 'it'
+    }
+  })
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('limet-lang', lang)
+    } catch {
+      /* ignore */
+    }
+  }, [lang])
+
+  function toggleLang() {
+    const next: Lang = lang === 'it' ? 'en' : 'it'
+    setLang(next)
+    post('/api/language', { lang: next }).catch(() => {})
+  }
+
+  const t = T[lang]
   const current = NAV.find((n) => n.id === page)!
 
   return (
@@ -27,7 +52,7 @@ export default function App() {
           <span className="brand-mark" />
           <span>LIMET</span>
         </div>
-        <div className="nav-group">Operazioni</div>
+        <div className="nav-group">{lang === 'it' ? 'Operazioni' : 'Operations'}</div>
         <nav>
           {NAV.map((n) => (
             <button
@@ -36,9 +61,24 @@ export default function App() {
               onClick={() => setPage(n.id)}
             >
               <Icon name={n.id} />
-              <span>{n.label}</span>
+              <span>{t[n.label]}</span>
             </button>
           ))}
+        </nav>
+        <div className="nav-group">{t.docs}</div>
+        <nav>
+          <a className="nav" href={`/docs/setup?lang=${lang}`} target="_blank" rel="noopener noreferrer">
+            <Icon name="book" />
+            <span>{t.docsSetup}</span>
+          </a>
+          <a className="nav" href={`/docs/project-init?lang=${lang}`} target="_blank" rel="noopener noreferrer">
+            <Icon name="book" />
+            <span>{t.docsProjectInit}</span>
+          </a>
+          <a className="nav" href={`/docs/workflow?lang=${lang}`} target="_blank" rel="noopener noreferrer">
+            <Icon name="book" />
+            <span>{t.docsWorkflow}</span>
+          </a>
         </nav>
         <div className="sidebar-foot">
           <span className="badge ok">v2.0.0</span>
@@ -47,15 +87,24 @@ export default function App() {
 
       <div className="main">
         <header className="topbar">
-          <h1>{current.label}</h1>
-          <p>{current.desc}</p>
+          <div className="title">
+            <h1>{t[current.label]}</h1>
+            <p>{t[current.desc]}</p>
+          </div>
+          <button
+            className="lang-btn"
+            onClick={toggleLang}
+            title={lang === 'it' ? 'Switch to English' : 'Passa a italiano'}
+          >
+            {lang === 'it' ? '🇮🇹' : '🇬🇧'}
+          </button>
         </header>
         <main className="content">
-          {page === 'status' && <StatusPage />}
-          {page === 'init' && <InitPage />}
-          {page === 'projects' && <ProjectsPage />}
-          {page === 'reindex' && <ReindexPage />}
-          {page === 'db' && <DbPage />}
+          {page === 'status' && <StatusPage t={t} />}
+          {page === 'init' && <InitPage t={t} />}
+          {page === 'projects' && <ProjectsPage t={t} />}
+          {page === 'reindex' && <ReindexPage t={t} />}
+          {page === 'setup' && <SetupPage t={t} />}
         </main>
       </div>
     </div>

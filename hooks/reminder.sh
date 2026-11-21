@@ -24,7 +24,7 @@ with open(task_list, "r", encoding="utf-8") as f:
 
 # Task non conclusi: righe della tabella con stato pending/in_progress/blocked.
 incomplete = []
-for m in re.finditer(r'^\|\s*(\d+)\s*\|[^|]*\|[^|]*\|\s*`(pending|in_progress|blocked)`', content, re.M):
+for m in re.finditer(r'^\|\s*(\d+)\s*\|[^|]*\|[^|]*\|\s*`?(pending|in_progress|blocked)`?', content, re.M):
     incomplete.append(m.group(1))
 
 if not incomplete:

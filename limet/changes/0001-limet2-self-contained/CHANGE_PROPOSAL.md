@@ -67,7 +67,7 @@ utenti, e i 3 pezzi (LIMET + CEREBRO + GRAPHIFY) restano tre installazioni separ
 ## Impatto
 
 - **Codice/moduli interessati**: nuovo repo `limet/` (plugin, skills, agents, hooks, mcp/*, dashboard).
-  `C:\Progetti\CEREBRO` resta sorgente da copiare per `mcp/cerebro/`; Graphify = dipendenza `graphifyy==0.9.32`.
+  `<repo-cerebro>` resta sorgente da copiare per `mcp/cerebro/`; Graphify = dipendenza `graphifyy==0.9.32`.
 - **API/contratti interessati**: contratti dei tool MCP (nuovi); compatibilità all'indietro sui
   **documenti** LIMET 1.0 garantita al 100% (`docs/MIGRATION.md`: stesso formato, cambia chi genera).
 - **Dipendenze esterne**: Qdrant + Ollama (infra runtime, nativi di default, Docker opzionale).

@@ -30,6 +30,16 @@ _DDL_DML_RE = re.compile(
 )
 
 
+def _deep_merge(base, override):
+    out = dict(base)
+    for k, v in (override or {}).items():
+        if isinstance(v, dict) and isinstance(out.get(k), dict):
+            out[k] = _deep_merge(out[k], v)
+        else:
+            out[k] = v
+    return out
+
+
 def _load_config():
     try:
         import yaml
@@ -42,39 +52,48 @@ def _load_config():
             try:
                 with open(p, encoding="utf-8") as f:
                     data = yaml.safe_load(f) or {}
-                for k, v in (data.get("db") or {}).items():
-                    if v is not None:
-                        merged[k] = v
+                merged = _deep_merge(merged, data.get("projects") or {})
             except Exception:
                 pass
     return merged
 
 
-DB = _load_config()
-ROW_LIMIT = int(DB.get("row_limit", 100) or 100)
+ROW_LIMIT = 100
 
 
-def _connect():
+def _db_for(project):
+    cfg = _load_config()
+    if project and project in cfg:
+        return (cfg[project].get("db") or {})
+    for _p, s in cfg.items():
+        if isinstance(s, dict) and s.get("db"):
+            return s["db"]
+    return {}
+
+
+def _connect(db):
     import psycopg2
     return psycopg2.connect(
-        host=DB.get("host", "localhost"),
-        port=int(DB.get("port", 5432) or 5432),
-        dbname=DB.get("database") or DB.get("dbname") or "",
-        user=DB.get("user") or "",
-        password=DB.get("password") or "",
+        host=db.get("host", "localhost"),
+        port=int(db.get("port", 5432) or 5432),
+        dbname=db.get("database") or db.get("dbname") or "",
+        user=db.get("user") or "",
+        password=db.get("password") or "",
     )
 
 
-def query(sql):
+def query(sql, project=""):
     sql = (sql or "").strip()
     if not sql:
         raise ValueError("sql is required")
+    if ";" in sql.rstrip(";"):
+        raise ValueError("multiple statements are not allowed (read-only)")
     if not sql.lstrip().lower().startswith("select"):
         raise ValueError("only SELECT queries are allowed (read-only)")
     if _DDL_DML_RE.match(sql):
         raise ValueError("only SELECT queries are allowed (read-only)")
 
-    conn = _connect()
+    conn = _connect(_db_for(project))
     try:
         cur = conn.cursor()
         cur.execute(sql)
@@ -94,10 +113,13 @@ def query(sql):
 TOOLS = [
     {
         "name": "db_query",
-        "description": "Run a READ-ONLY SQL query (SELECT only) against the configured database. Row-limited.",
+        "description": "Run a READ-ONLY SQL query (SELECT only) against a project's configured database. Row-limited.",
         "inputSchema": {
             "type": "object",
-            "properties": {"sql": {"type": "string", "description": "The SELECT query."}},
+            "properties": {
+                "sql": {"type": "string", "description": "The SELECT query."},
+                "project": {"type": "string", "description": "Project slug (optional)."},
+            },
             "required": ["sql"],
         },
     },
@@ -132,7 +154,7 @@ def _handle(msg):
         if name != "db_query":
             return error(-32601, f"unknown tool: {name}")
         try:
-            out = query(args.get("sql") or "")
+            out = query(args.get("sql") or "", args.get("project") or "")
             return result({
                 "content": [{"type": "text", "text": json.dumps(out, ensure_ascii=False)}],
                 "isError": False,

@@ -8,31 +8,39 @@ A spec-driven method for building software with AI agents, built natively for **
 
 - **Spec first.** Every change starts from a written proposal and spec — never from code.
 - **Full lifecycle.** `proposal → spec → plan → task → test → archive`, each step tracked.
-- **Quality enforced, not hoped for.** No task is marked *done* without a verification strategy. Human approval is recorded. Every file change is logged automatically.
-- **Project context on tap.** Document search (CEREBRO + Qdrant) and a code knowledge graph (Graphify) exposed as native MCP tools.
-- **Native Claude Code.** Built from skills, hooks, subagents, a plugin and slash commands.
+- **Quality enforced, not hoped for.** No task is marked *done* without a verification strategy. Every file change is logged automatically by a hook.
+- **Three columns.** Qdrant for documents, Graphify for the code graph, spec-driven as the method that ties them together.
+- **Native Claude Code.** Skills, hooks, subagents, MCP servers, a dashboard and slash commands.
 
-## How it works
+## Install
 
-You speak normally — *"add feature X"*, *"there's a bug Y"* — and Claude starts the right flow by itself.
+```bash
+pip install -e .          # dipendenze Python (qdrant-client, fastapi, graphifyy, …)
+claude plugin marketplace add ./
+claude plugin install limet
+claude plugin validate .   # non-strict (the root CLAUDE.md warning is by design)
+```
+
+## Commands
 
 | Command | Purpose |
 |---|---|
-| `/limet:init` | Install LIMET in a project |
-| `/limet:new` | New change: proposal → spec → plan |
-| `/limet:bug` | Structured bug report |
-| `/limet:task` | Implement a task + automatic change log |
-| `/limet:test` | Test plan and execution |
-| `/limet:archive` | Archive the finished change |
+| `/limet-new` | New change: proposal → spec → plan → task list → tests |
+| `/limet-task` | Implement a task + automatic change log |
+| `/limet-test` | Test plan and execution |
+| `/limet-bug` | Structured bug report |
+| `/limet-archive` | Archive the finished, verified change |
+| `/limet-dashboard` | Launch the dashboard on http://127.0.0.1:8787 |
 
-### Where to start
+## Where to start
 
 | You want to | Go to |
 |---|---|
-| Add a feature | `limet/FRAMEWORK_MANUAL.md` Appendix B.4 |
-| Fix a bug | `limet/FRAMEWORK_MANUAL.md` Appendix B.3 |
-| Set up LIMET in a project | `limet/FRAMEWORK_MANUAL.md` §9 |
-| Multi-project workspace | `limet/FRAMEWORK_MANUAL.md` Appendix C.1 |
+| Understand how LIMET works | `limet/FRAMEWORK_MANUAL.md` |
+| Get going on a project | `limet/ONBOARDING_CHECKLIST.md` |
+| Map every file | `limet/MASTER_INDEX.md` |
+| Launch + set up Qdrant/Ollama/Postgres | `limet-setup.html` |
+| Initialize a project from the dashboard | `limet-project-init.html` |
 
 ---
 
@@ -46,28 +54,36 @@ Un metodo *spec-driven* per sviluppare software con agenti AI, costruito nativam
 
 - **Prima la specifica.** Ogni modifica parte da una proposta e una spec scritte — mai dal codice.
 - **Ciclo di vita completo.** `proposta → spec → piano → task → test → archivio`, ogni passo tracciato.
-- **Qualità imposta, non sperata.** Nessun task è marcato *done* senza una strategia di verifica. L'approvazione umana è registrata. Ogni modifica ai file è tracciata automaticamente.
-- **Contesto del progetto a portata di mano.** Ricerca documentale (CEREBRO + Qdrant) e grafo del codice (Graphify) esposti come strumenti MCP nativi.
-- **Claude Code nativo.** Fatto di skill, hook, subagent, plugin e slash command.
+- **Qualità imposta, non sperata.** Nessun task è marcato *done* senza una strategia di verifica. Ogni modifica ai file è tracciata automaticamente da un hook.
+- **Tre colonne.** Qdrant per i documenti, Graphify per il grafo del codice, spec-driven come metodo che li lega.
+- **Claude Code nativo.** Skill, hook, subagent, server MCP, una dashboard e slash command.
 
-## Come funziona
+## Installazione
 
-Parli normalmente — *"aggiungi la feature X"*, *"c'è un bug Y"* — e Claude avvia da solo il flusso giusto.
+```bash
+pip install -e .          # dipendenze Python (qdrant-client, fastapi, graphifyy, …)
+claude plugin marketplace add ./
+claude plugin install limet
+claude plugin validate .   # non-strict (il warning sul CLAUDE.md alla root è by-design)
+```
+
+## Comandi
 
 | Comando | Scopo |
 |---|---|
-| `/limet:init` | Installa LIMET in un progetto |
-| `/limet:new` | Nuova modifica: proposta → spec → piano |
-| `/limet:bug` | Report di bug strutturato |
-| `/limet:task` | Implementa un task + change log automatico |
-| `/limet:test` | Piano ed esecuzione dei test |
-| `/limet:archive` | Archivia la modifica conclusa |
+| `/limet-new` | Nuova modifica: proposta → spec → piano → task list → test |
+| `/limet-task` | Implementa un task + change log automatico |
+| `/limet-test` | Piano ed esecuzione dei test |
+| `/limet-bug` | Report di bug strutturato |
+| `/limet-archive` | Archivia la modifica conclusa e verificata |
+| `/limet-dashboard` | Avvia la dashboard su http://127.0.0.1:8787 |
 
-### Da dove partire
+## Da dove partire
 
 | Vuoi | Vai a |
 |---|---|
-| Aggiungere una feature | `limet/FRAMEWORK_MANUAL.md` Appendice B.4 |
-| Correggere un bug | `limet/FRAMEWORK_MANUAL.md` Appendice B.3 |
-| Installare LIMET in un progetto | `limet/FRAMEWORK_MANUAL.md` §9 |
-| Workspace multi-progetto | `limet/FRAMEWORK_MANUAL.md` Appendice C.1 |
+| Capire come funziona LIMET | `limet/FRAMEWORK_MANUAL.md` |
+| Partire su un progetto | `limet/ONBOARDING_CHECKLIST.md` |
+| Mappa di tutti i file | `limet/MASTER_INDEX.md` |
+| Avviare la dashboard + setup Qdrant/Ollama/Postgres | `limet-setup.html` |
+| Inizializzare un progetto dalla dashboard | `limet-project-init.html` |

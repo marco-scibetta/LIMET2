@@ -1,0 +1,12 @@
+# LIMET — configurazione di default (committed).
+# Una sezione `projects.<slug>` per progetto: qdrant, ollama, db.
+# Override locali e segreti in `config.local.yaml` (gitignored).
+# I progetti reali si registrano con Init (dashboard) → `mcp/projects.json` (gitignored).
+language: it
+
+# Esempio di sezione per progetto (da mettere in config.local.yaml):
+# projects:
+#   my-app:
+#     qdrant: { url: http://localhost:6333 }
+#     ollama: { url: http://localhost:11434, model: nomic-embed-text }
+#     db: { host: localhost, port: 5432, database: mydb, user: myuser }

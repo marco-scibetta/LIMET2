@@ -1,0 +1,137 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>LIMET Workflow</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0F172A; --bg-elevated: #16213A; --bg-code: #0B1222;
+    --fg: #E2E8F0; --muted: #94A3B8; --border: #24324A; --border-strong: #334155;
+    --accent: #22C55E; --accent-dim: rgba(34,197,94,0.14);
+    --qdrant: #F59E0B; --graphify: #38BDF8; --spec: #A78BFA;
+    --display: 'Space Grotesk', system-ui, sans-serif;
+    --body: 'Inter', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font-family: var(--body); font-size: 15.5px; line-height: 1.65;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .shell { max-width: 880px; margin-inline: auto; padding-block: 40px 96px; }
+  .masthead { display: flex; align-items: center; gap: 12px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+  .brand-mark { width: 12px; height: 12px; border-radius: 3px; background: var(--accent); box-shadow: 0 0 14px rgba(34,197,94,0.55); }
+  .brand-name { font-family: var(--display); font-weight: 700; letter-spacing: 0.06em; }
+  .brand-tag { color: var(--muted); font-size: 13px; margin-left: auto; font-family: var(--mono); }
+  h1 { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 5vw, 44px); line-height: 1.08; margin: 0; letter-spacing: -0.02em; }
+  h2 { font-family: var(--display); font-weight: 600; font-size: 22px; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .lede { color: var(--muted); font-size: 17px; max-width: 62ch; }
+  section { margin-top: 48px; }
+  section:first-of-type { margin-top: 40px; }
+  .step { display: flex; gap: 16px; padding: 14px 0; border-top: 1px solid var(--border); }
+  .step:last-child { border-bottom: 1px solid var(--border); }
+  .step-n { font-family: var(--mono); font-size: 13px; color: var(--accent); background: var(--accent-dim); height: 26px; min-width: 26px; display: grid; place-items: center; border-radius: 6px; font-weight: 500; }
+  .step-body { min-width: 0; }
+  .step-body p { margin: 0; }
+  pre { background: var(--bg-code); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; overflow-x: auto; margin: 8px 0 0; }
+  code { font-family: var(--mono); font-size: 13px; }
+  :not(pre) > code { background: var(--bg-elevated); border: 1px solid var(--border); padding: 1px 6px; border-radius: 5px; }
+  .note { border-left: 3px solid var(--accent); background: var(--accent-dim); border-radius: 0 10px 10px 0; padding: 12px 16px; margin-top: 16px; }
+  .note p { margin: 0; }
+</style>
+
+<div class="shell">
+  <header class="masthead">
+    <span class="brand-mark"></span>
+    <span class="brand-name">LIMET</span>
+    <span class="brand-tag">workflow · 2.0</span>
+  </header>
+
+  <section>
+    <div class="eyebrow">Workflow</div>
+    <h1>The three main flows</h1>
+    <p class="lede">Create a new project, create a new feature and handle a bug. Three short sequences, each with its commands.</p>
+  </section>
+
+  <section>
+    <h2>1 · Create a new project</h2>
+    <div class="step">
+      <span class="step-n">1</span>
+      <div class="step-body"><p>Launch the dashboard: <code>/limet-dashboard</code> → http://127.0.0.1:8787</p></div>
+    </div>
+    <div class="step">
+      <span class="step-n">2</span>
+      <div class="step-body"><p>In <strong>Init</strong>: project name + docs path (check <em>Workspace</em> if multi-module). One click → register + graphify + Qdrant ingestion.</p></div>
+    </div>
+    <div class="step">
+      <span class="step-n">3</span>
+      <div class="step-body"><p>In <strong>Setup</strong>: select the project and configure Qdrant, Ollama and DB (optional).</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>2 · Create a new feature</h2>
+    <div class="step">
+      <span class="step-n">1</span>
+      <div class="step-body">
+        <p>Open the Claude session in the project and run:</p>
+        <pre><code>/limet-new "feature description"</code></pre>
+        <p>Generates the documents in <code>limet/changes/&lt;slug&gt;/</code>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-n">2</span>
+      <div class="step-body">
+        <p>Implement each task:</p>
+        <pre><code>/limet-task 1</code></pre>
+        <p>2-3 line brief, code, automatic change log.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-n">3</span>
+      <div class="step-body">
+        <p>Verify:</p>
+        <pre><code>/limet-test</code></pre>
+        <p>TEST_PLAN + TEST_EXECUTION with real outcomes.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-n">4</span>
+      <div class="step-body">
+        <p>Archive (only if verified):</p>
+        <pre><code>/limet-archive</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>3 · Handle a bug</h2>
+    <div class="step">
+      <span class="step-n">1</span>
+      <div class="step-body">
+        <p>Report the bug:</p>
+        <pre><code>/limet-bug "problem description"</code></pre>
+        <p>Generates <code>BUG_REPORT.md</code> with root cause and regression test.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-n">2</span>
+      <div class="step-body">
+        <p>Implement the fix:</p>
+        <pre><code>/limet-task N</code></pre>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-n">3</span>
+      <div class="step-body">
+        <p>Regression + archive:</p>
+        <pre><code>/limet-test
+/limet-archive</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="note"><p><strong>Rule:</strong> never <code>done</code> without verification, never build/test autonomously, never commit/push without authorization.</p></div>
+</div>

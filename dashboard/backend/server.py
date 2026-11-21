@@ -28,24 +28,100 @@ app.add_middleware(
 PLUGIN_ROOT = os.environ.get("CLAUDE_PLUGIN_ROOT") or ROOT
 
 
-def _load_db_config():
+CONFIG_DIR = os.path.join(PLUGIN_ROOT, "config")
+CONFIG_PATH = os.path.join(CONFIG_DIR, "config.yaml")
+LOCAL_CONFIG_PATH = os.path.join(CONFIG_DIR, "config.local.yaml")
+
+_SECRET_KEYS = {"password"}
+
+
+def _deep_merge(base, override):
+    out = dict(base)
+    for k, v in (override or {}).items():
+        if isinstance(v, dict) and isinstance(out.get(k), dict):
+            out[k] = _deep_merge(out[k], v)
+        else:
+            out[k] = v
+    return out
+
+
+def _load_yaml(path):
     try:
         import yaml
     except ImportError:
         return {}
-    merged = {}
-    for name in ("config.yaml", "config.local.yaml"):
-        p = os.path.join(PLUGIN_ROOT, "config", name)
-        if os.path.exists(p):
-            try:
-                with open(p, encoding="utf-8") as f:
-                    data = yaml.safe_load(f) or {}
-                for k, v in (data.get("db") or {}).items():
-                    if v is not None:
-                        merged[k] = v
-            except Exception:
-                pass
-    return merged
+    if not os.path.exists(path):
+        return {}
+    try:
+        with open(path, encoding="utf-8") as f:
+            return yaml.safe_load(f) or {}
+    except Exception:
+        return {}
+
+
+def _load_config():
+    base = _load_yaml(CONFIG_PATH)
+    local = _load_yaml(LOCAL_CONFIG_PATH)
+    return _deep_merge(base, local)
+
+
+def _save_local_config(data):
+    import yaml
+
+    existing = _load_yaml(LOCAL_CONFIG_PATH)
+    merged = _deep_merge(existing, data)
+    os.makedirs(CONFIG_DIR, exist_ok=True)
+    with open(LOCAL_CONFIG_PATH, "w", encoding="utf-8") as f:
+        yaml.safe_dump(merged, f, sort_keys=False, allow_unicode=True)
+
+
+def _mask(data):
+    out = {}
+    for k, v in data.items():
+        if isinstance(v, dict):
+            out[k] = _mask(v)
+        elif k in _SECRET_KEYS and v:
+            out[k] = "****"
+        else:
+            out[k] = v
+    return out
+
+
+def _db_conn_from(cfg):
+    import psycopg2
+
+    db = (cfg or {}).get("db", {}) or {}
+    return psycopg2.connect(
+        host=db.get("host", "localhost"),
+        port=int(db.get("port", 5432) or 5432),
+        dbname=db.get("database") or db.get("dbname") or "",
+        user=db.get("user") or "",
+        password=db.get("password") or "",
+    )
+
+
+_DEFAULT_PROJECT = {
+    "qdrant": {"url": "http://localhost:6333"},
+    "ollama": {"url": "http://localhost:11434", "model": "nomic-embed-text"},
+    "db": {"host": "localhost", "port": 5432, "database": "", "user": ""},
+}
+
+
+def _project_config(slug):
+    cfg = _load_config()
+    proj = (cfg.get("projects") or {}).get(slug) or {}
+    return _deep_merge(_DEFAULT_PROJECT, proj)
+
+
+def _save_project_config(slug, qdrant, ollama, db):
+    section = {}
+    if qdrant:
+        section["qdrant"] = qdrant
+    if ollama:
+        section["ollama"] = ollama
+    if db:
+        section["db"] = db
+    _save_local_config({"projects": {slug: section}})
 
 
 @app.get("/api/info")
@@ -53,55 +129,57 @@ def info():
     return {"name": "LIMET dashboard", "version": "2.0.0", "status": "ok"}
 
 
-class SqlBody(BaseModel):
-    sql: str
+class ConfigBody(BaseModel):
+    project: str = ""
+    qdrant: dict = {}
+    ollama: dict = {}
+    db: dict = {}
 
 
-@app.post("/api/db/test")
-def db_test():
-    """Verifica la connessione read-only (senza esporre i segreti)."""
-    import psycopg2
+@app.get("/api/config")
+def get_config(project: str = ""):
+    """Configurazione (password mascherata) — globale o di un progetto."""
+    if project:
+        return _mask(_project_config(project))
+    return _mask(_load_config())
 
-    db = _load_db_config()
+
+@app.post("/api/config")
+def save_config(body: ConfigBody):
+    """Salva la configurazione di un progetto in config.local.yaml."""
+    if not body.project:
+        raise HTTPException(status_code=400, detail="project is required")
+    _save_project_config(body.project, body.qdrant, body.ollama, body.db)
+    return {"ok": True, "config": _mask(_project_config(body.project))}
+
+
+class TestBody(BaseModel):
+    project: str = ""
+
+
+@app.post("/api/config/test")
+def test_db(body: TestBody):
+    """Verifica la connessione DB di un progetto (senza esporre i segreti)."""
+    cfg = _project_config(body.project) if body.project else _load_config()
     try:
-        conn = psycopg2.connect(
-            host=db.get("host", "localhost"),
-            port=int(db.get("port", 5432) or 5432),
-            dbname=db.get("database") or db.get("dbname") or "",
-            user=db.get("user") or "",
-            password=db.get("password") or "",
-        )
+        conn = _db_conn_from(cfg)
         conn.close()
         return {"ok": True}
     except Exception as e:
-        raise HTTPException(status_code=502, detail=f"connection failed: {e}")
+        return {"ok": False, "error": str(e)}
 
 
-@app.post("/api/db/schema")
-def db_schema():
-    """Elenco tabelle (read-only)."""
-    import psycopg2
+class LanguageBody(BaseModel):
+    lang: str
 
-    db = _load_db_config()
-    try:
-        conn = psycopg2.connect(
-            host=db.get("host", "localhost"),
-            port=int(db.get("port", 5432) or 5432),
-            dbname=db.get("database") or db.get("dbname") or "",
-            user=db.get("user") or "",
-            password=db.get("password") or "",
-        )
-        cur = conn.cursor()
-        cur.execute(
-            "SELECT table_schema, table_name FROM information_schema.tables "
-            "WHERE table_schema NOT IN ('pg_catalog', 'information_schema') "
-            "ORDER BY table_schema, table_name"
-        )
-        rows = [{"schema": r[0], "table": r[1]} for r in cur.fetchall()]
-        conn.close()
-        return {"tables": rows}
-    except Exception as e:
-        raise HTTPException(status_code=502, detail=f"schema error: {e}")
+
+@app.post("/api/language")
+def set_language(body: LanguageBody):
+    """Imposta la lingua globale (it/en) in config.local.yaml."""
+    if body.lang not in ("it", "en"):
+        raise HTTPException(status_code=400, detail="lang must be 'it' or 'en'")
+    _save_local_config({"language": body.lang})
+    return {"ok": True, "language": body.lang}
 
 
 def _registry():
@@ -117,6 +195,10 @@ def _registry():
 def status():
     import urllib.request
 
+    cfg = _load_config()
+    qdrant_url = (_DEFAULT_PROJECT.get("qdrant") or {}).get("url", "http://localhost:6333").rstrip("/")
+    ollama_url = (_DEFAULT_PROJECT.get("ollama") or {}).get("url", "http://localhost:11434").rstrip("/")
+
     def reachable(url):
         try:
             req = urllib.request.Request(url, method="GET")
@@ -127,8 +209,8 @@ def status():
             return False
 
     return {
-        "qdrant": reachable("http://localhost:6333/collections"),
-        "ollama": reachable("http://localhost:11434/api/tags"),
+        "qdrant": reachable(qdrant_url + "/collections"),
+        "ollama": reachable(ollama_url + "/api/tags"),
         "projects": sorted(_registry().keys()),
     }
 
@@ -138,14 +220,62 @@ def projects():
     reg = _registry()
     return {
         "projects": [
-            {"slug": s, "docs": e.get("docs", []), "root": e.get("root", "")}
+            {"slug": s, "docs": e.get("docs", []), "root": e.get("root", ""),
+             "collections": e.get("collections", [])}
             for s, e in reg.items()
         ]
     }
 
 
+class LinkBody(BaseModel):
+    a: str
+    b: str
+
+
+@app.post("/api/link")
+def link(body: LinkBody):
+    import project_config
+
+    reg = project_config.load_registry()
+    sa = project_config.sanitize_project_name(body.a)
+    sb = project_config.sanitize_project_name(body.b)
+    ca = project_config.collection_for(body.a)
+    cb = project_config.collection_for(body.b)
+    linked = []
+    for slug, extra in ((sa, cb), (sb, ca)):
+        entry = reg.setdefault(slug, {})
+        cols = list(entry.get("collections") or [])
+        if extra not in cols:
+            cols.append(extra)
+        entry["collections"] = cols
+        linked.append(f"{slug} -> {extra}")
+    project_config.save_registry(reg)
+    return {"ok": True, "linked": linked}
+
+
+@app.post("/api/unlink")
+def unlink(body: LinkBody):
+    import project_config
+
+    reg = project_config.load_registry()
+    sa = project_config.sanitize_project_name(body.a)
+    sb = project_config.sanitize_project_name(body.b)
+    ca = project_config.collection_for(body.a)
+    cb = project_config.collection_for(body.b)
+    for slug, extra in ((sa, cb), (sb, ca)):
+        entry = reg.get(slug, {})
+        cols = [c for c in (entry.get("collections") or []) if c != extra]
+        if cols:
+            entry["collections"] = cols
+        else:
+            entry.pop("collections", None)
+    project_config.save_registry(reg)
+    return {"ok": True, "unlinked": [sa, sb]}
+
+
 class ReindexBody(BaseModel):
     project: str = ""
+    path: str = ""
     mode: str = "incremental"
 
 
@@ -157,6 +287,8 @@ def reindex(body: ReindexBody):
     cmd = [sys.executable, script]
     if body.project:
         cmd += ["--project", body.project]
+    if body.path:
+        cmd += [body.path]
     if body.mode == "force":
         cmd += ["--force"]
     elif body.mode == "clean":
@@ -171,21 +303,85 @@ def reindex(body: ReindexBody):
 class InitBody(BaseModel):
     project: str
     path: str = ""
+    workspace: bool = False
+
+
+_EXCLUDE_DIRS = {
+    ".git", "node_modules", "__pycache__", "dist", "build", "graphify-out",
+    "limet", "docs", "venv", ".venv", "env",
+}
+
+
+def _discover_modules(root):
+    modules = []
+    try:
+        for name in sorted(os.listdir(root)):
+            full = os.path.join(root, name)
+            if not os.path.isdir(full) or name in _EXCLUDE_DIRS or name.startswith("."):
+                continue
+            docs = os.path.join(full, "docs")
+            if os.path.isdir(docs):
+                modules.append({"name": name, "docs": docs})
+    except Exception:
+        pass
+    return modules
 
 
 @app.post("/api/init")
 def init(body: InitBody):
+    import shutil
     import subprocess
 
     if not body.path:
         raise HTTPException(status_code=400, detail="path (docs) is required")
-    script = os.path.join(ROOT, "mcp", "cerebro", "register_project.py")
-    cmd = [sys.executable, script, "add", body.project, "--docs", body.path]
-    try:
-        out = subprocess.run(cmd, capture_output=True, text=True, timeout=120, encoding="utf-8")
-        return {"log": (out.stdout + out.stderr).strip() or "registered"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+    norm = os.path.normpath(body.path.rstrip("\\/"))
+    if os.path.basename(norm).lower() == "docs":
+        root = os.path.dirname(norm)
+        docs_path = norm
+    else:
+        root = norm
+        candidate = os.path.join(root, "docs")
+        docs_path = candidate if os.path.isdir(candidate) else norm
+
+    def _run(cmd, timeout):
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, encoding="utf-8")
+        return (r.stdout + r.stderr).strip()
+
+    log = []
+
+    # docs: docs_path + (se workspace) i docs dei moduli
+    docs_paths = [docs_path]
+    modules = []
+    if body.workspace:
+        modules = _discover_modules(root)
+        docs_paths += [m["docs"] for m in modules]
+
+    # 1) registra UN progetto con TUTTI i docs (root + moduli) → Qdrant/Graphify/DB unici
+    reg = os.path.join(ROOT, "mcp", "cerebro", "register_project.py")
+    reg_cmd = [sys.executable, reg, "add", body.project, "--docs"] + docs_paths + ["--root", root]
+    log.append("=== register ===\n" + _run(reg_cmd, 120))
+
+    # 2) graphify: unico grafo su root (copre tutti i moduli)
+    graphify = shutil.which("graphify")
+    if graphify:
+        log.append("=== graphify ===\n" + _run(
+            [graphify, "extract", root, "--code-only"], 600))
+    else:
+        log.append("=== graphify ===\n(comando `graphify` non trovato nel PATH)")
+
+    # 3) ingestion Qdrant: unica collection con tutti i docs
+    ing = os.path.join(ROOT, "mcp", "cerebro", "ingest_docs.py")
+    log.append("=== qdrant ingest ===\n" + _run(
+        [sys.executable, ing, "--project", body.project], 600))
+
+    if body.workspace:
+        if modules:
+            log.append(f"=== workspace: {len(modules)} moduli, docs indicizzati nella collection '{body.project}' ===")
+        else:
+            log.append("=== workspace: nessun modulo trovato ===")
+
+    return {"log": "\n\n".join(log)}
 
 
 @app.get("/api/browse")
@@ -216,6 +412,31 @@ ASSETS = os.path.join(DIST, "assets")
 
 if os.path.isdir(ASSETS):
     app.mount("/assets", StaticFiles(directory=ASSETS), name="assets")
+
+
+# Documentazione (HTML servita dal backend, prima del fallback SPA)
+def _guide_lang(lang: str) -> str:
+    if lang in ("it", "en"):
+        return lang
+    return (_load_config().get("language") or "it")
+
+
+@app.get("/docs/setup", include_in_schema=False)
+def serve_setup_doc(lang: str = ""):
+    l = _guide_lang(lang)
+    return FileResponse(os.path.join(ROOT, "guides", l, "limet-setup.html"))
+
+
+@app.get("/docs/project-init", include_in_schema=False)
+def serve_project_init_doc(lang: str = ""):
+    l = _guide_lang(lang)
+    return FileResponse(os.path.join(ROOT, "guides", l, "limet-project-init.html"))
+
+
+@app.get("/docs/workflow", include_in_schema=False)
+def serve_workflow_doc(lang: str = ""):
+    l = _guide_lang(lang)
+    return FileResponse(os.path.join(ROOT, "guides", l, "workflow.html"))
 
 
 @app.get("/", include_in_schema=False)

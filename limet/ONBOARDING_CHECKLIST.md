@@ -1,63 +1,58 @@
-# Checklist di onboarding — inizio sessione/feature (LIMET)
+# LIMET 2.0 — Onboarding Checklist
 
-> Da consultare a inizio sessione o prima di iniziare una nuova feature/bug fix con un agente AI.
-> Spuntare ogni voce; se una voce non è applicabile, annotarlo esplicitamente invece di saltarla
-> in silenzio.
+Passi per partire con LIMET su un progetto.
 
-## 1. Prima di iniziare
+## 1. Installa il plugin
+```bash
+pip install -e .                    # dipendenze Python
+claude plugin marketplace add ./
+claude plugin install limet
+claude plugin validate .            # non-strict
+```
 
-- [ ] Ho letto/richiamato il contesto di progetto rilevante (documentazione esistente, istruzioni
-      per l'agente, se presenti).
-- [ ] Ho verificato se esiste già un piano/proposta per questo lavoro (evitare duplicazioni).
-- [ ] Ho chiaro se il lavoro è abbastanza piccolo da non richiedere un documento di piano formale
-      (vedi `FRAMEWORK_MANUAL.md` §3) oppure se serve `PLAN_TEMPLATE.md`/`CHANGE_PROPOSAL_TEMPLATE.md`.
+## 2. Prepara l'infrastruttura (se serve)
+- Qdrant: `docker run -d -p 6333:6333 qdrant/qdrant`
+- Ollama: `ollama pull nomic-embed-text`
+- Postgres: `docker run -d --name limet-postgres -e POSTGRES_USER=... -e POSTGRES_PASSWORD=... -e POSTGRES_DB=... -p 5432:5432 postgres:18-alpine3.23`
 
-## 2. Raccolta di contesto
+## 3. Avvia la dashboard
+```
+/limet-dashboard
+```
+→ http://127.0.0.1:8787
 
-- [ ] Ho usato le fonti di contesto disponibili (documentale/strutturale/dati reali — vedi
-      §2 del manuale) secondo il criterio di combinazione (§2.4), non a caso.
-- [ ] Ho cercato PRIMA in CEREBRO/Qdrant; se il documento non era indicizzato, l'ho letto
-      localmente in `docs/` (o `limet/`).
-- [ ] Ogni ambiguità trovata è stata registrata come domanda contestuale (§1.2), non assunta.
+Scegli la **lingua** col flag 🇮🇹/🇬🇧 in alto a destra (interfaccia + documenti prodotti).
 
-## 3. Pianificazione
+## 4. Inizializza il progetto (Init)
+- nome progetto (combobox se esistente)
+- percorso docs
+→ register + graphify + ingestion Qdrant in un colpo.
+- Spunta **Workspace** se il progetto è multi-modulo (root + moduli in una collection).
 
-- [ ] Il piano/proposta descrive esplicitamente perimetro dentro/fuori scope.
-- [ ] Le alternative considerate e scartate sono documentate (se rilevanti).
-- [ ] La strategia di verifica (unit test + e2e) è già abbozzata in questa fase, non rimandata a
-      dopo l'implementazione.
+## 5. Configura il progetto (Setup)
+- seleziona progetto dalla combo
+- Qdrant / Ollama / DB
+- Salva → config.local.yaml
+- Test connessione DB.
 
-## 4. Implementazione
+## 5bis. Collega progetti (se interagiscono)
+- **Progetti** → "Collega progetti" → A e B → **Collega**.
+- La ricerca Qdrant in A copre anche B (e viceversa).
 
-- [ ] Le modifiche restano dentro il perimetro dichiarato (o lo scostamento è stato segnalato ed
-      eventualmente approvato).
-- [ ] Nessun comando con effetti persistenti (commit, push, migrazioni, deploy) è stato eseguito
-      senza autorizzazione esplicita.
-- [ ] Nessuna build o test è stato eseguito dall'agente — delega il comando all'utente e resta in
-      standby finché l'esito non arriva.
+## 6. Ciclo di lavoro
+```
+/limet-new "feature X"    → genera i documenti
+/limet-task 1             → implementa (brief 2-3 righe)
+/limet-test               → piano + esecuzione test
+/limet-bug "errore Y"     → se serve
+/limet-archive            → archivia il lavoro verificato
+```
 
-## 5. Verifica (obbligatoria — vedi §1.5/§5 del manuale)
+## 7. Verifica finale
+- `python -m pytest tests -v` → tutti verdi
+- `limet-gate` → OK su ogni task `done`
 
-- [ ] Sono stati scritti/estesi unit test per il comportamento modificato.
-- [ ] È stata eseguita l'**autorevisione della qualità** dei test (§5.1): sabotaggio mentale
-      («quale alterazione del codice non farebbe fallire nessun test?»), assert che possono
-      fallire per il motivo dichiarato, atteso non derivato dall'oggetto sotto test, nessun
-      campione arbitrario, contratto verificato oltre al percorso felice.
-- [ ] È stato valutato se serve un test e2e approfondito; se sì, è stato documentato con
-      `E2E_VERIFICATION_TEMPLATE.md` (precondizioni, controllo pre/post dello stato, passi
-      numerati, risultato atteso per passo, criteri di verifica oggettivi, rollback).
-- [ ] Se un test non è stato previsto, la motivazione è esplicita nel documento di task (§5.3).
-- [ ] L'esito reale dei test (non solo quello previsto) è stato registrato in
-      `TEST_EXECUTION_TEMPLATE.md`.
-
-## 6. Chiusura
-
-- [ ] I documenti di piano/task sono stati aggiornati a ritroso con l'esito implementazione
-      (data, scostamenti rispetto al piano).
-- [ ] Se rilevante, è stata prodotta una sintesi non tecnica (`NON_TECHNICAL_SUMMARY_TEMPLATE.md`).
-- [ ] Il lavoro concluso è stato congelato con `ARCHIVE_ENTRY_TEMPLATE.md`, se il progetto separa
-      documentazione attiva da documentazione archiviata.
-- [ ] Sono stati eliminati/segnalati i task residui che non servono più.
-- [ ] La collection RAG del progetto è stata re-indicizzata
-      (`limet/scripts/limet-index.ps1 update`), così la modifica archiviata è contesto
-      ricercabile.
+## Regole da ricordare
+- Mai build/test in autonomia.
+- Mai commit/push senza autorizzazione esplicita.
+- Ogni task `done` ha una strategia di verifica (unit + e2e).

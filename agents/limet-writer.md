@@ -24,4 +24,4 @@ in quest'ordine, ognuno istanziato dal relativo template:
 - **Test non-negoziabile**: ogni task prevede unit + e2e, anche con "n/a" giustificato esplicitamente.
 - **Fatti vs ipotesi**: distinguere ciò che è verificato da ciò che è assunto.
 - **No build/test**: fornire solo i comandi; l'esecuzione spetta all'utente.
-- **Lingua**: scrivere nella lingua dell'utente.
+- **Lingua**: scrivere nella lingua configurata in `config/config.yaml` + `config/config.local.yaml` (`language`, valori `it`/`en`); se assente, nella lingua dell'utente.

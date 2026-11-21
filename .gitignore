@@ -3,6 +3,11 @@ config/config.local.yaml
 .env_db
 *.env
 
+# Stato runtime (per-macchina, path assoluti) — mai committati
+mcp/projects.json
+mcp/cache/
+mcp/assets/
+
 # Python
 __pycache__/
 *.py[cod]

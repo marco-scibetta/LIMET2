@@ -12,10 +12,10 @@ LIMET 1.0 era corretto nella **filosofia** (spec-driven, traceability, test non-
 - **1.0**: due edizioni (IT/EN) + compatibilità Copilot/Claude = overhead di manutenzione.
 - **2.0**: solo Claude Code. Via il doppio albero documentale e l'astrazione "tool-agnostic". (L'EN si può aggiungere dopo, se serve.)
 
-## 3. Python/CLI → MCP thin wrapper
+## 3. Python/CLI → MCP
 
 - **1.0**: CEREBRO = skill-guida che orchestra script Python; GRAPHIFY = CLI.
-- **2.0**: stessi motori, avvolti in MCP. Claude chiama `cerebro_search(...)` invece di lanciare `python query_qdrant.py`. **Nessuna riscrittura della logica.**
+- **2.0**: CEREBRO avvolto in MCP (stessi script), Graphify via MCP nativo (`graphify-mcp`). Claude chiama `cerebro_search(...)` invece di lanciare `python query_qdrant.py`.
 
 ## 4. Template manuali → hook-driven
 
@@ -30,7 +30,7 @@ LIMET 1.0 era corretto nella **filosofia** (spec-driven, traceability, test non-
 ## 6. Consolidamento: 18 → 5 skill
 
 - **1.0**: un template per ogni artefatto = 18 documenti separati.
-- **2.0**: `/limet:new` genera tutto il ciclo insieme (proposal+spec+plan+task+test+e2e). I doc di supporto (glossary, conventions, analysis…) si generano a richiesta. Meno attrito, stessa tracciabilità.
+- **2.0**: `/limet-new` genera tutto il ciclo insieme (proposal+spec+plan+task+test+e2e). I doc di supporto (glossary, conventions, analysis…) si generano a richiesta. Meno attrito, stessa tracciabilità.
 
 ## 7. Self-contained: un solo repo
 

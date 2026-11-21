@@ -37,7 +37,7 @@ else:
 
 # scope: escludi framework LIMET e rumore
 rel = os.path.relpath(fp, cwd)
-if rel.startswith("limet") or re.search(r'(^|/)(\.git|node_modules|__pycache__|dist|build|\.vite|graphify-out|\.claude)(/|$)', rel):
+if rel.startswith("limet/changes") or rel.startswith("limet/archive") or rel.startswith("..") or re.search(r'(^|/)(\.git|node_modules|__pycache__|dist|build|\.vite|graphify-out|\.claude)(/|$)', rel):
     sys.exit(0)
 
 tipo = "creato" if tool == "Write" else "modificato"

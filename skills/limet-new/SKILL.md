@@ -9,7 +9,7 @@ allowed-tools: Read, Grep, Glob, Write
 
 Genera in `limet/changes/<data-slug>/` i documenti seguenti, **in ordine**, partendo dal contenuto di `$ARGUMENTS`.
 `<data-slug>` = `YYYY-MM-DD-slug` derivato da `$ARGUMENTS` (es. `2026-11-20-login-page`).
-Scrivi nella lingua dell'utente. Ogni documento è istanziato dal template inline sotto, e non deve
+Scrivi nella lingua configurata in `config/config.yaml` + `config/config.local.yaml` (chiave `language`, valori `it`/`en`); se assente, nella lingua dell'utente. Ogni documento è istanziato dal template inline sotto, e non deve
 restare vuoto.
 
 ## Documenti da generare

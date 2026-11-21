@@ -1,0 +1,17 @@
+# Template — copia in `config/config.local.yaml` e compila con i tuoi valori.
+# `config.local.yaml` è gitignored: MAI committare i segreti.
+language: it
+
+projects:
+  my-app:
+    qdrant:
+      url: http://localhost:6333
+    ollama:
+      url: http://localhost:11434
+      model: nomic-embed-text
+    db:
+      host: localhost
+      port: 5432
+      database: mydb
+      user: myuser
+      password: "CAMBIAMI"

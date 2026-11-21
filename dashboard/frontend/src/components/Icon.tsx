@@ -30,6 +30,14 @@ const ICONS: Record<string, ReactNode> = {
       <path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" />
     </>
   ),
+  setup: (
+    <>
+      <path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h7M15 18h5" />
+      <circle cx="16" cy="6" r="2" />
+      <circle cx="8" cy="12" r="2" />
+      <circle cx="13" cy="18" r="2" />
+    </>
+  ),
   artifacts: (
     <>
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -39,6 +47,12 @@ const ICONS: Record<string, ReactNode> = {
   folder: (
     <>
       <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+    </>
+  ),
+  book: (
+    <>
+      <path d="M12 6c-1.5-1.5-3.5-2-6-2v16c2.5 0 4.5.5 6 2 1.5-1.5 3.5-2 6-2V4c-2.5 0-4.5.5-6 2z" />
+      <path d="M12 6v16" />
     </>
   ),
 }

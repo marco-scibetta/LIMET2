@@ -23,12 +23,12 @@ limet/                          ← UNICO repo self-contained
 │   ├── guardrail.sh
 │   ├── changelog.sh
 │   └── reminder.sh
-├── .mcp.json                 ← cerebro + graphify
-├── mcp/                      ← i motori DENTRO il repo
+├── .mcp.json                 ← cerebro + graphify (nativo) + db
+├── mcp/                      ← cerebro e db DENTRO il repo
 │   ├── cerebro/              (RAG: server.py + scripts register/ingest/query)
-│   ├── graphify/             (KG: server.py)
-│   └── db/                   (DB: server.py, legge .env_db)
-├── .gitignore                ← include .env_db (mai nel repo)
+│   └── db/                   (DB: server.py, legge config.yaml/config.local.yaml)
+├── config/                   ← config.yaml + config.local.yaml + loader.py
+├── .gitignore                ← include config.local.yaml (mai nel repo)
 ├── CLAUDE.md                 ← policy always-on
 └── docs/                     ← manual, onboarding
 
@@ -47,8 +47,8 @@ limet/                          ← UNICO repo self-contained
 }
 ```
 
-- `name` = namespace delle skill (`/limet:new`, ecc.).
-- Le skill `user-invocable` diventano comandi `/limet:new`, `/limet:task`, …
+- `name` = namespace delle skill (`/limet-new`, ecc.).
+- Le skill `user-invocable` diventano comandi `/limet-new`, `/limet-task`, …
 
 ## Distribuzione
 

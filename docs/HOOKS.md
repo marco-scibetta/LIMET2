@@ -86,7 +86,7 @@ Gli hook sono **deterministici** (zero contesto se non ritornano output). In LIM
 ## reminder.sh (logica)
 
 - Legge lo stato del task corrente.
-- Se c'è un task senza sezione test o non archiviato → stampa un reminder: "LIMET: il task X non ha verifica/archivio. Usa /limet:test e /limet:archive."
+- Se c'è un task senza sezione test o non archiviato → stampa un reminder: "LIMET: il task X non ha verifica/archivio. Usa /limet-test e /limet-archive."
 - Se tutto a posto → nessun output.
 
 ## Fail-safe (tutti gli hook)

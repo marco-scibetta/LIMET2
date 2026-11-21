@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { get } from '../api'
 import Icon from '../components/Icon'
+import { Dict } from '../i18n'
 
 interface Status {
   qdrant: boolean
@@ -8,7 +9,7 @@ interface Status {
   projects: string[]
 }
 
-export default function StatusPage() {
+export default function StatusPage({ t }: { t: Dict }) {
   const [s, setS] = useState<Status | null>(null)
   const [err, setErr] = useState('')
 
@@ -16,36 +17,24 @@ export default function StatusPage() {
     get<Status>('/api/status').then(setS).catch((e) => setErr(String(e)))
   }, [])
 
-  if (err) return <p className="muted">Errore: {err}</p>
-  if (!s) return <p className="muted">Caricamento…</p>
+  if (err) return <p className="muted">{t.err}: {err}</p>
+  if (!s) return <p className="muted">{t.loading}</p>
 
   return (
     <div>
       <div className="grid">
-        <StatCard
-          icon="db"
-          tone="green"
-          label="Qdrant"
-          value={s.qdrant ? 'Attivo' : 'Offline'}
-          ok={s.qdrant}
-        />
-        <StatCard
-          icon="status"
-          tone="blue"
-          label="Ollama"
-          value={s.ollama ? 'Attivo' : 'Offline'}
-          ok={s.ollama}
-        />
-        <StatCard icon="projects" tone="amber" label="Progetti" value={String(s.projects.length)} />
+        <StatCard t={t} icon="db" tone="green" label="Qdrant" value={s.qdrant ? t.active : t.offline} ok={s.qdrant} />
+        <StatCard t={t} icon="status" tone="blue" label="Ollama" value={s.ollama ? t.active : t.offline} ok={s.ollama} />
+        <StatCard t={t} icon="projects" tone="amber" label={t.projects} value={String(s.projects.length)} />
       </div>
 
       <div className="card">
         <div className="card-head">
-          <h3>Progetti registrati</h3>
-          <span className="badge ok">{s.projects.length} totali</span>
+          <h3>{t.projectsTotal}</h3>
+          <span className="badge ok">{s.projects.length} {t.totali}</span>
         </div>
         {s.projects.length === 0 ? (
-          <p className="muted">Nessuno</p>
+          <p className="muted">{t.none}</p>
         ) : (
           <ul className="list">
             {s.projects.map((p) => (
@@ -59,12 +48,14 @@ export default function StatusPage() {
 }
 
 function StatCard({
+  t,
   icon,
   tone,
   label,
   value,
   ok,
 }: {
+  t: Dict
   icon: string
   tone: 'green' | 'blue' | 'amber' | 'violet'
   label: string
@@ -81,7 +72,7 @@ function StatCard({
         <div className="stat-value">{value}</div>
       </div>
       {ok !== undefined && (
-        <span className={ok ? 'badge ok' : 'badge ko'}>{ok ? 'online' : 'offline'}</span>
+        <span className={ok ? 'badge ok' : 'badge ko'}>{ok ? t.online : t.offline}</span>
       )}
     </div>
   )

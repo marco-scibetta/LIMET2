@@ -1,89 +1,62 @@
-# LIMET 2.0 — Dashboard React (ops)
+# LIMET 2.0 — Dashboard (ops)
 
 La dashboard è l'interfaccia **web per le operazioni**, non per il lavoro. Il lavoro lo fa Claude; le ops le fa l'umano con una GUI.
 
 ## Principio di separazione
 
-| | Claude (MCP + skill) | Dashboard React |
+| | Claude (MCP + skill) | Dashboard |
 |---|---|---|
 | Ruolo | **il lavoro** | **le ops** |
-| Cosa | generare spec/task, implementare, query contesto | init/setup, re-index, status, config, monitoraggio |
+| Cosa | generare spec/task, implementare, query contesto | init, re-index, status, setup/config |
 | Interazione | conversazionale | GUI |
-| Perché | è il core spec-driven | una GUI batte una chat per ops ripetitive |
 
-Regola: **se una funzione è più comoda in conversazione, sta in chat, non nella UI.** La dashboard non duplica il lavoro di Claude.
+Regola: **se una funzione è più comoda in conversazione, sta in chat, non nella UI.** Ogni pagina = un'azione reale.
 
-## Architettura: un backend, due frontend
+## Architettura: monoprocesso
 
 ```
-React Dashboard ──► REST API (stessa logica) ◄── Claude MCP
-                    ┌────────────────────┐
-                    │  backend condiviso │
-                    │  cerebro / graphify│
-                    │  / db + ciclo limet│
-                    └────────────────────┘
+React (Vite) ──► REST API ◄── Claude MCP
+                 ┌─────────────────┐
+                 │ backend FastAPI │  (serve anche il frontend buildato)
+                 │ cerebro/db      │
+                 └─────────────────┘
 ```
 
-Il backend è lo stesso dei server MCP (`mcp/`). La dashboard parla con una **REST API** (o direttamente col backend), Claude parla con **MCP**. Stessa logica, due frontend.
+Il backend FastAPI **serve anche il frontend buildato** (`dist/`): un solo processo, un solo comando.
 
-## Stack
+```bash
+python dashboard/run.py     # builda se serve + avvia su :8787
+/limet-dashboard            # comando slash equivalente
+```
 
-- **React** (Vite) + TypeScript.
-- Nessun framework UI pesante: componenti semplici, tema scuro professionale.
-- Stato locale (React state / localStorage), niente backend di stato separato: il backend è già nei server MCP/REST.
+## Pagine (5)
 
-## Design / grafica (moderna professionale, non '90s)
+1. **Status** — stato di Qdrant/Ollama + progetti registrati.
+2. **Init** — registra un progetto (nome + percorso docs): in un colpo fa **register + graphify extract + ingestion Qdrant**. Una combo propone i progetti già esistenti.
+3. **Progetti** — slug, root, percorsi docs dei progetti registrati.
+4. **Re-index** — incrementale / forza / pulizia (prune); combo progetto + percorso docs.
+5. **Setup** — configurazione **per progetto** (Qdrant, Ollama, DB), salvata in `config.local.yaml`. Password mai mostrata. Include "Test connessione DB".
 
-"Super avanzata" = **grafica moderna professionale**, non più funzioni. Il launcher 1.0 (HTML vanilla) sembra anni '90: va ridisegnato, non solo portato in React.
+## API
 
-Requisiti grafici:
-- **Design system** con token (palette scura professionale, accent coerente, tipografia moderna, spaziature). Niente "sito anni '90".
-- **Layout**: sidebar di navigazione + pannello contenuto; dashboard con card, badge di stato, tabelle, sparkline.
-- **Dark mode** di default (coerente col contesto dev), con eventuale toggle.
-- **Micro-interazioni** curate (hover, stato attivo, loading, streaming log), ma sobrie.
-- **Responsive** (desktop first, ma leggibile su schermi stretti).
-- Tipografia e palette scelte con criterio (si può usare il design system della skill `ui-ux-pro-max`: 67 stili, 96 palette, 57 coppie di font — da applicare, non inventare a caso).
-
-La **qualità visiva** è un requisito, non un optional: la dashboard è la vetrina del prodotto.
-
-## Pagine (le sezioni della dashboard)
-
-1. **Init / Setup wizard** — crea progetto: percorso, lingua (it/en), modalità (progetto/workspace), progetti correlati, contesto (cerebro/graphify/db). Riusa il flusso del launcher.
-2. **Progetti** — lista, aggiungi, rimuovi, collega/scollega (progetti correlati).
-3. **Re-index** — modalità incrementale / forza / pulizia; log in streaming.
-4. **Status / Monitoraggio** — collection Qdrant, chunk count, stato Qdrant/Ollama/MCP/db, progetti registrati.
-5. **Config DB** — gestione `.env_db` (host, porta, db, utente read-only, sslmode). Mai mostrare la password in chiaro.
-6. **Artefatti** — visualizzazione read-only dei documenti LIMET generati (spec, plan, task list, report, archive).
-
-## API (riuso launcher.html)
-
-Il launcher 1.0 espone già: `/api/info`, `/api/check`, `/api/run` (streaming), `/api/stop`, `/api/shutdown`. In 2.0:
-
-| Endpoint 1.0 | 2.0 |
+| Endpoint | Scopo |
 |---|---|
-| `/api/info` | stato graphify/cerebro → esteso con db + MCP status |
-| `/api/check` | auto-detect progetto (collisione slug, registrato, collection) → invariato |
-| `/api/run` | azioni create/update/status/remove/adddocs/createrelated/unrelate (streaming) → invariato |
-| `/api/stop` | ferma operazione → invariato |
-| `/api/shutdown` | chiudi launcher → invariato |
-| — | `/api/db/test` (verifica connessione read-only) |
-| — | `/api/db/schema` (elenco tabelle) |
-
-Il backend REST riusa la **stessa logica** dei server MCP: nessuna duplicazione.
+| `GET /api/info` | nome + versione + stato |
+| `GET /api/status` | Qdrant/Ollama reachable + progetti |
+| `GET /api/projects` | progetti registrati (slug, root, docs) |
+| `POST /api/init` | register + graphify + ingestion |
+| `POST /api/reindex` | re-ingestion (incremental/force/prune) |
+| `GET /api/config?project=` | config di un progetto (password mascherata) |
+| `POST /api/config` | salva config per-progetto in config.local.yaml |
+| `POST /api/config/test` | test connessione DB |
+| `GET /api/browse` | file browser (sottocartelle) |
 
 ## Cosa NON copre la dashboard
 
 - Generare spec/plan/task (→ Claude, via skill).
 - Implementare codice (→ Claude).
-- Query di contesto durante il lavoro (→ Claude, via MCP cerebro/graphify/db).
-
-## Riuso del launcher.html
-
-Il `launcher.html` 1.0 (già una SPA vanilla con `/api/*` + streaming log) è la **base**:
-- La logica (azioni, campi, auto-detect, streaming) si porta in React.
-- Si estende con: **db config**, **monitoraggio MCP**, **artefatti read-only**.
-- Si mantiene il tema scuro e l'UX (pill, log streaming, stop).
+- Query di contesto durante il lavoro (→ Claude, via MCP).
 
 ## Vincolo (non overingegnerizzare)
 
-La dashboard fa **le ops che un umano farebbe a mano**. Niente funzioni superflue: ogni pagina mappa un'azione reale (init/reindex/status/config/artefatti). Se serve solo a Claude, non va nella UI. **"Super avanzata" = grafica moderna professionale, non più funzionalità.**
+La dashboard fa **le ops che un umano farebbe a mano**. Ogni pagina mappa un'azione reale; se serve solo a Claude, non va nella UI.

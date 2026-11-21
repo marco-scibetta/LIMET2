@@ -40,8 +40,8 @@ il piano test; `/limet:archive` archivia in `limet/archive/<data-slug>/`; `/lime
 BUG_REPORT strutturato.
 
 **Scenari**:
-- **Dato** `/limet:new "X"`, **quando** completato, **allora** in `limet/` esistono i documenti attesi,
-  ognuno compilato dai template e non vuoto.
+- **Dato** `/limet:new "X"`, **quando** completato, **allora** in `limet/changes/<data-slug>/` esistono i
+  documenti attesi, ognuno compilato dai template e non vuoto.
 - **Dato** scelta ambigua durante `/limet:new`, **quando** manca un'informazione, **allora** viene
   registrata una domanda contestuale con data (mai assunta in silenzio).
 
@@ -88,8 +88,8 @@ Tool `graphify_query/path/explain/update` rispondono sul knowledge graph.
 **Scenari**:
 - **Dato** grafo generato, **quando** `graphify_explain(simbolo)`, **allora** restituisce la spiegazione
   del simbolo.
-- **Dato** `graphifyy` dichiarato come dipendenza, **quando** si avvia `mcp/graphify`, **allora** riusa
-  l'MCP nativo del pacchetto (no wrapper custom).
+- **Dato** `graphifyy` dichiarato come dipendenza, **quando** si avvia `graphify-mcp`, **allora** riusa
+  l'MCP nativo del pacchetto (no wrapper custom, non vendorizzato in `mcp/graphify/`).
 
 ### Requisito 7: MCP db (read-only, segreti fuori dal contesto)
 
@@ -105,14 +105,15 @@ l'LLM non vede mai host/user/password.
 
 ### Requisito 8: dashboard ops
 
-La dashboard espone le pagine init/progetti/re-index/status/config-db/artefatti e non duplica il
-lavoro di Claude (nessuna generazione spec/plan/task).
+La dashboard espone 5 pagine — status/init/progetti/re-index/setup — e non duplica il lavoro di
+Claude (nessuna generazione spec/plan/task).
 
 **Scenari**:
-- **Dato** stato Qdrant/Ollama/MCP/db, **quando** pagina Status, **allora** mostra stato + chunk count.
-- **Dato** `config.local.yaml` con password, **quando** pagina Config DB, **allora** la password non è mai
-  mostrata in chiaro.
-- **Dato** artefatti LIMET generati, **quando** pagina Artefatti, **allora** visualizzazione read-only.
+- **Dato** stato Qdrant/Ollama/progetti, **quando** pagina Status, **allora** mostra lo stato.
+- **Dato** config con password, **quando** pagina Setup, **allora** la password non è mai mostrata in
+  chiaro (mascherata).
+- **Dato** un progetto selezionato, **quando** pagina Setup, **allora** carica/salva la config
+  per-progetto (qdrant/ollama/db).
 
 ### Requisito 9: installazione self-contained
 
@@ -120,26 +121,27 @@ Un solo `claude plugin install limet` (+ infra Qdrant/Ollama) rende tutto operat
 esterni CEREBRO/Graphify.
 
 **Scenari**:
-- **Dato** plugin installato, **quando** si esegue `claude plugin validate --strict ./limet`, **allora**
-  validazione ok.
+- **Dato** plugin installato, **quando** si esegue `claude plugin validate .`, **allora** validazione ok
+  (non-strict: il warning "CLAUDE.md alla root" è by-design, la root è il plugin).
 - **Dato** tool MCP dichiarati in `.mcp.json`, **quando** il plugin è attivo, **allora** i server
   cerebro/graphify/db sono raggiungibili (o errore diagnostico se l'infra è giù).
 
-### Requisito 10: configurazione da file (zero hardcoded, zero env var)
+### Requisito 10: configurazione da file (default + override locale)
 
-Ogni variabile (path, host/porta, modello embedding, limiti, lingua, segreti) vive in file di
-configurazione che LIMET legge da una posizione nota. Nessun valore hardcoded nel codice, nessuna
-variabile d'ambiente richiesta all'utente.
+Ogni variabile (host/porta, modello embedding, limiti, lingua, segreti) vive in `config/config.yaml`
+(default committati) + `config/config.local.yaml` (override + segreti, gitignored), letti dal loader
+condiviso `config/loader.py`. Le variabili d'ambiente restano un override opzionale (mai richiesto
+all'utente); i default hardcoded sono solo fallback di ultima istanza.
 
 **Scenari**:
-- **Dato** `config/config.yaml` presente, **quando** un server MCP si avvia, **allora** legge i valori
-  da lì (default committati).
+- **Dato** `config/config.yaml` presente, **quando** un server MCP/dashboard si avvia, **allora** legge i
+  valori da lì (default committati).
 - **Dato** `config/config.local.yaml` presente, **quando** si carica la config, **allora** i suoi valori
-  sovrascrivono i default (merge default ← local).
+  sovrascrivono i default (merge default ← local, deep-merge).
 - **Dato** `config.local.yaml` assente, **quando** si avvia LIMET, **allora** usa solo i default, senza
-  errore, segnalando cosa è configurabile.
-- **Dato** un valore non presente nel file, **quando** il codice lo usa, **allora** nessun path
-  hardcoded: o c'è un default nel file o viene segnalato esplicitamente.
+  errore.
+- **Dato** un valore assente sia dal file sia dall'env, **quando** il codice lo usa, **allora** usa un
+  default safe (localhost) e funziona comunque.
 
 ## Vincoli e casi limite
 
@@ -149,7 +151,7 @@ variabile d'ambiente richiesta all'utente.
 - Row limit e timeout su db (niente query enormi nel contesto).
 - `/goal` usato in un solo punto (fine `/limet:task`), non sovrapposto a `limet-gate`.
 - Vincolo "non overingegnerizzare": 5 skill, 4 hook, 2 subagent, 3 MCP. Stop.
-- Path interni del plugin con `${CLAUDE_PLUGIN_ROOT}/...`, mai assoluti.
+- Path interni del plugin relativi al plugin root (o `${CLAUDE_PLUGIN_ROOT}/...`), mai assoluti.
 
 ## Fuori specifica (esplicitamente non coperto)
 

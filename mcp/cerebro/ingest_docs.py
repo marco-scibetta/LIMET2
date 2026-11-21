@@ -30,10 +30,24 @@ from doc_to_markdown import extract_image_names, epub_to_markdown, pdf_to_markdo
 
 load_env()
 
+# Config condiviso (config.yaml + config.local.yaml): env override → config → default.
+import sys as _sys
+_CFG_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if _CFG_ROOT not in _sys.path:
+    _sys.path.insert(0, _CFG_ROOT)
+try:
+    from config.loader import shared_qdrant_ollama as _shared_infra
+    _sh = _shared_infra() or {}
+    _cfg_qdrant = (_sh.get("qdrant") or {}).get("url") or ""
+    _cfg_ollama = _sh.get("ollama") or {}
+except Exception:
+    _cfg_qdrant = ""
+    _cfg_ollama = {}
+
 # Configuration
-QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
-OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
+QDRANT_URL = os.getenv("QDRANT_URL", _cfg_qdrant or "http://localhost:6333")
+OLLAMA_URL = os.getenv("OLLAMA_URL", _cfg_ollama.get("url") or "http://localhost:11434")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", _cfg_ollama.get("model") or "nomic-embed-text")
 EMBEDDING_DIM = int(os.getenv("EMBEDDING_DIM", "768"))
 IMAGES_PORT = int(os.getenv("IMAGES_PORT", "8777"))
 IMAGES_BASE_URL = f"http://localhost:{IMAGES_PORT}"

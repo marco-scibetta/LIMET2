@@ -23,11 +23,17 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
-import project_config  # noqa: E402
+ROOT = os.path.dirname(os.path.dirname(HERE))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
 
-QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
-OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
-EMBED_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
+import project_config  # noqa: E402
+from config.loader import shared_qdrant_ollama  # noqa: E402
+
+_sh = shared_qdrant_ollama()
+QDRANT_URL = os.getenv("QDRANT_URL", _sh["qdrant"].get("url") or "http://localhost:6333")
+OLLAMA_URL = os.getenv("OLLAMA_URL", _sh["ollama"].get("url") or "http://localhost:11434")
+EMBED_MODEL = os.getenv("EMBEDDING_MODEL", _sh["ollama"].get("model") or "nomic-embed-text")
 
 SERVER_NAME = "cerebro"
 SERVER_VERSION = "2.0.0"

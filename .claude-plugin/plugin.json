@@ -2,10 +2,12 @@
   "name": "limet",
   "description": "Spec-driven engineering framework with traceability: proposal → spec → plan → task → test → archive.",
   "version": "2.0.0",
+  "icon": ".claude-plugin/icon.png",
   "author": {
     "name": "marco-scibetta",
     "url": "https://github.com/marco-scibetta"
   },
   "homepage": "https://github.com/marco-scibetta/LIMET2",
-  "repository": "https://github.com/marco-scibetta/LIMET2"
+  "repository": "https://github.com/marco-scibetta/LIMET2",
+  "network": { "hosts": ["localhost", "127.0.0.1"] }
 }
