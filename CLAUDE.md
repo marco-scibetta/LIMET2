@@ -1,6 +1,6 @@
 # LIMET 2.0
 
-Spec-driven engineering for Claude Code. Lifecycle: `/limet:new` → `/limet:task` → `/limet:test` → `/limet:archive`; `/limet:bug` for bugs.
+Spec-driven engineering for Claude Code. Lifecycle: `limet-new` → `limet-task` → `limet-test` → `limet-archive`; `limet-bug` for bugs. (Skills, non slash command: `/limet-dashboard` è l'unico comando slash.)
 
 ## Binding rules
 
