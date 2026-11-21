@@ -15,7 +15,7 @@ A spec-driven method for building software with AI agents, built natively for **
 ## Install
 
 ```bash
-pip install -e .          # dipendenze Python (qdrant-client, fastapi, graphifyy, …)
+pip install -e .          # Python dependencies (qdrant-client, fastapi, graphifyy, …)
 claude plugin marketplace add ./
 claude plugin install limet
 claude plugin validate .   # non-strict (the root CLAUDE.md warning is by design)
