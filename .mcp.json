@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "cerebro": {
+      "command": "python",
+      "args": ["mcp/cerebro/server.py"]
+    },
+    "graphify": {
+      "command": "graphify-mcp",
+      "args": []
+    },
+    "db": {
+      "command": "python",
+      "args": ["mcp/db/server.py"]
+    }
+  }
+}

@@ -1,0 +1,28 @@
+# Config locali e segreti — mai committati
+config/config.local.yaml
+.env_db
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# Node / dashboard
+node_modules/
+dist/
+build/
+.vite/
+
+# Artefatti generati
+graphify-out/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "limet-marketplace",
+  "description": "LIMET 2.0 — spec-driven engineering framework with traceability.",
+  "owner": {
+    "name": "marco-scibetta",
+    "url": "https://github.com/marco-scibetta"
+  },
+  "plugins": [
+    {
+      "name": "limet",
+      "source": "./",
+      "description": "Spec-driven engineering framework with traceability: proposal → spec → plan → task → test → archive."
+    }
+  ]
+}

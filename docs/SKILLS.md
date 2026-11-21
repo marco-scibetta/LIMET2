@@ -59,6 +59,7 @@ Regole (binding):
 2. **Mai build/test autonomi**: fornisci il comando, l'utente esegue e riporta l'esito.
 3. **Traceability**: ogni file creato/modificato finisce nel change log (via hook PostToolUse).
 4. **Lingua**: rispondi nella lingua dell'utente.
+5. **Brief prima di ogni task**: prima di implementare, dai un brief di 2-3 righe (cosa farai, file toccati, verifica collegata), poi procedi senza attendere conferma.
 
 ## Perché 5 e non 18
 

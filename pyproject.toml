@@ -1,0 +1,20 @@
+[project]
+name = "limet"
+version = "2.0.0"
+description = "Spec-driven engineering framework with traceability (Claude Code plugin)."
+requires-python = ">=3.10"
+dependencies = [
+    "graphifyy==0.9.32",
+    "qdrant-client",
+    "requests",
+    "python-dotenv",
+    "markitdown[all]",
+    "ebooklib",
+    "markdownify",
+    "beautifulsoup4",
+    "pypdfium2",
+    "PyYAML",
+    "psycopg2-binary",
+    "fastapi",
+    "uvicorn",
+]

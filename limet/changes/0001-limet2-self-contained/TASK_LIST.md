@@ -3,6 +3,28 @@
 > Deriva da `CHANGE_PROPOSAL.md` + `DESIGN.md`. Fasi ordinate; ogni task con stato e dipendenze.
 > Per un task complesso, scheda dedicata in `TASK.md` linkata da "Dettaglio".
 
+> **Convenzione di sessione (utente, 2026-11-20)**: prima di implementare ogni task, l'agente dà un
+> brief di 2-3 righe (cosa, file toccati, verifica) e procede **senza attendere conferma**. Baked-in
+> nel design LIMET 2.0 — `docs/SKILLS.md` §"Regole condivise" e skill `/limet:task` (task #4).
+>
+> **Verifica skill (utente, 2026-11-20)**: il test di `/limet:new` e delle altre skill si fa **dopo**
+> aver scritto tutte e 5 (task #3–#7), in un'unica sessione di test — non skill per skill.
+>
+> **Esito test unico (2026-11-20)**: ciclo completo OK in `C:\Progetti\limet2-test-dummy` — new→task→test→bug→archive
+> tutti i doc prodotti. **Gap trovati e corretti**: `/limet:new` generava flat in `limet/` (→ `changes/<slug>/`); `/limet:bug`
+> senza regola slug; `/limet:test` senza TEST_EXECUTION; `/limet:archive` senza `Bash` (mv). **Verifica finale (16:43)**:
+> `limet/archive/2026-11-20-login-page/` completo (ARCHIVE_ENTRY + 9 doc), `changes/` svuotata. Guardrail archive robusto
+> (rifiuta non-verificato, rileva `done` forzato, esige e2e). Tutte e 5 le skill funzionanti end-to-end.
+>
+> **Slug convenzione (decisione, 2026-11-20)**: le skill usano `<data-slug>` = `YYYY-MM-DD-slug` per `changes/` e
+> `archive/` (deviazione da 1.0 `NNNN-slug`, scelta per sortabilità).
+>
+> **Dashboard senza "Artefatti" (decisione utente, 2026-11-20)**: pagina "Artefatti" rimossa — read-only ridondante
+> (i doc si vedono già nell'editor), viola "ogni pagina = un'azione". Scostamento da SPEC R8 (6→5 pagine).
+>
+> **Dashboard monoprocesso (decisione, 2026-11-20)**: il backend FastAPI serve anche il frontend buildato (`dist/`),
+> così l'utente avvia UN solo processo (niente BE+FE separati a mano).
+
 ## Legenda stato
 
 - `pending` — non ancora iniziato
@@ -14,27 +36,29 @@
 
 | # | Titolo | Scopo (non tecnico) | Stato | Dipende da | Dettaglio | Note |
 | - | ------ | ------------------- | ----- | ---------- | --------- | ---- |
-| 1 | Skeleton repo + plugin manifest | Impalcatura repo: `.claude-plugin/plugin.json`, `.gitignore`, `.mcp.json` stub, `CLAUDE.md` policy | pending | — | | |
-| 2 | Dev locale + marketplace placeholder | `marketplace.json` con `<org>` segnaposto + install dev locale (`--plugin-dir`) | pending | #1 | | |
-| 3 | Skill `/limet:new` | Ciclo completo: proposal+spec+plan+task+test+e2e+decisions | pending | #1 | [TASK.md](./TASK.md) | |
-| 4 | Skill `/limet:task` | Esegue un task + change log | pending | #3 | | |
-| 5 | Skill `/limet:test` | Genera/esegue il piano test | pending | #4 | | |
-| 6 | Skill `/limet:archive` | Archivia il lavoro concluso | pending | #5 | | |
-| 7 | Skill `/limet:bug` | Report bug strutturato | pending | #1 | | |
-| 8 | Hook `intent.sh` | Rileva intento feature/bug da UserPromptSubmit | pending | #1 | | |
-| 9 | Hook `guardrail.sh` | Blocca build/test/commit non autorizzati (PreToolUse) | pending | #1 | | |
-| 10 | Hook `changelog.sh` | Appende change log (PostToolUse Edit/Write) | pending | #1 | | |
-| 11 | Hook `reminder.sh` | Ricorda test/archivio a fine ciclo (Stop) | pending | #1 | | |
-| 12 | `hooks.json` + fail-safe | Wiring dei 4 hook con try/catch | pending | #8–11 | | |
-| 13 | Agent `limet-writer` | Scrive i documenti con contesto isolato | pending | #3 | | |
-| 14 | Agent `limet-gate` | Valida §1.5 + fresh-eyes + drift report | pending | #5 | | |
-| 15 | MCP `cerebro` + batch embedding | Copia script CEREBRO + wrapper MCP + rewrite `ingest_docs`/`doc_to_markdown` | pending | #1 | | |
-| 16 | MCP `graphify` | Dipendenza `graphifyy==0.9.32` + riuso MCP nativo | pending | #1 | | niente porting; solo pin + launch MCP nativo |
-| 17 | MCP `db` | Server read-only + `.env_db` | pending | #1 | | |
-| 18 | Dashboard backend + scaffold | REST condiviso + React/Vite/TS + design system | pending | #1 | | |
-| 19 | Dashboard pagine ops | init/progetti/re-index/status/config-db/artefatti | pending | #18 | | |
+| 1 | Skeleton repo + plugin manifest | Impalcatura repo: `.claude-plugin/plugin.json`, `.gitignore`, `.mcp.json` stub, `CLAUDE.md` policy | in_progress | — | | |
+| 2 | Dev locale + marketplace placeholder | `marketplace.json` con `<org>` segnaposto + install dev locale (`--plugin-dir`) | in_progress | #1 | | |
+| 3 | Skill `/limet:new` | Ciclo completo: proposal+spec+plan+task+test+e2e+decisions | in_progress | #1 | [TASK.md](./TASK.md) | |
+| 4 | Skill `/limet:task` | Esegue un task + change log; **brief di 2-3 righe prima di implementare** (regola condivisa `docs/SKILLS.md`) | in_progress | #3 | | |
+| 5 | Skill `/limet:test` | Genera/esegue il piano test | in_progress | #4 | | |
+| 6 | Skill `/limet:archive` | Archivia il lavoro concluso | in_progress | #5 | | |
+| 7 | Skill `/limet:bug` | Report bug strutturato | in_progress | #1 | | |
+| 8 | Hook `intent.sh` | Rileva intento feature/bug da UserPromptSubmit | in_progress | #1 | | |
+| 9 | Hook `guardrail.sh` | Blocca build/test/commit non autorizzati (PreToolUse) | in_progress | #1 | | |
+| 10 | Hook `changelog.sh` | Appende change log (PostToolUse Edit/Write) | in_progress | #1 | | |
+| 11 | Hook `reminder.sh` | Ricorda test/archivio a fine ciclo (Stop) | in_progress | #1 | | |
+| 12 | `hooks.json` + fail-safe | Wiring dei 4 hook con try/catch | in_progress | #8–11 | | |
+| 13 | Agent `limet-writer` | Scrive i documenti con contesto isolato | in_progress | #3 | | |
+| 14 | Agent `limet-gate` | Valida §1.5 + fresh-eyes + drift report | in_progress | #5 | | |
+| 15 | MCP `cerebro` + batch embedding | Copia script CEREBRO + wrapper MCP + rewrite `ingest_docs`/`doc_to_markdown` | in_progress | #1 | | |
+| 16 | MCP `graphify` | Dipendenza `graphifyy==0.9.32` + riuso MCP nativo | in_progress | #1 | | niente porting; solo pin + launch MCP nativo |
+| 17 | MCP `db` | Server read-only + `.env_db` | in_progress | #1 | | |
+| 18 | Dashboard backend + scaffold | REST condiviso + React/Vite/TS + design system | done | #1 | | 2026-11-20 16:34 — build ok + /api/info 200 |
+| 19 | Dashboard pagine ops | init/progetti/re-index/status/config-db/artefatti | done | #18 | | 2026-11-20 18:02 — build ok + 6 pagine + file browser verificato |
 | 20 | Integrazione E2E + docs | Ciclo completo validato + manuale + onboarding | pending | #12,#14,#17 | | |
 | 21 | File di configurazione + loader | `config.yaml` + `config.local.yaml` + loader; letto da hook/MCP/dashboard | pending | #1 | | trasversale: da fare subito dopo #1 |
+| 22 | Riscrittura documenti legacy per LIMET 2.0 | `limet/FRAMEWORK_MANUAL.md`, `MASTER_INDEX.md`, `ONBOARDING_CHECKLIST.md` e template 1.0 → riscritti/aggiornati per LIMET 2.0 (skill/hook/subagent/MCP/plugin) | pending | #20 | | vecchi doc restano finché l'implementazione non è pronta |
+| 23 | Aggiornamento README | README root riflette lo stato finale di LIMET 2.0 (già abbozzato; da rivedere a fine implementazione) | pending | #22 | | |
 
 ---
 
@@ -65,11 +89,61 @@
 | 19 | sì: component test per pagina | sì: navigazione pagine su browser | |
 | 20 | sì: n/a (integrazione) | sì: ciclo completo su progetto fittizio | unit n/a perché integrazione, non nuova logica |
 | 21 | sì: pytest su loader (merge default↔local, default assenti, file assente) | sì: avvio MCP con/senza `config.local.yaml` | |
+| 22 | sì: n/a (sola documentazione) | sì: grep assenza riferimenti 1.0 residui (`Copilot CLI`, `18 template`) + percorsi/rimandi del manuale risolvibili | unit n/a: nessuna logica nuova |
+| 23 | sì: n/a (sola documentazione) | sì: README renderizza, link corretti, due sezioni (EN/IT) presenti | unit n/a: nessuna logica nuova |
 
 ## Registro modifiche — una riga per file toccato
 
 | Task | File | Tipo | Cosa è cambiato | Perché | Verifica collegata |
 | ---- | ---- | ---- | --------------- | ------ | ------------------ |
+| 1    | `.claude-plugin/plugin.json` | creato | Manifest plugin `limet` v2.0.0 (name/description/version/author/homepage) | Skeleton plugin; fonte per `claude plugin validate` | task #1 e2e: validate --strict |
+| 1    | `.gitignore` | creato | Ignora `config.local.yaml`, `.env_db`, artefatti Python/Node, `graphify-out/` | Segreti fuori dal repo (R10) + niente build artifact | task #1: presenza file + segreti esclusi |
+| 1    | `.mcp.json` | creato | Stub 3 server MCP (cerebro/graphify/db) con command/args | Dichiarazione unica dei tool; wiring finale in #15–17 | task #1: file valido; MCP vivi in #15–17 |
+| 1    | `CLAUDE.md` | modificato | Policy 2.0 minima (regole binding + pointer MCP) sostituisce 1.0 `@AGENTS.md` | `CLAUDE.md` = minimo (principio guida DESIGN) | task #1: policy presente e coerente |
+| 2    | `.claude-plugin/marketplace.json` | creato | Marketplace placeholder: `name=limet-marketplace`, `owner=<org>`, plugin `limet` `source="./"` | Distribuzione via `claude plugin marketplace add` (design PLUGIN.md) | task #2: `marketplace add` valida |
+| 3    | `skills/limet-new/SKILL.md` | creato | Skill `/limet:new`: genera proposal+spec+plan+task+test+e2e+decisions, template inline, regole binding (incl. brief) | Skill del ciclo di vita (R2); self-contained | task #3: frontmatter valido + template non vuoti |
+| 3    | `docs/SKILLS.md` | modificato | Aggiunta regola condivisa #5 "brief prima di ogni task" | Requisito utente: brief sempre, baked-in nel design | task #4: `/limet:task` implementa la regola |
+| 4    | `skills/limet-task/SKILL.md` | creato | Skill `/limet:task`: legge task, brief 2-3 righe, implementa, change log, no-done-senza-verifica | Skill ciclo di vita (R2) + regola brief (utente) | task #4: frontmatter valido + brief/no-done presenti |
+| 5    | `skills/limet-test/SKILL.md` | creato | Skill `/limet:test`: TEST_PLAN + TEST_EXECUTION, autorevisione qualità, template inline | Skill ciclo di vita (R2) | task #5: frontmatter valido + template non vuoti |
+| 6    | `skills/limet-archive/SKILL.md` | creato | Skill `/limet:archive`: archivia in `archive/<data-slug>/` + voce archivio, solo lavoro verificato | Skill ciclo di vita (R2) | task #6: frontmatter valido + solo-verificato presente |
+| 7    | `skills/limet-bug/SKILL.md` | creato | Skill `/limet:bug`: BUG_REPORT strutturato con causa radice + test regressione | Skill ciclo di vita (R2) | task #7: frontmatter valido + template non vuoto |
+| 3–7  | `skills/limet-{new,task,test,archive,bug}/SKILL.md` | modificato | `description` accorciata (rimossi rimandi `/limet:*` e testo lungo) | Descrizione concisa per registrazione/triggering del comando | task #3–7 e2e: `/limet-*` tutti visibili |
+| 3–7  | `skills/limet-{new,task,test,archive,bug}/SKILL.md` | modificato | Path `limet/` → `limet/changes/<data-slug>/` | Gap e2e: i doc vanno in `changes/`, non flat in `limet/` | retest: `/limet-new` crea `limet/changes/<data-slug>/` |
+| 5    | `skills/limet-test/SKILL.md` | modificato | `TEST_EXECUTION.md` sempre generato (struttura "da compilare" se test non eseguiti) | Gap e2e: `/limet-test` produceva solo TEST_PLAN | retest: `/limet-test` → TEST_EXECUTION presente |
+| 7    | `skills/limet-bug/SKILL.md` | modificato | Slug esplicito: scrive in `changes/<slug>` attivo o ne crea uno da `$ARGUMENTS` | Gap e2e: `/limet-bug` senza regola slug → non produceva BUG_REPORT | retest: `/limet-bug` → BUG_REPORT.md nella dir giusta |
+| 6    | `skills/limet-archive/SKILL.md` | modificato | `allowed-tools` + `Bash` (per `mv` changes→archive) | Spostamento file richiede shell; Write/Edit non cancellano origine | retest `/limet-archive` su lavoro verificato → sposta + voce |
+| 8    | `hooks/intent.sh` | creato | Hook intento: rileva feature/bug dal prompt, inietta `additionalContext` (suggerimento `/limet-new` o `/limet-bug`); exit 0 se nessun intento/errore | Flusso conversazionale (R1); fail-safe | task #8: exit 0 su prompt neutro; JSON su intento |
+| 9    | `hooks/guardrail.sh` | creato | Hook guardrail (PreToolUse/Bash): blocca build/test (exit 2) e comandi persistenti (commit/push/rebase/migrate/deploy) con messaggio su stderr | Enforcement §1.3 (R3); fail-safe | task #9: `./mvnw test`→exit 2; `git commit`→exit 2; `ls`→exit 0 |
+| 10   | `hooks/changelog.sh` | creato | Hook changelog (PostToolUse Edit/Write): appende riga al registro del TASK_LIST attivo, solo file in scope, coalesce | Tracciabilità automatica (R3); fail-safe | task #10: edit→riga aggiunta; file tracciato→no duplicato; `limet/`/`.git/`→ignorato |
+| 11   | `hooks/reminder.sh` | creato | Hook reminder (Stop): se task non `done` → inietta reminder `/limet-test` + `/limet-archive` | Verifica/archivio non dimenticati (R1.5); fail-safe | task #11: task non-done→reminder; tutto done→exit 0 |
+| 12   | `hooks/hooks.json` | creato | Wiring 4 hook: UserPromptSubmit→intent, PreToolUse/Bash→guardrail, PostToolUse/Edit|Write→changelog, Stop→reminder; timeout 10–15s | Registrazione hook nel plugin (R3); fail-safe negli script | task #12: `claude plugin validate --strict .` riconosce i 4 hook |
+| 13   | `agents/limet-writer.md` | creato | Subagent scrittore: genera 7 doc LIMET in `changes/<slug>/` con regole binding (spec-driven, traceability, test, no build/test) | Ruolo scrittura isolata (R2) | task #13: frontmatter valido + regole binding presenti |
+| 14   | `agents/limet-gate.md` | creato | Subagent validatore (sola lettura): verifica §1.5, fresh-eyes review, drift report; rifiuta task senza verifica | Gate qualità indipendente (R4) | task #14: frontmatter valido + OK/FAIL/drift presenti |
+| 15   | `mcp/cerebro/server.py` | creato | MCP cerebro: 5 tool (`search/count/list/ingest/register`), JSON-RPC stdio, stdlib-only | RAG come MCP nativo (R5/R9) | task #15: `tools/list`→5 tool; `search` rispetta limit |
+| 15   | `mcp/cerebro/ingest_docs.py` | copiato+riscritto | `get_embedding` (1 HTTP/chunk) → `get_embeddings_batch` (`/api/embed`, N chunk = 1 chiamata) | Fix velocità ingestion (§8) | task #15: batch = 1 POST per file, non per chunk |
+| 15   | `mcp/cerebro/doc_to_markdown.py` | copiato+riscritto | `pdf_to_markdown`: pdfplumber seriale → pypdfium2 + `ThreadPoolExecutor` | Fix velocità parsing (§9) | task #15: PDF multi-pagina processato in parallelo |
+| 15   | `mcp/cerebro/{project_config,query_qdrant,register_project,serve_images,limet_rag}.py` | copiati | Script CEREBRO intatti dentro il plugin | Self-contained, zero repo esterni (R9) | task #15: import/avvio senza repo CEREBRO |
+| 16   | `pyproject.toml` | creato | Dipendenze: `graphifyy==0.9.32` (pin) + qdrant-client, requests, pypdfium2, markitdown[all], ebooklib, markdownify, beautifulsoup4 | Graphify terze-parti pinnato, non vendorizzato (R6/R9) | task #16: `pip install -e .` risolve tutte le dipendenze |
+| 16   | `.mcp.json` | modificato | `graphify`: `graphifyy mcp` → `graphify-mcp` (entry point nativo `graphify.serve:_main`) | Riuso MCP nativo, zero wrapper (R6) | task #16: tool `graphify_*` vivi via `graphify-mcp` |
+| 17   | `mcp/db/server.py` | creato | MCP db read-only: solo SELECT (reject DDL/DML via regex), row limit 100, segreti letti da `config.local.yaml`/`config.yaml` (sez. `db`) mai esposti | Query SQL senza segreti nel contesto (R7) | task #17: INSERT→reject; SELECT>limit→troncata; output senza host/user/password |
+| 17   | `pyproject.toml` | modificato | + `PyYAML`, `psycopg2-binary` (driver Postgres + parser YAML config) | Config YAML + connessione DB (R7/R10) | task #17: import yaml/psycopg2 risolti |
+| 18   | `dashboard/backend/server.py` | creato | FastAPI: `/api/info`, `/api/db/test`, `/api/db/schema` (CORS aperto, port 8787), segreti mai esposti | Backend REST condiviso (R8) | task #18: `/api/info`→200; `/api/db/test`→ok/502 |
+| 18   | `dashboard/frontend/{package.json,vite.config.ts,tsconfig.json,index.html}` | creati | Scaffold Vite + React + TS (React 18, Vite 5, strict) | Frontend React/TS (R8) | task #18: `npm run build` compila |
+| 18   | `dashboard/frontend/src/{main.tsx,App.tsx,theme.css}` | creati | App con sidebar (6 pagine) + design system token dark professionale | Grafica moderna, non '90s (R8) | task #18: layout responsive + token coerenti |
+| 18   | `pyproject.toml` | modificato | + `fastapi`, `uvicorn` | Backend REST | task #18: uvicorn avvia il server |
+| 19   | `dashboard/frontend/src/pages/*.tsx` (6) + `api.ts` | creati | 6 pagine: Status, Init, Progetti, Re-index, Config DB (password mai mostrata), Artefatti (read-only) | Pagine ops (R8) | task #19: `npm run build` + navigazione |
+| 19   | `dashboard/frontend/src/App.tsx` | modificato | Render pagine per stato nav (sidebar → componente) | Routing pagine | task #19: click nav → pagina corretta |
+| 19   | `dashboard/frontend/src/theme.css` | modificato | Componenti: card, badge, table, form, button, log, grid | Design system applicato | task #19: stile coerente |
+| 19   | `dashboard/backend/server.py` | modificato | + `/api/status`, `/api/projects`, `/api/artifacts`, `/api/reindex`, `/api/init` | Backend per le pagine | task #19: endpoint → 200 |
+| 19   | `dashboard/frontend/src/theme.css` + `App.tsx` + `StatusPage.tsx` | riscritti | Design system "code dark + run green" (bg #0F172A, accent #22C55E, Fira Sans/Code), sidebar raggruppata + header con descrizione + card KPI | Grafica moderna (richiesta utente) | task #19: look professionale, non '90s |
+| 19   | `dashboard/frontend/src/components/PathInput.tsx` | creato | File browser: dialog modale che naviga il filesystem via `/api/browse` | Seleziona path senza digitarli (richiesta utente) | task #19: "Sfoglia…" apre dialog → seleziona cartella |
+| 19   | `dashboard/backend/server.py` | modificato | + `/api/browse` (elenca sottocartelle) | File browser | task #19: navigate + select path |
+| 19   | `dashboard/frontend/src/components/PathInput.tsx` | modificato | Campo path → `<button>`; dialog → `createPortal(document.body)`; rimosso `<label>` wrapper | Fix click dialog non si apriva | task #19: click campo → dialog aperta (verificato utente) |
+| 19   | `dashboard/frontend/src/pages/InitPage.tsx` | modificato | `<label>` → `.form-field`/`.form-label` | Semantica corretta, non interferisce col click | task #19: click campo funziona |
+| 19   | `dashboard/run.py` | creato | Launcher monocomando: builda il frontend se serve, poi avvia il backend (API + frontend servito) | Un solo comando per l'utente (niente BE+FE a mano) | task #19: `python dashboard/run.py` → dashboard su :8787 |
+| 19   | `dashboard/backend/server.py` | modificato | Serve il frontend `dist/` (static + SPA fallback) | Monoprocesso: API + UI in un server | task #19: `/` → index.html; `/api/*` → JSON |
+| 19   | `dashboard/frontend/src/App.tsx` + `ArtifactsPage.tsx` | modificato/rimosso | Rimossa pagina "Artefatti" (nav + import + render + file) | Read-only ridondante (decisione utente) | task #19: 5 pagine, build ok |
+| 19   | `commands/limet-dashboard.md` | creato | Slash command `/limet-dashboard`: avvia la dashboard in background e riferisce l'URL | L'utente non digita mai il comando a mano | task #19: `/limet-dashboard` → server su :8787 |
 | —    | (vuoto, popolato in fase di implementazione) | | | | |
 
 ## Esito implementazione (da compilare a lavoro concluso)
