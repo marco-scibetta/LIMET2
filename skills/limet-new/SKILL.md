@@ -1,6 +1,6 @@
 ---
 name: limet-new
-description: Avvia un ciclo LIMET per una feature o modifica: genera proposta, spec, piano, task, test ed e2e.
+description: 'Avvia un ciclo LIMET per una feature o modifica: genera proposta, spec, piano, task, test ed e2e.'
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Write
 ---

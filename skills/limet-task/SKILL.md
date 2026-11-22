@@ -1,6 +1,6 @@
 ---
 name: limet-task
-description: Esegue un task del TASK_LIST: brief, implementazione e change log.
+description: 'Esegue un task del TASK_LIST: brief, implementazione e change log.'
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Write, Edit
 ---

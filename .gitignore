@@ -28,6 +28,7 @@ graphify-out/
 
 # Test runner transitori (scripts/run-tests.sh)
 limet/.test-logs/
+limet/TEST_EXECUTION.md
 
 # OS / editor
 .DS_Store
