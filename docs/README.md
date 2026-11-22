@@ -20,7 +20,7 @@ LIMET 2.0 è la riscrittura di LIMET 1.0 per sfruttare le feature native di Clau
 |---|---|
 | [ARCHITECTURE.md](ARCHITECTURE.md) | architettura complessiva + mappatura 1.0→2.0 |
 | [SKILLS.md](SKILLS.md) | le 5 skill (ciclo di vita) con esempio SKILL.md |
-| [HOOKS.md](HOOKS.md) | i 4 hook (intent, guardrail, changelog, reminder) con hooks.json |
+| [HOOKS.md](HOOKS.md) | i 6 hook (resume, intent, guardrail, changelog, precompact, reminder) con hooks.json |
 | [SUBAGENTS.md](SUBAGENTS.md) | i 2 subagent (writer, gate) |
 | [MCP.md](MCP.md) | cerebro + graphify + db come MCP |
 | [PLUGIN.md](PLUGIN.md) | packaging/distribuzione del plugin `limet` |

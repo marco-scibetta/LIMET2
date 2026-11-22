@@ -31,4 +31,10 @@ if printf '%s' "$cmd" | grep -Eq '(git[[:space:]]+(commit|push|rebase|merge)|mig
   exit 2
 fi
 
+# Distruttivo irreversibile → blocca sempre.
+if printf '%s' "$cmd" | grep -Eq '(git[[:space:]]+(reset[[:space:]]+--hard|clean|checkout[[:space:]]+--|branch[[:space:]]+-D|stash[[:space:]]+drop)|rm[[:space:]]+-[rRfF])'; then
+  echo "LIMET: comando distruttivo irreversibile. Richiede autorizzazione esplicita dell'utente." >&2
+  exit 2
+fi
+
 exit 0

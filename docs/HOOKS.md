@@ -2,13 +2,15 @@
 
 Gli hook sono **deterministici** (zero contesto se non ritornano output). In LIMET 2.0 fanno le **guardrail**: le regole non-negoziabili passano da testo a enforcement.
 
-## I 4 hook
+## I 6 hook
 
 | Hook | Evento | Scopo |
 |---|---|---|
+| **resume** | `SessionStart` | **riprende il ciclo attivo** all'avvio sessione: inietta i task non conclusi |
 | **intent** | `UserPromptSubmit` | **rileva l'intento** ("voglio una feature"/"c'è un bug") e avvia il flusso LIMET **senza che l'utente scriva comandi** |
-| **guardrail** | `PreToolUse` (Bash) | blocca build/test autonomi + comandi a effetti persistenti senza autorizzazione |
+| **guardrail** | `PreToolUse` (Bash) | blocca build/test autonomi + comandi a effetti persistenti + distruttivi irreversibili senza autorizzazione |
 | **changelog** | `PostToolUse` (Edit/Write) | appende automaticamente al change log di TASK_LIST.md |
+| **precompact** | `PreCompact` | **inietta lo stato del ciclo attivo** prima della compattazione (task + file toccati), così il contesto non si perde |
 | **reminder** | `Stop` | verifica test + archivio prima di chiudere |
 
 **L'hook `intent` è ciò che rende LIMET conversazionale** (come LIMET 1.0): l'utente parla normalmente, Claude riconosce l'intento e parte col flusso. Nessun comando da digitare.
@@ -18,6 +20,16 @@ Gli hook sono **deterministici** (zero contesto se non ritornano output). In LIM
 ```json
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PLUGIN_ROOT/hooks/resume.sh\""
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [
@@ -50,6 +62,16 @@ Gli hook sono **deterministici** (zero contesto se non ritornano output). In LIM
         ]
       }
     ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PLUGIN_ROOT/hooks/precompact.sh\""
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
@@ -64,6 +86,12 @@ Gli hook sono **deterministici** (zero contesto se non ritornano output). In LIM
 }
 ```
 
+## resume.sh (logica)
+
+- Scatta a `SessionStart`.
+- Se esiste un ciclo attivo (`limet/changes/*/TASK_LIST.md`, il più recente) con task `pending/in_progress/blocked` → inietta: "ciclo attivo `slug` — task non conclusi: #X. Riprendi dal primo."
+- Altrimenti: exit 0 (nessun output).
+
 ## intent.sh (logica)
 
 - Riceve il prompt dell'utente.
@@ -74,6 +102,7 @@ Gli hook sono **deterministici** (zero contesto se non ritornano output). In LIM
 
 - Se il comando Bash contiene `mvnw`, `./gradlew`, `npm test`, `pytest`, `cargo test`, ecc. → **blocca** (exit 2) con messaggio: "LIMET: build/test non in autonomia. Fornisci il comando all'utente."
 - Se il comando contiene `git commit`, `git push`, `git rebase`, `migrate`, `deploy` → **blocca** senza autorizzazione esplicita.
+- Se il comando contiene `git reset --hard`, `git clean`, `git checkout --`, `git branch -D`, `git stash drop`, `rm -rf` → **blocca** (distruttivo irreversibile).
 - Altrimenti: exit 0 (nessun output, zero contesto).
 
 ## changelog.sh (logica)
@@ -82,6 +111,13 @@ Gli hook sono **deterministici** (zero contesto se non ritornano output). In LIM
 - **Anti-rumore**: logga solo file **nello scope del task attivo**; **coalesce** modifiche multiple allo stesso file (una riga per file, non una per edit).
 - Se `limet/TASK_LIST.md` esiste → appende/aggiorna la riga: `<timestamp> <file> — <tool>`.
 - Se non c'è un task attivo → exit 0 (nessun output).
+
+## precompact.sh (logica)
+
+- Scatta a `PreCompact`, prima della compattazione del contesto.
+- Se c'è un ciclo attivo → inietta: slug del ciclo + task non conclusi + ultimi file toccati (registro modifiche).
+- Rende la compattazione "lossless" per lo stato LIMET: Claude non dimentica a che punto è.
+- Se non c'è ciclo attivo → exit 0.
 
 ## reminder.sh (logica)
 

@@ -19,9 +19,11 @@ limet/                          ← UNICO repo self-contained
 │   └── limet-gate.md
 ├── hooks/
 │   ├── hooks.json
+│   ├── resume.sh
 │   ├── intent.sh
 │   ├── guardrail.sh
 │   ├── changelog.sh
+│   ├── precompact.sh
 │   └── reminder.sh
 ├── .mcp.json                 ← cerebro + graphify (nativo) + db
 ├── mcp/                      ← cerebro e db DENTRO il repo

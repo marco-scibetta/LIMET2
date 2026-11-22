@@ -29,6 +29,14 @@
 > declassato a non-strict. Motivo: warning `CLAUDE.md at the plugin root is not loaded as project context` è
 > by-design — repo root = plugin root, e `CLAUDE.md` è policy dev del progetto (non contesto plugin), non rimovibile.
 > Aggiunti `icon` + `network.hosts` (`localhost`, `127.0.0.1`); resta solo quel warning strutturale.
+>
+> **Amendment post-archivio (2026-11-22)**: aggiunti 2 hook — `resume.sh` (SessionStart: riprende il
+> ciclo attivo) e `precompact.sh` (PreCompact: inietta stato prima della compattazione) — ed esteso
+> `guardrail.sh` ai comandi distruttivi irreversibili (`git reset --hard`, `git clean`, `git checkout --`,
+> `git branch -D`, `git stash drop`, `rm -rf`). Hook 4→6. Test `tests/test_hooks.py` estesi: 33→41 unit
+> (41 passed, 1 skipped). Doc aggiornate: `docs/HOOKS.md`, `docs/PLUGIN.md`, `docs/ARCHITECTURE.md`,
+> `docs/OPTIMIZATIONS.md`, `docs/README.md`, `docs/SETUP.md`, `FRAMEWORK_MANUAL.md`, `MASTER_INDEX.md`,
+> `SPEC.md`, `DESIGN.md`, `ARCHIVE_ENTRY.md`.
 
 ## Legenda stato
 

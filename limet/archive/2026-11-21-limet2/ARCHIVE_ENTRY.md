@@ -7,7 +7,7 @@
 
 ## Sintesi
 LIMET 2.0 — plugin Claude Code self-contained. Riscrittura di LIMET 1.0:
-5 skill ciclo di vita, 4 hook deterministici, 2 subagent, 3 MCP (cerebro/graphify/db),
+5 skill ciclo di vita, 6 hook deterministici (incl. resume/precompact), 2 subagent, 3 MCP (cerebro/graphify/db),
 dashboard React/FastAPI monoprocesso, config per-progetto.
 
 Feature: workspace multi-modulo, progetti correlati (link), lingua IT/EN, guide HTML (IT+EN).

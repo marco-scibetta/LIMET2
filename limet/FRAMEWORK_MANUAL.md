@@ -21,7 +21,7 @@ claude plugin validate .    # non-strict: il warning CLAUDE.md alla root è by-d
 | Componente | Cosa fa |
 | ---------- | ------- |
 | **Skill** (5) | `/limet-new`, `/limet-task`, `/limet-test`, `/limet-bug`, `/limet-archive` |
-| **Hook** (4) | `intent.sh` (rileva intento), `guardrail.sh` (blocca build/commit), `changelog.sh` (registro auto), `reminder.sh` (ricorda test/archive) |
+| **Hook** (6) | `resume.sh` (riprende ciclo attivo), `intent.sh` (rileva intento), `guardrail.sh` (blocca build/commit/distruttivi), `changelog.sh` (registro auto), `precompact.sh` (stato pre-compattazione), `reminder.sh` (ricorda test/archive) |
 | **Subagent** (2) | `limet-writer` (scrive doc), `limet-gate` (valida §1.5 + drift) |
 | **MCP** (3) | `cerebro` (RAG Qdrant), `graphify` (knowledge graph codice), `db` (SQL read-only) |
 | **Dashboard** | init / progetti / re-index / setup (config per-progetto) su :8787 |

@@ -13,7 +13,7 @@
 ## Descrizione della capability
 
 LIMET 2.0 è un plugin Claude Code che sostituisce il flusso LIMET 1.0 manuale con: 5 skill per il
-ciclo di vita, 4 hook deterministici per le guardrail, 2 subagent per scrittura/validazione, 3
+ciclo di vita, 6 hook deterministici per le guardrail (resume, intent, guardrail, changelog, precompact, reminder), 2 subagent per scrittura/validazione, 3
 server MCP (cerebro/graphify/db) e una dashboard React per le ops. Tutto in un unico repo
 self-contained; esterni solo Qdrant e Ollama (infra).
 
@@ -56,8 +56,14 @@ blocca mai Claude.
   autonomia".
 - **Dato** comando con `git commit`/`push`/`rebase`/`migrate`/`deploy`, **quando** senza
   autorizzazione esplicita, **allora** blocca.
+- **Dato** comando distruttivo irreversibile (`git reset --hard`/`git clean`/`git checkout --`/`rm -rf`),
+  **quando** `guardrail` lo intercetta, **allora** blocca (exit 2).
 - **Dato** Edit/Write su file nello scope del task attivo, **quando** `changelog` (PostToolUse) scatta,
   **allora** appende/coalesce una riga al change log di `TASK_LIST.md`.
+- **Dato** sessione avviata con ciclo attivo, **quando** `resume` (SessionStart) scatta, **allora**
+  inietta i task non conclusi.
+- **Dato** compattazione contesto con ciclo attivo, **quando** `precompact` (PreCompact) scatta,
+  **allora** inietta stato del ciclo + file toccati.
 - **Dato** un hook che lancia eccezione, **quando** eseguito, **allora** exit 0 + log di diagnosi
   (nessun blocco di Claude).
 
@@ -150,7 +156,7 @@ all'utente); i default hardcoded sono solo fallback di ultima istanza.
   `config.local.example.yaml`.
 - Row limit e timeout su db (niente query enormi nel contesto).
 - `/goal` usato in un solo punto (fine `/limet:task`), non sovrapposto a `limet-gate`.
-- Vincolo "non overingegnerizzare": 5 skill, 4 hook, 2 subagent, 3 MCP. Stop.
+- Vincolo "non overingegnerizzare": 5 skill, 6 hook, 2 subagent, 3 MCP. Stop.
 - Path interni del plugin relativi al plugin root (o `${CLAUDE_PLUGIN_ROOT}/...`), mai assoluti.
 
 ## Fuori specifica (esplicitamente non coperto)
@@ -169,7 +175,7 @@ all'utente); i default hardcoded sono solo fallback di ultima istanza.
 | --- | --- | --- |
 | R1 intent | unit su `intent.sh` (frasi positive/negative) | prompt naturale → flusso avviato |
 | R2 skill | unit sui template generati (non vuoti, schema) | `/limet:new X` → doc presenti |
-| R3 hook | unit su guardrail/changelog (blocca/non-blocca, coalesce) | edit reale → riga in change log |
+| R3 hook | unit su guardrail/changelog/resume/precompact (blocca/non-blocca, coalesce, iniezione stato) | edit reale → riga in change log; session start/compact con ciclo attivo → stato iniettato |
 | R4 gate | unit su `limet-gate` (FAIL su task senza test) | task senza test → rifiutato |
 | R5 cerebro | pytest su tool (limit, batch) | `cerebro_ingest` su Qdrant reale |
 | R6 graphify | pytest su tool | `graphify_explain` su grafo reale |

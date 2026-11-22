@@ -66,5 +66,5 @@ LIMET 1.0 era corretto nella **filosofia** (spec-driven, traceability, test non-
 - Traceability delle decisioni (§1.2).
 - Separazione scrittura/esecuzione (§1.3).
 - Test non-negoziabile (§1.5).
-- Leggero: 5 skill, 4 hook, 2 subagent, 3 MCP. Stop.
+- Leggero: 5 skill, 6 hook, 2 subagent, 3 MCP. Stop.
 - **Conversazionale** (come 1.0): l'utente parla, non digita comandi — l'hook `intent` rileva e avvia.

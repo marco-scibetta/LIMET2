@@ -19,7 +19,7 @@
 | Componente | Percorso | Ruolo |
 | ---------- | -------- | ----- |
 | Skill (5) | `skills/limet-{new,task,test,bug,archive}/SKILL.md` | Ciclo di vita: new → task → test → bug → archive |
-| Hook (4) | `hooks/{intent,guardrail,changelog,reminder}.sh` + `hooks/hooks.json` | intento, blocco build/commit, change log automatico, reminder |
+| Hook (6) | `hooks/{resume,intent,guardrail,changelog,precompact,reminder}.sh` + `hooks/hooks.json` | resume ciclo, intento, blocco build/commit/distruttivi, change log, stato pre-compattazione, reminder |
 | Subagent (2) | `agents/{limet-writer,limet-gate}.md` | scrittura documenti, validazione §1.5 + drift |
 | MCP (3) | `mcp/{cerebro,graphify,db}/` | RAG documentale (Qdrant), knowledge graph codice, SQL read-only |
 | Dashboard | `dashboard/` | init / progetti / re-index / setup su :8787 |

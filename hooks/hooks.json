@@ -1,5 +1,16 @@
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PLUGIN_ROOT/hooks/resume.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [
@@ -31,6 +42,17 @@
             "type": "command",
             "command": "\"$CLAUDE_PLUGIN_ROOT/hooks/changelog.sh\"",
             "timeout": 15
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PLUGIN_ROOT/hooks/precompact.sh\"",
+            "timeout": 10
           }
         ]
       }

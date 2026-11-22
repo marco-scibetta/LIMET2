@@ -29,7 +29,7 @@ limet/
 ├── .claude-plugin/plugin.json, marketplace.json
 ├── skills/limet-{new,task,test,archive,bug}/SKILL.md
 ├── agents/limet-writer.md, limet-gate.md
-├── hooks/hooks.json, intent.sh, guardrail.sh, changelog.sh, reminder.sh
+├── hooks/hooks.json, intent.sh, resume.sh, guardrail.sh, changelog.sh, precompact.sh, reminder.sh
 ├── .mcp.json              (cerebro + graphify + db)
 ├── mcp/cerebro/  mcp/graphify/  mcp/db/
 ├── dashboard/             (React + Vite + TS, backend REST condiviso)
@@ -78,8 +78,10 @@ Niente hardcoded, niente variabili d'ambiente richieste all'utente.
 logica* dei server MCP; Claude parla via MCP, la dashboard via REST. Niente duplicazione logica.
 
 **Hook deterministici con fail-safe** (`docs/HOOKS.md`): ogni hook in try/catch; su errore exit 0 +
-log di diagnosi. `guardrail` blocca build/test/commit senza autorizzazione; `changelog` logga solo
-file nello scope del task attivo e coalesce più edit allo stesso file.
+log di diagnosi. `guardrail` blocca build/test/commit e i distruttivi irreversibili (`git reset --hard`,
+`git clean`, `git checkout --`, `rm -rf`) senza autorizzazione; `changelog` logga solo file nello scope
+del task attivo e coalesce più edit allo stesso file. `resume` (SessionStart) e `precompact`
+(PreCompact) iniettano lo stato del ciclo attivo per non perderlo tra sessioni e compattazioni.
 
 ## Alternative considerate
 
