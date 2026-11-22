@@ -26,6 +26,9 @@ build/
 # Artefatti generati
 graphify-out/
 
+# Test runner transitori (scripts/run-tests.sh)
+limet/.test-logs/
+
 # OS / editor
 .DS_Store
 Thumbs.db

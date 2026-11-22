@@ -44,6 +44,7 @@ Scegli la **lingua** col flag 🇮🇹/🇬🇧 in alto a destra (interfaccia + 
 /limet-new "feature X"    → genera i documenti
 /limet-task 1             → implementa (brief 2-3 righe)
 /limet-test               → piano + esecuzione test
+!bash scripts/run-tests.sh <comando>   → esegue test, esito in TEST_EXECUTION (log distrutto se OK)
 /limet-bug "errore Y"     → se serve
 /limet-archive            → archivia il lavoro verificato
 ```
@@ -55,4 +56,4 @@ Scegli la **lingua** col flag 🇮🇹/🇬🇧 in alto a destra (interfaccia + 
 ## Regole da ricordare
 - Mai build/test in autonomia.
 - Mai commit/push senza autorizzazione esplicita.
-- Ogni task `done` ha una strategia di verifica (unit + e2e).
+- Ogni task `done` ha una strategia di verifica (unit + e2e + lint/type se configurati).

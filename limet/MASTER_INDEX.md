@@ -20,10 +20,11 @@
 | ---------- | -------- | ----- |
 | Skill (5) | `skills/limet-{new,task,test,bug,archive}/SKILL.md` | Ciclo di vita: new → task → test → bug → archive |
 | Hook (6) | `hooks/{resume,intent,guardrail,changelog,precompact,reminder}.sh` + `hooks/hooks.json` | resume ciclo, intento, blocco build/commit/distruttivi, change log, stato pre-compattazione, reminder |
-| Subagent (2) | `agents/{limet-writer,limet-gate}.md` | scrittura documenti, validazione §1.5 + drift |
+| Subagent (2) | `agents/{limet-writer,limet-gate}.md` | scrittura documenti, validazione §1.5 (unit+e2e+lint/type) + drift |
 | MCP (3) | `mcp/{cerebro,graphify,db}/` | RAG documentale (Qdrant), knowledge graph codice, SQL read-only |
 | Dashboard | `dashboard/` | init / progetti / re-index / setup su :8787 |
 | Comandi | `commands/{limet-dashboard,limet-dashboard-stop}.md` | `/limet-dashboard`, `/limet-dashboard-stop` |
+| Script (1) | `scripts/run-tests.sh` | esegue i test, esito compatto in TEST_EXECUTION, log distrutto se OK |
 
 ## 3. Configurazione (per-progetto)
 
@@ -50,7 +51,7 @@ In `limet/changes/<data-slug>/` (poi `limet/archive/<slug>/`):
 
 - **Nuova feature** → `/limet-new "feature"` (genera i documenti)
 - **Implementare un task** → `/limet-task N` (brief + implementazione + change log)
-- **Testare** → `/limet-test` (piano + esecuzione)
+- **Testare** → `/limet-test` (piano) + `!bash scripts/run-tests.sh <comando>` (esecuzione, esito in TEST_EXECUTION)
 - **Segnalare un bug** → `/limet-bug "descrizione"`
 - **Archiviare** → `/limet-archive` (solo lavoro verificato)
 - **Dashboard** → `/limet-dashboard` → http://127.0.0.1:8787

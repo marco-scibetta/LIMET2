@@ -14,6 +14,7 @@ Il plugin spedisce:
 | 1 comando | `/limet-dashboard` | Sì |
 | 2 agent | `limet-gate`, `limet-writer` | Sì |
 | 6 hook | resume, intento, guardrail, change log, pre-compattazione, reminder | No (vedi §4) |
+| 1 script | `run-tests.sh` (esegue test, log distrutto se OK) | No (vedi §4) |
 | 3 MCP | `cerebro` (RAG), `db` (SQL read-only), `graphify` (code KG) | No (vedi §3) |
 
 **Le skill funzionano anche senza MCP e senza hook.** MCP e hook sono componenti opzionali che arricchiscono il flusso.
@@ -116,6 +117,10 @@ Richiede il binario `graphify-mcp` sul `PATH` (fornito dal pacchetto `graphifyy`
 ## 4. Hook su Windows
 
 I 6 hook sono script `.sh` (`hooks/*.sh`). Su Windows servono **Git Bash** o **WSL** per essere eseguiti. Se non disponibili, gli hook falliscono in silenzio: le skill continuano a funzionare, ma perdi l'auto-attivazione e il change log automatico.
+
+Lo script helper `scripts/run-tests.sh` (esecuzione test) è anch'esso `.sh` e richiede Git Bash/WSL.
+
+I log test transitori vanno in `limet/.test-logs/` (per-progetto): assicura che il `.gitignore` del progetto contenga `limet/.test-logs/` (lo aggiunge `/limet-new` al bootstrap).
 
 Da verificare sul primo uso: se il change log non si popola, controlla che Git Bash/WSL sia presente.
 

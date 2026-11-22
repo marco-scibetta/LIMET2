@@ -31,7 +31,11 @@ if not incomplete:
     sys.exit(0)
 
 ids = ", ".join(incomplete)
-msg = "LIMET: task non conclusi/verificati: #%s. Prima di chiudere usa /limet-test e /limet-archive." % ids
+root = os.environ.get("CLAUDE_PLUGIN_ROOT") or ""
+run = ""
+if root:
+    run = ' Esegui i test: !bash "%s/scripts/run-tests.sh" (o aggiungi il comando esatto).' % root
+msg = "LIMET: task non conclusi/verificati: #%s.%s Poi /limet-test e /limet-archive." % (ids, run)
 print(json.dumps({
     "hookSpecificOutput": {
         "hookEventName": "Stop",

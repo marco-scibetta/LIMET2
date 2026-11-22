@@ -74,7 +74,7 @@ Contesto a monte: **CEREBRO** (docs RAG) + **GRAPHIFY** (codice KG) + **DB** (SQ
 
 1. **Spec-driven, non vibe-driven** — il documento resta la fonte di verità.
 2. **Traceability** — ogni scelta ambigua = domanda esplicita con data.
-3. **Test non-negoziabile** — nessun task chiuso senza unit + e2e (§1.5).
+3. **Test non-negoziabile** — nessun task chiuso senza unit + e2e + lint/type (§1.5).
 4. **Leggero** — 5 skill, 6 hook, 2 subagent, 3 MCP, 1 dashboard. Niente di più.
 5. **Conversazionale** — l'utente parla, non digita comandi (hook `intent`).
 6. **Claude-only** — via l'overhead tool-agnostic.

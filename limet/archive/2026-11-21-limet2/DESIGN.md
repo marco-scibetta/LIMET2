@@ -38,6 +38,7 @@ limet/
 │   ├── config.local.yaml        (gitignored: override + segreti)
 │   ├── config.local.example.yaml
 │   └── config.py / config.ts    (loader)
+├── scripts/              (run-tests.sh — esecuzione test, esito in TEST_EXECUTION, log distrutto se OK)
 ├── .gitignore             (include config.local.yaml)
 ├── CLAUDE.md              (policy minimale)
 └── docs/                  (manuale + onboarding)

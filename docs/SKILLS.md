@@ -38,13 +38,13 @@ Genera in `limet/` i seguenti documenti, in ordine, dal contenuto di $ARGUMENTS:
 2. `SPEC.md` — cosa deve fare (behaviour, non implementazione).
 3. `PLAN.md` — come, a design level.
 4. `TASK_LIST.md` — task granulari, con sezione "Change log" vuota.
-5. `TEST_PLAN.md` — unit + e2e, con comando di riesecuzione.
+5. `TEST_PLAN.md` — unit + e2e + lint/type (se configurati), con comando di riesecuzione.
 6. `E2E_VERIFICATION.md` — passi end-to-end.
 7. `DECISIONS.md` — decisioni hard-to-reverse (ADR-lite), solo se emergono.
 
 Regole (binding):
 - Ogni scelta ambigua → domanda esplicita all'utente (mai assumere).
-- Ogni task deve avere una strategia di verifica (unit + e2e), anche "n/a" giustificato.
+- Ogni task deve avere una strategia di verifica (unit + e2e + lint/type se configurati), anche "n/a" giustificato.
 - Non eseguire build/test: fornisci i comandi, l'utente li esegue.
 
 ## Template CHANGE_PROPOSAL

@@ -37,6 +37,17 @@
 > (41 passed, 1 skipped). Doc aggiornate: `docs/HOOKS.md`, `docs/PLUGIN.md`, `docs/ARCHITECTURE.md`,
 > `docs/OPTIMIZATIONS.md`, `docs/README.md`, `docs/SETUP.md`, `FRAMEWORK_MANUAL.md`, `MASTER_INDEX.md`,
 > `SPEC.md`, `DESIGN.md`, `ARCHIVE_ENTRY.md`.
+>
+> **Amendment 2 (2026-11-22)**: `limet-gate` esteso — verifica anche lint/type (quando il progetto ha
+> `ruff`/`mypy`/`eslint`/`tsc` configurati); rifiuta `done` senza esito lint/type registrato. §1.5
+> aggiornata a "unit + e2e + lint/type (se configurati)" in `CLAUDE.md`, `limet-writer`, skill
+> (`limet-new`, `limet-test`), `docs/SKILLS.md`, `docs/SUBAGENTS.md`, `docs/ARCHITECTURE.md`,
+> `FRAMEWORK_MANUAL.md`, `MASTER_INDEX.md`, `ONBOARDING_CHECKLIST.md`.
+>
+> **Amendment 3 (2026-11-22)**: aggiunto `scripts/run-tests.sh` — comando esplicito (NON hook) che
+> esegue i test, registra l'esito compatto in `TEST_EXECUTION.md`, distrugge i log temporanei se OK e
+> mantiene `raw.log` se KO. `reminder.sh` (Stop) ora suggerisce il comando; `limet-gate` legge solo il
+> summary (mai `raw.log`). Test `tests/test_hooks.py` estesi con OK-cleanup e KO-keep-log.
 
 ## Legenda stato
 

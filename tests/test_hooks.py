@@ -147,3 +147,45 @@ def test_precompact_no_active(tmp_path):
     r = _run("precompact.sh", {"cwd": str(tmp_path)})
     assert r.returncode == 0, r.stderr
     assert "LIMET" not in r.stdout
+
+
+def _run_script(name, args, cwd):
+    script = _to_posix(os.path.join(ROOT, "scripts", name))
+    return subprocess.run(
+        [BASH, script] + args,
+        capture_output=True,
+        text=True,
+        cwd=str(cwd),
+        timeout=30,
+    )
+
+
+def _make_change(tmp_path):
+    change = tmp_path / "limet" / "changes" / "2026-01-01-x"
+    change.mkdir(parents=True)
+    return change
+
+
+def test_run_tests_ok_cleans_up(tmp_path):
+    change = _make_change(tmp_path)
+    r = _run_script("run-tests.sh", ["echo", "hello"], tmp_path)
+    assert r.returncode == 0, r.stderr
+    exec_file = change / "TEST_EXECUTION.md"
+    assert exec_file.exists()
+    assert "OK" in exec_file.read_text(encoding="utf-8")
+    logdir = tmp_path / "limet" / ".test-logs"
+    assert not (logdir / ".run-tests.tmp.log").exists()
+    assert not (logdir / "raw.log").exists()
+
+
+def test_run_tests_fail_keeps_log(tmp_path):
+    change = _make_change(tmp_path)
+    r = _run_script("run-tests.sh", ["sh", "-c", "echo boom; exit 3"], tmp_path)
+    assert r.returncode == 0, r.stderr
+    exec_file = change / "TEST_EXECUTION.md"
+    assert "FAIL" in exec_file.read_text(encoding="utf-8")
+    logdir = tmp_path / "limet" / ".test-logs"
+    raw = logdir / "raw.log"
+    assert raw.exists()
+    assert "boom" in raw.read_text(encoding="utf-8")
+    assert not (logdir / ".run-tests.tmp.log").exists()

@@ -18,15 +18,16 @@ restare vuoto.
 2. `SPEC.md` — il *cosa* verificabile: requisiti + scenari dato/quando/allora.
 3. `PLAN.md` — il *come* a livello di disegno: approccio, alternative, rischi.
 4. `TASK_LIST.md` — task granulari con stato, dipendenze, strategia di test, registro modifiche vuoto.
-5. `TEST_PLAN.md` — unit + e2e, con comandi di riesecuzione.
+5. `TEST_PLAN.md` — unit + e2e + lint/type (se configurati), con comandi di riesecuzione.
 6. `E2E_VERIFICATION.md` — checklist passo-passo per la verifica manuale.
 7. `DECISIONS.md` — solo se emergono decisioni hard-to-reverse (ADR-lite).
 
 ## Regole binding
 
 - Ogni scelta ambigua → domanda esplicita all'utente con data. **Mai assumere in silenzio.**
-- Ogni task deve avere una strategia di verifica (unit + e2e), anche con "n/a" giustificato.
+- Ogni task deve avere una strategia di verifica (unit + e2e + lint/type se configurati), anche con "n/a" giustificato.
 - Non eseguire build/test: fornisci i comandi, l'utente li esegue e riporta l'esito.
+- Assicura che il `.gitignore` del progetto contenga `limet/.test-logs/` (aggiungi la riga se assente, così i log test transitori non finiscono nel repo).
 - Prima di implementare un task, dai un **brief di 2-3 righe** (cosa, file toccati, verifica) e procedi senza attendere conferma.
 - Non eseguire commit/push/migrate/deploy senza autorizzazione esplicita.
 

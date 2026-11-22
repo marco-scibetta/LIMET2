@@ -35,7 +35,7 @@ limet-new → limet-task → limet-test → (limet-bug) → limet-archive
 
 1. **new** — genera i documenti in `limet/changes/<data-slug>/`.
 2. **task** — esegue un task con brief di 2-3 righe e aggiorna il change log.
-3. **test** — genera TEST_PLAN + TEST_EXECUTION con comandi rieseguibili.
+3. **test** — genera TEST_PLAN + TEST_EXECUTION con comandi rieseguibili. L'esecuzione spetta all'utente: `!bash scripts/run-tests.sh` (o `!bash scripts/run-tests.sh <comando>`) registra l'esito in TEST_EXECUTION senza sporcare il contesto e distrugge i log temporanei se OK.
 4. **bug** — report bug strutturato (se serve).
 5. **archive** — sposta il lavoro verificato in `limet/archive/<slug>/`.
 
@@ -91,6 +91,6 @@ Loader condiviso: `config/loader.py` (deep-merge config.yaml ← config.local.ya
 
 - Spec first: proposal/plan prima di codice non banale.
 - Ambiguità → domanda esplicita con data, mai assumere.
-- Nessun task `done` senza strategia di verifica (unit + e2e).
+- Nessun task `done` senza strategia di verifica (unit + e2e + lint/type se configurati).
 - Mai build/test in autonomia: dai il comando, l'utente lo esegue.
 - Mai commit/push/migrate/deploy senza autorizzazione.

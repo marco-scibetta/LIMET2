@@ -16,9 +16,9 @@ Genera/aggiorna in `limet/changes/<data-slug>/`:
 
 ## Regole binding
 
-- Non eseguire i test tu: fornisci i comandi, l'utente li esegue e riporta l'esito.
+- Non eseguire i test tu: fornisci i comandi, l'utente li esegue e riporta l'esito. Suggerisci `!bash scripts/run-tests.sh <comando>` (esito in TEST_EXECUTION, log distrutto se OK).
 - Autorevisione qualità obbligatoria prima di dichiarare completo il piano.
-- Ogni task prevede unit + e2e, anche con "n/a" giustificato.
+- Ogni task prevede unit + e2e + lint/type (se configurati), anche con "n/a" giustificato.
 
 ---
 

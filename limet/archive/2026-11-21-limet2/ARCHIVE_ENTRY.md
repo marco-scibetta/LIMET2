@@ -12,6 +12,8 @@ dashboard React/FastAPI monoprocesso, config per-progetto.
 
 Feature: workspace multi-modulo, progetti correlati (link), lingua IT/EN, guide HTML (IT+EN).
 
+Amendment (2026-11-22): hook 4→6 (resume/precompact + guardrail distruttivi); limet-gate esteso a lint/type; script `run-tests.sh` per l'esecuzione test con esito compatto (log distrutto se OK).
+
 ## Esito test
 - `python -m pytest tests -v` → **33 passed** (config loader, db guardrail, hook, dashboard, project config).
 - e2e: ciclo completo mini-todo (15 test), workspace multi-modulo, link progetti.

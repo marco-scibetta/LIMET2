@@ -6,7 +6,7 @@ Spec-driven engineering for Claude Code. Lifecycle: `limet-new` → `limet-task`
 
 - Spec first: proposal/plan before non-trivial code changes.
 - Ambiguity → explicit question with date; never assume.
-- No task marked `done` without a verification strategy (unit + e2e), or explicit justification.
+- No task marked `done` without a verification strategy (unit + e2e + lint/type when configured), or explicit justification.
 - Human approval recorded before implementation.
 - Never run build/test autonomously — give the command, the user runs it.
 - No commit/push/migrate/deploy without explicit authorization.

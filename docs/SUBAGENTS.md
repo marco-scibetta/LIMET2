@@ -7,14 +7,14 @@ I subagent sono **contesti isolati** per ruoli specifici. LIMET 2.0 ne usa **2**
 | Subagent | Ruolo | Tools | Quando |
 |---|---|---|---|
 | `limet-writer` | scrive i documenti (proposal/spec/plan/test) con contesto isolato | Read, Grep, Glob, Write | dentro `/limet-new` |
-| `limet-gate` | **validatore**: verifica §1.5 + **fresh-eyes review** + **drift report** (doc ↔ codice) | Read, Grep, Glob | prima di `/limet-archive` e a fine task |
+| `limet-gate` | **validatore**: verifica §1.5 (unit + e2e + lint/type) + **fresh-eyes review** + **drift report** (doc ↔ codice) | Read, Grep, Glob | prima di `/limet-archive` e a fine task |
 
 ## Esempio `agents/limet-gate.md`
 
 ```markdown
 ---
 name: limet-gate
-description: Validatore LIMET. Verifica §1.5 (unit + e2e), fa fresh-eyes review della SPEC/PLAN e drift report doc↔codice. Rifiuta task senza verifica. Solo lettura.
+description: Validatore LIMET. Verifica §1.5 (unit + e2e + lint/type se configurati), fa fresh-eyes review della SPEC/PLAN e drift report doc↔codice. Rifiuta task senza verifica. Solo lettura.
 tools: Read, Grep, Glob
 ---
 
@@ -25,6 +25,7 @@ Controlla `limet/TASK_LIST.md` e i file di test. Per ogni task marcato "done":
 1. Esiste un unit test dedicato? (o giustificazione esplicita "n/a")
 2. Esiste una verifica e2e con passi eseguibili?
 3. Il change log è compilato?
+4. Lint/typecheck eseguito (se configurato)?
 
 ### Fresh-eyes review (principio "goldfish", da EGM)
 

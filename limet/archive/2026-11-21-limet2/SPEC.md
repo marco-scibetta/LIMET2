@@ -69,11 +69,14 @@ blocca mai Claude.
 
 ### Requisito 4: gate di validazione
 
-`limet-gate` rifiuta un task senza verifica e segnala drift doc↔codice.
+`limet-gate` rifiuta un task senza verifica (unit + e2e + lint/type se configurati) e segnala drift
+doc↔codice.
 
 **Scenari**:
 - **Dato** task marcato `done` senza unit test né giustificazione "n/a", **quando** `limet-gate` lo
   controlla, **allora** esito `FAIL` e il task non è chiuso.
+- **Dato** progetto con lint/type configurati (`ruff`/`mypy`/`eslint`/`tsc`) e task `done` senza esito
+  lint/type registrato, **quando** `limet-gate` lo controlla, **allora** esito `FAIL`.
 - **Dato** SPEC/PLAN che divergono dal codice reale, **quando** `limet-gate` confronta, **allora**
   produce un drift report con le divergenze.
 
@@ -176,7 +179,7 @@ all'utente); i default hardcoded sono solo fallback di ultima istanza.
 | R1 intent | unit su `intent.sh` (frasi positive/negative) | prompt naturale → flusso avviato |
 | R2 skill | unit sui template generati (non vuoti, schema) | `/limet:new X` → doc presenti |
 | R3 hook | unit su guardrail/changelog/resume/precompact (blocca/non-blocca, coalesce, iniezione stato) | edit reale → riga in change log; session start/compact con ciclo attivo → stato iniettato |
-| R4 gate | unit su `limet-gate` (FAIL su task senza test) | task senza test → rifiutato |
+| R4 gate | unit su `limet-gate` (FAIL su task senza test/lint/type) | task senza verifica → rifiutato |
 | R5 cerebro | pytest su tool (limit, batch) | `cerebro_ingest` su Qdrant reale |
 | R6 graphify | pytest su tool | `graphify_explain` su grafo reale |
 | R7 db | pytest su reject DDL/row-limit/no-secret | connessione read-only reale |
