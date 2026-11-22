@@ -18,7 +18,7 @@ Runtime esterno: **Qdrant** + **Ollama** (nativi o Docker). L'ingestion usa **ba
 
 ## GRAPHIFY — knowledge graph (MCP nativo)
 
-Graphify **non è vendorizzato**: si usa l'entry point nativo `graphify-mcp` del package `graphifyy==0.9.32` (pinnato in `pyproject.toml`).
+Graphify **non è vendorizzato**: si usa l'entry point nativo `graphify-mcp` del package `graphifyy[mcp]==0.9.32` (pinnato in `pyproject.toml`, extra `[mcp]` obbligatorio per l'SDK MCP).
 
 | Tool MCP | Scopo |
 |---|---|

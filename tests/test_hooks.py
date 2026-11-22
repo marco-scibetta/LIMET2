@@ -189,3 +189,40 @@ def test_run_tests_fail_keeps_log(tmp_path):
     assert raw.exists()
     assert "boom" in raw.read_text(encoding="utf-8")
     assert not (logdir / ".run-tests.tmp.log").exists()
+
+
+def _run_reminder(cwd, env=None):
+    script = _to_posix(os.path.join(ROOT, "hooks", "reminder.sh"))
+    e = os.environ.copy()
+    if env:
+        e.update(env)
+    return subprocess.run(
+        [BASH, script],
+        input="{}",
+        capture_output=True,
+        text=True,
+        cwd=str(cwd),
+        env=e,
+        timeout=30,
+    )
+
+
+def test_reminder_incomplete(tmp_path):
+    base = _write_task_list(tmp_path, "in_progress")
+    r = _run_reminder(tmp_path, {"CLAUDE_PLUGIN_ROOT": str(ROOT)})
+    assert r.returncode == 0, r.stderr
+    assert "#1" in r.stdout
+    assert "run-tests.sh" in r.stdout
+
+
+def test_reminder_all_done(tmp_path):
+    _write_task_list(tmp_path, "done")
+    r = _run_reminder(tmp_path)
+    assert r.returncode == 0, r.stderr
+    assert "LIMET" not in r.stdout
+
+
+def test_reminder_no_task(tmp_path):
+    r = _run_reminder(tmp_path)
+    assert r.returncode == 0, r.stderr
+    assert "LIMET" not in r.stdout

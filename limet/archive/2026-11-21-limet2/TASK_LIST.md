@@ -48,6 +48,10 @@
 > esegue i test, registra l'esito compatto in `TEST_EXECUTION.md`, distrugge i log temporanei se OK e
 > mantiene `raw.log` se KO. `reminder.sh` (Stop) ora suggerisce il comando; `limet-gate` legge solo il
 > summary (mai `raw.log`). Test `tests/test_hooks.py` estesi con OK-cleanup e KO-keep-log.
+>
+> **Amendment 4 (2026-11-22)**: fix bug MCP graphify — `pyproject.toml` ora dichiara
+> `graphifyy[mcp]==0.9.32` (extra `[mcp]` mancante → SDK `mcp` non installato → `graphify-mcp` crash
+> "Connection closed"). Fix runtime: `uv tool install "graphifyy[mcp]==0.9.32"`. Aggiunti test `reminder.sh`.
 
 ## Legenda stato
 
