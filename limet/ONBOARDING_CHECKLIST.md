@@ -39,6 +39,11 @@ Scegli la **lingua** col flag 🇮🇹/🇬🇧 in alto a destra (interfaccia + 
 - **Progetti** → "Collega progetti" → A e B → **Collega**.
 - La ricerca Qdrant in A copre anche B (e viceversa).
 
+## 5ter. Analizza un progetto non documentato (opzionale)
+- Dashboard → **Analizza** → seleziona progetto → "Richiedi analisi".
+- In Claude Code su quel progetto: `/limet-analyze` → genera doc onboarding in `docs/`.
+- Re-index i doc quando vuoi.
+
 ## 6. Ciclo di lavoro
 ```
 /limet-new "feature X"    → genera i documenti

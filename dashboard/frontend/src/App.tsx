@@ -6,6 +6,7 @@ import InitPage from './pages/InitPage'
 import ProjectsPage from './pages/ProjectsPage'
 import ReindexPage from './pages/ReindexPage'
 import SetupPage from './pages/SetupPage'
+import AnalyzePage from './pages/AnalyzePage'
 import { T, Lang } from './i18n'
 
 const NAV = [
@@ -14,6 +15,7 @@ const NAV = [
   { id: 'projects', label: 'projects', desc: 'descProjects' },
   { id: 'reindex', label: 'reindex', desc: 'descReindex' },
   { id: 'setup', label: 'setup', desc: 'descSetup' },
+  { id: 'analyze', label: 'analyze', desc: 'descAnalyze' },
 ] as const
 
 type PageId = (typeof NAV)[number]['id']
@@ -105,6 +107,7 @@ export default function App() {
           {page === 'projects' && <ProjectsPage t={t} />}
           {page === 'reindex' && <ReindexPage t={t} />}
           {page === 'setup' && <SetupPage t={t} />}
+          {page === 'analyze' && <AnalyzePage t={t} />}
         </main>
       </div>
     </div>

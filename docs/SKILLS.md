@@ -6,7 +6,7 @@ I comandi `/limet-*` esistono solo come **scorciatoie opzionali** per il control
 
 Frontmatter standard (AgentSkills.io): `name`, `description`, `allowed-tools`, `user-invocable`. Progressive disclosure: metadata → SKILL.md body → file reference.
 
-## Le 5 skill
+## Le 6 skill
 
 | Skill | Cosa fa | Input | Output |
 |---|---|---|---|
@@ -15,6 +15,7 @@ Frontmatter standard (AgentSkills.io): `name`, `description`, `allowed-tools`, `
 | `/limet-test` | genera/esegue il piano test | — | TEST_PLAN + TEST_EXECUTION |
 | `/limet-archive` | archivia il lavoro concluso | — | `limet/archive/<data-slug>/` |
 | `/limet-bug` | report bug strutturato | `$ARGUMENTS` = descrizione | BUG_REPORT.md |
+| `/limet-analyze` | analizza un progetto non documentato → doc onboarding in `docs/` | — | `docs/` (7 doc) |
 
 I template di supporto (glossary, conventions, codebase-analysis, architecture, module-map, summary, **decisions**) si generano **ad hoc** dentro `/limet-new`, non come skill separate.
 
@@ -61,6 +62,6 @@ Regole (binding):
 4. **Lingua**: rispondi nella lingua dell'utente.
 5. **Brief prima di ogni task**: prima di implementare, dai un brief di 2-3 righe (cosa farai, file toccati, verifica collegata), poi procedi senza attendere conferma.
 
-## Perché 5 e non 18
+## Perché 6 e non 18
 
 I 18 template 1.0 erano "documenti da riempire a mano". In 2.0, il **flusso** li genera insieme (`/limet-new`), il **change log** è automatico (hook), l'**archivio** è una skill, il **bug** è una skill. Il resto è supporto generato a richiesta. Meno attrito, stessa tracciabilità.

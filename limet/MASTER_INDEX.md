@@ -18,11 +18,11 @@
 
 | Componente | Percorso | Ruolo |
 | ---------- | -------- | ----- |
-| Skill (5) | `skills/limet-{new,task,test,bug,archive}/SKILL.md` | Ciclo di vita: new → task → test → bug → archive |
+| Skill (6) | `skills/limet-{new,task,test,bug,archive,analyze}/SKILL.md` | Ciclo di vita + analisi progetto (`analyze`) |
 | Hook (6) | `hooks/{resume,intent,guardrail,changelog,precompact,reminder}.sh` + `hooks/hooks.json` | resume ciclo, intento, blocco build/commit/distruttivi, change log, stato pre-compattazione, reminder |
-| Subagent (2) | `agents/{limet-writer,limet-gate}.md` | scrittura documenti, validazione §1.5 (unit+e2e+lint/type) + drift |
+| Subagent (3) | `agents/{limet-writer,limet-gate,limet-analyzer}.md` | scrittura documenti, validazione §1.5 + drift, analisi progetto |
 | MCP (3) | `mcp/{cerebro,graphify,db}/` | RAG documentale (Qdrant), knowledge graph codice, SQL read-only |
-| Dashboard | `dashboard/` | init / progetti / re-index / setup su :8787 |
+| Dashboard | `dashboard/` | init / progetti / re-index / setup / analizza su :8787 |
 | Comandi | `commands/{limet-dashboard,limet-dashboard-stop}.md` | `/limet-dashboard`, `/limet-dashboard-stop` |
 | Script (1) | `scripts/run-tests.sh` | esegue i test, esito compatto in TEST_EXECUTION, log distrutto se OK |
 
@@ -54,6 +54,7 @@ In `limet/changes/<data-slug>/` (poi `limet/archive/<slug>/`):
 - **Testare** → `/limet-test` (piano) + `!bash scripts/run-tests.sh <comando>` (esecuzione, esito in TEST_EXECUTION)
 - **Segnalare un bug** → `/limet-bug "descrizione"`
 - **Archiviare** → `/limet-archive` (solo lavoro verificato)
+- **Analizzare un progetto** → dashboard Analizza → `/limet-analyze`
 - **Dashboard** → `/limet-dashboard` → http://127.0.0.1:8787
 
 ## 7. Template

@@ -50,3 +50,9 @@ def shared_qdrant_ollama():
         merged = deep_merge(_DEFAULTS, section)
         return {"qdrant": merged["qdrant"], "ollama": merged["ollama"]}
     return {"qdrant": _DEFAULTS["qdrant"], "ollama": _DEFAULTS["ollama"]}
+
+
+def analyze_requested(slug):
+    """True se il progetto ha richiesto l'analisi (flag `projects.<slug>.analyze`)."""
+    proj = (load_config().get("projects") or {}).get(slug) or {}
+    return bool(proj.get("analyze"))

@@ -78,6 +78,14 @@ export const T = {
     saved: 'Salvato in config.local.yaml',
     dbOk: 'Connessione DB OK',
     dbKo: 'DB non raggiungibile:',
+    // analyze page
+    analyze: 'Analizza',
+    descAnalyze: 'Genera documenti onboarding per un progetto non documentato.',
+    analyzeDesc: 'Marca un progetto per l\'analisi, poi in Claude Code sul progetto esegui /limet-analyze.',
+    analyzeHint: 'In Claude Code sul progetto esegui:',
+    analyzeRequest: 'Richiedi analisi',
+    analyzeRequested: 'Analisi richiesta. Esegui /limet-analyze in Claude Code sul progetto.',
+    analyzeOn: 'Analisi richiesta',
   },
   en: {
     err: 'Error',
@@ -149,6 +157,14 @@ export const T = {
     saved: 'Saved to config.local.yaml',
     dbOk: 'DB connection OK',
     dbKo: 'DB unreachable:',
+    // analyze page
+    analyze: 'Analyze',
+    descAnalyze: 'Generate onboarding documents for an undocumented project.',
+    analyzeDesc: 'Mark a project for analysis, then in Claude Code on that project run /limet-analyze.',
+    analyzeHint: 'In Claude Code on the project run:',
+    analyzeRequest: 'Request analysis',
+    analyzeRequested: 'Analysis requested. Run /limet-analyze in Claude Code on the project.',
+    analyzeOn: 'Analysis requested',
   },
 }
 

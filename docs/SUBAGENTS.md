@@ -1,13 +1,14 @@
 # LIMET 2.0 — Subagents
 
-I subagent sono **contesti isolati** per ruoli specifici. LIMET 2.0 ne usa **2** (non di più, per restare leggero).
+I subagent sono **contesti isolati** per ruoli specifici. LIMET 2.0 ne usa **3** (non di più, per restare leggero).
 
-## I 2 subagent
+## I 3 subagent
 
 | Subagent | Ruolo | Tools | Quando |
 |---|---|---|---|
 | `limet-writer` | scrive i documenti (proposal/spec/plan/test) con contesto isolato | Read, Grep, Glob, Write | dentro `/limet-new` |
 | `limet-gate` | **validatore**: verifica §1.5 (unit + e2e + lint/type) + **fresh-eyes review** + **drift report** (doc ↔ codice) | Read, Grep, Glob | prima di `/limet-archive` e a fine task |
+| `limet-analyzer` | analizza un progetto non documentato e genera doc onboarding in `docs/` | Read, Grep, Glob, Write | dentro `/limet-analyze` |
 
 ## Esempio `agents/limet-gate.md`
 
@@ -70,11 +71,12 @@ Mai assumere: scelte ambigue → riportale come domande aperte.
 | `/goal` (fast evaluator) | **oggettiva**: i test passano davvero? |
 | `limet-gate` (subagent) | **documentale**: fresh-eyes, drift, §1.5 documentato |
 
-## Perché solo 2
+## Perché solo 3
 
 - `limet-writer` = tutto il "produrre documenti" (un ruolo, non 18).
 - `limet-gate` = il controllo qualità (il principio §1.5 come gate indipendente).
+- `limet-analyzer` = capire un progetto non documentato (analisi → doc onboarding).
 
 Le 2 estensioni di `limet-gate` (fresh-eyes review + drift report) vengono da **EGM (Elephant-Goldfish Model)**: rivedere con "occhi freschi" e confrontare doc↔codice. Sono piccole, **non aggiungono subagent** — estendono quello esistente.
 
-Aggiungere altri subagent (es. `limet-analyzer` per la codebase analysis) **solo se** il flusso lo richiede davvero — non per completezza. (Vincolo "non overingegnerizzare".)
+`limet-analyzer` è stato aggiunto quando il flusso lo ha richiesto (analisi progetto non documentato, trigger dashboard + `/limet-analyze`). Aggiungerne altri **solo se** il flusso lo richiede davvero — non per completezza. (Vincolo "non overingegnerizzare".)

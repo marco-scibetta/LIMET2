@@ -8,7 +8,7 @@ LIMET 2.0 è la riscrittura di LIMET 1.0 per sfruttare le feature native di Clau
 
 | | LIMET 1.0 | LIMET 2.0 |
 |---|---|---|
-| Template | 18 .md da riempire a mano | **5 skill** che Claude esegue |
+| Template | 18 .md da riempire a mano | **6 skill** che Claude esegue |
 | Regole (§1.3, §1.5) | testo in CLAUDE.md | **hook** (enforcement) |
 | Attivazione | script PowerShell/bash | **plugin** install |
 | CEREBRO/Graphify | skill-guida + script Python/CLI | **MCP** (tool nativi) |
@@ -19,9 +19,9 @@ LIMET 2.0 è la riscrittura di LIMET 1.0 per sfruttare le feature native di Clau
 | Doc | Cosa contiene |
 |---|---|
 | [ARCHITECTURE.md](ARCHITECTURE.md) | architettura complessiva + mappatura 1.0→2.0 |
-| [SKILLS.md](SKILLS.md) | le 5 skill (ciclo di vita) con esempio SKILL.md |
+| [SKILLS.md](SKILLS.md) | le 6 skill (ciclo di vita + analisi) con esempio SKILL.md |
 | [HOOKS.md](HOOKS.md) | i 6 hook (resume, intent, guardrail, changelog, precompact, reminder) con hooks.json |
-| [SUBAGENTS.md](SUBAGENTS.md) | i 2 subagent (writer, gate) |
+| [SUBAGENTS.md](SUBAGENTS.md) | i 3 subagent (writer, gate, analyzer) |
 | [MCP.md](MCP.md) | cerebro + graphify + db come MCP |
 | [PLUGIN.md](PLUGIN.md) | packaging/distribuzione del plugin `limet` |
 | [OPTIMIZATIONS.md](OPTIMIZATIONS.md) | le ottimizzazioni e le motivazioni |
@@ -29,7 +29,7 @@ LIMET 2.0 è la riscrittura di LIMET 1.0 per sfruttare le feature native di Clau
 
 ## Il ciclo di vita (in una riga)
 
-`/limet-new` (proposta→spec→plan) → `/limet-task` (implementa, change log automatico) → `/limet-test` (verifica) → `/limet-archive`. Con `/limet-bug` per i bug.
+`/limet-new` (proposta→spec→plan) → `/limet-task` (implementa, change log automatico) → `/limet-test` (verifica) → `/limet-archive`. Con `/limet-bug` per i bug e `/limet-analyze` per l'analisi di un progetto non documentato.
 
 ## Stato
 

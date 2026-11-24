@@ -51,8 +51,8 @@
 
   <section>
     <div class="eyebrow">Workflow</div>
-    <h1>The three main flows</h1>
-    <p class="lede">Create a new project, create a new feature and handle a bug. Three short sequences, each with its commands.</p>
+    <h1>The four main flows</h1>
+    <p class="lede">Create a new project, create a new feature, handle a bug and analyze an undocumented project. Four short sequences, each with its commands.</p>
   </section>
 
   <section>
@@ -129,6 +129,24 @@
         <p>Regression + archive:</p>
         <pre><code>/limet-test
 /limet-archive</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>4 · Analyze an undocumented project</h2>
+    <div class="step">
+      <span class="step-n">1</span>
+      <div class="step-body">
+        <p>In the dashboard, page <strong>Analyze</strong>: select the project and click <em>Request analysis</em>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-n">2</span>
+      <div class="step-body">
+        <p>In Claude Code on that project:</p>
+        <pre><code>/limet-analyze</code></pre>
+        <p>Generates the onboarding documents in <code>docs/</code> (architecture, module-map, dependencies, conventions, glossary, non-technical summary).</p>
       </div>
     </div>
   </section>

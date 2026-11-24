@@ -26,6 +26,8 @@ if prompt:
     p = prompt
     if re.search(r'(aggiung|nuova (feature|funzionalit|pagina|sezione)|implementa|crea una|sviluppa|feature)', p, re.I):
         hints.append("rilevato intento feature. Avvia il flusso spec-driven: /limet-new")
+    elif re.search(r'onboarding|\b(analizza|documenta|mappa)\b.{0,30}\b(progetto|codebase|repo|architettura)\b', p, re.I):
+        hints.append("rilevato intento analisi progetto. Avvia: /limet-analyze")
     elif re.search(r'limet[-:]?bug', p, re.I):
         pass  # falso positivo: nome comando, non un report bug
     elif re.search(r'\b(bug|non funziona|non va|errore|crash|difetto|correggi|fixa|sistemare)\b', p, re.I):

@@ -7,7 +7,7 @@ La dashboard è l'interfaccia **web per le operazioni**, non per il lavoro. Il l
 | | Claude (MCP + skill) | Dashboard |
 |---|---|---|
 | Ruolo | **il lavoro** | **le ops** |
-| Cosa | generare spec/task, implementare, query contesto | init, re-index, status, setup/config |
+| Cosa | generare spec/task, implementare, query contesto | init, re-index, status, setup/config, analizza |
 | Interazione | conversazionale | GUI |
 
 Regola: **se una funzione è più comoda in conversazione, sta in chat, non nella UI.** Ogni pagina = un'azione reale.
@@ -29,13 +29,14 @@ python dashboard/run.py     # builda se serve + avvia su :8787
 /limet-dashboard            # comando slash equivalente
 ```
 
-## Pagine (5)
+## Pagine (6)
 
 1. **Status** — stato di Qdrant/Ollama + progetti registrati.
 2. **Init** — registra un progetto (nome + percorso docs): in un colpo fa **register + graphify extract + ingestion Qdrant**. Una combo propone i progetti già esistenti.
 3. **Progetti** — slug, root, percorsi docs dei progetti registrati.
 4. **Re-index** — incrementale / forza / pulizia (prune); combo progetto + percorso docs.
 5. **Setup** — configurazione **per progetto** (Qdrant, Ollama, DB), salvata in `config.local.yaml`. Password mai mostrata. Include "Test connessione DB".
+6. **Analizza** — marca un progetto per l'analisi (`analyze: true` in `config.local.yaml`). In Claude Code, `/limet-analyze` genera i doc onboarding in `docs/`.
 
 ## API
 
@@ -49,6 +50,8 @@ python dashboard/run.py     # builda se serve + avvia su :8787
 | `GET /api/config?project=` | config di un progetto (password mascherata) |
 | `POST /api/config` | salva config per-progetto in config.local.yaml |
 | `POST /api/config/test` | test connessione DB |
+| `POST /api/analyze` | marca un progetto per l'analisi (flag `analyze`) |
+| `GET /api/analyze?project=` | legge il flag `analyze` di un progetto |
 | `GET /api/browse` | file browser (sottocartelle) |
 
 ## Cosa NON copre la dashboard

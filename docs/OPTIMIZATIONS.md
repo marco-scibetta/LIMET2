@@ -5,7 +5,7 @@ LIMET 1.0 era corretto nella **filosofia** (spec-driven, traceability, test non-
 ## 1. Doc-heavy → skill-automated
 
 - **1.0**: 18 template .md che l'umano riempie a mano. Attrito = si salta la tracciabilità.
-- **2.0**: 5 skill. Claude genera i documenti, l'umano approva. Il documento resta la fonte di verità (§1.1) ma non è più un modulo da compilare.
+- **2.0**: 6 skill. Claude genera i documenti, l'umano approva. Il documento resta la fonte di verità (§1.1) ma non è più un modulo da compilare.
 
 ## 2. Tool-agnostic → Claude-only
 
@@ -27,7 +27,7 @@ LIMET 1.0 era corretto nella **filosofia** (spec-driven, traceability, test non-
 - **1.0**: §1.3 (no build/test autonomi) e §1.5 (test non-negoziabile) erano *scritte* nel CLAUDE.md.
 - **2.0**: `PreToolUse` *blocca* i build/test; `limet-gate` *rifiuta* i task senza verifica. "Un'istruzione è una richiesta; un hook è enforcement."
 
-## 6. Consolidamento: 18 → 5 skill
+## 6. Consolidamento: 18 → 6 skill
 
 - **1.0**: un template per ogni artefatto = 18 documenti separati.
 - **2.0**: `/limet-new` genera tutto il ciclo insieme (proposal+spec+plan+task+test+e2e). I doc di supporto (glossary, conventions, analysis…) si generano a richiesta. Meno attrito, stessa tracciabilità.
@@ -66,5 +66,5 @@ LIMET 1.0 era corretto nella **filosofia** (spec-driven, traceability, test non-
 - Traceability delle decisioni (§1.2).
 - Separazione scrittura/esecuzione (§1.3).
 - Test non-negoziabile (§1.5).
-- Leggero: 5 skill, 6 hook, 2 subagent, 3 MCP. Stop.
+- Leggero: 6 skill, 6 hook, 3 subagent, 3 MCP. Stop.
 - **Conversazionale** (come 1.0): l'utente parla, non digita comandi — l'hook `intent` rileva e avvia.

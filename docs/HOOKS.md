@@ -7,7 +7,7 @@ Gli hook sono **deterministici** (zero contesto se non ritornano output). In LIM
 | Hook | Evento | Scopo |
 |---|---|---|
 | **resume** | `SessionStart` | **riprende il ciclo attivo** all'avvio sessione: inietta i task non conclusi |
-| **intent** | `UserPromptSubmit` | **rileva l'intento** ("voglio una feature"/"c'è un bug") e avvia il flusso LIMET **senza che l'utente scriva comandi** |
+| **intent** | `UserPromptSubmit` | **rileva l'intento** (feature / bug / analisi progetto) e avvia il flusso LIMET **senza che l'utente scriva comandi** |
 | **guardrail** | `PreToolUse` (Bash) | blocca build/test autonomi + comandi a effetti persistenti + distruttivi irreversibili senza autorizzazione |
 | **changelog** | `PostToolUse` (Edit/Write) | appende automaticamente al change log di TASK_LIST.md |
 | **precompact** | `PreCompact` | **inietta lo stato del ciclo attivo** prima della compattazione (task + file toccati), così il contesto non si perde |
@@ -95,7 +95,8 @@ Gli hook sono **deterministici** (zero contesto se non ritornano output). In LIM
 ## intent.sh (logica)
 
 - Riceve il prompt dell'utente.
-- Se contiene intento feature/bug (es. "aggiungi", "voglio una feature", "c'è un bug", "non funziona") e non c'è già un ciclo attivo → stampa: "LIMET: sembra una feature/bug. Avvia il flusso spec-driven (genera proposal/spec/plan)."
+- Se contiene intento feature/bug (es. "aggiungi", "voglio una feature", "c'è un bug", "non funziona") → suggerisce `/limet-new` o `/limet-bug`.
+- Se contiene intento analisi progetto (es. "analizza il progetto", "onboarding", "documenta il progetto") → suggerisce `/limet-analyze`.
 - Altrimenti: exit 0 (nessun output).
 
 ## guardrail.sh (logica)

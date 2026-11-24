@@ -46,3 +46,24 @@ def test_discover_modules_only_with_docs(tmp_path):
     mods = dash._discover_modules(str(tmp_path))
     names = {m["name"] for m in mods}
     assert names == {"module-a", "module-b"}
+
+
+def test_analyze_endpoint_sets_flag(monkeypatch):
+    calls = {}
+
+    def fake_save(data):
+        calls.update(data)
+
+    monkeypatch.setattr(dash, "_save_local_config", fake_save)
+    body = dash.AnalyzeBody(project="x")
+    r = dash.request_analyze(body)
+    assert r["ok"] is True
+    assert r["analyze"] is True
+    assert calls == {"projects": {"x": {"analyze": True}}}
+
+
+def test_analyze_status_reads_flag(monkeypatch):
+    monkeypatch.setattr(dash, "_load_config", lambda: {"projects": {"x": {"analyze": True}}})
+    assert dash.analyze_status("x")["analyze"] is True
+    monkeypatch.setattr(dash, "_load_config", lambda: {"projects": {"x": {}}})
+    assert dash.analyze_status("x")["analyze"] is False

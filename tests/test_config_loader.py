@@ -42,3 +42,14 @@ def test_load_config_has_language():
     cfg = loader.load_config()
     assert "language" in cfg
     assert cfg["language"] in ("it", "en")
+
+
+def test_analyze_requested_true(monkeypatch):
+    monkeypatch.setattr(loader, "load_config", lambda: {"projects": {"x": {"analyze": True}}})
+    assert loader.analyze_requested("x") is True
+
+
+def test_analyze_requested_false_when_missing(monkeypatch):
+    monkeypatch.setattr(loader, "load_config", lambda: {"projects": {"x": {}}})
+    assert loader.analyze_requested("x") is False
+    assert loader.analyze_requested("missing") is False

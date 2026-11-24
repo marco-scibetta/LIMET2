@@ -52,6 +52,10 @@
 > **Amendment 4 (2026-11-22)**: fix bug MCP graphify — `pyproject.toml` ora dichiara
 > `graphifyy[mcp]==0.9.32` (extra `[mcp]` mancante → SDK `mcp` non installato → `graphify-mcp` crash
 > "Connection closed"). Fix runtime: `uv tool install "graphifyy[mcp]==0.9.32"`. Aggiunti test `reminder.sh`.
+>
+> **Amendment 5 (2026-11-24)**: aggiunta feature "Analisi progetto / auto-onboarding" — nuovo subagent
+> `limet-analyzer` + skill `/limet-analyze` + flag config `analyze` + intento hook + pagina dashboard
+> "Analizza" (`/api/analyze`). Doc onboarding generati in `docs/`. Vedi `limet/changes/2026-11-24-project-analysis/`.
 
 ## Legenda stato
 

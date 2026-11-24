@@ -10,9 +10,9 @@ Il plugin spedisce:
 
 | Componente | Cosa | Obbligatorio? |
 |---|---|---|
-| 5 skill | `limet-new`, `limet-task`, `limet-test`, `limet-archive`, `limet-bug` | Sì |
+| 6 skill | `limet-new`, `limet-task`, `limet-test`, `limet-archive`, `limet-bug`, `limet-analyze` | Sì |
 | 1 comando | `/limet-dashboard` | Sì |
-| 2 agent | `limet-gate`, `limet-writer` | Sì |
+| 3 agent | `limet-gate`, `limet-writer`, `limet-analyzer` | Sì |
 | 6 hook | resume, intento, guardrail, change log, pre-compattazione, reminder | No (vedi §4) |
 | 1 script | `run-tests.sh` (esegue test, log distrutto se OK) | No (vedi §4) |
 | 3 MCP | `cerebro` (RAG), `db` (SQL read-only), `graphify` (code KG) | No (vedi §3) |

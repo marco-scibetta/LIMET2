@@ -20,11 +20,11 @@ claude plugin validate .    # non-strict: il warning CLAUDE.md alla root è by-d
 
 | Componente | Cosa fa |
 | ---------- | ------- |
-| **Skill** (5) | `/limet-new`, `/limet-task`, `/limet-test`, `/limet-bug`, `/limet-archive` |
+| **Skill** (6) | `/limet-new`, `/limet-task`, `/limet-test`, `/limet-bug`, `/limet-archive`, `/limet-analyze` |
 | **Hook** (6) | `resume.sh` (riprende ciclo attivo), `intent.sh` (rileva intento), `guardrail.sh` (blocca build/commit/distruttivi), `changelog.sh` (registro auto), `precompact.sh` (stato pre-compattazione), `reminder.sh` (ricorda test/archive) |
-| **Subagent** (2) | `limet-writer` (scrive doc), `limet-gate` (valida §1.5 + drift) |
+| **Subagent** (3) | `limet-writer` (scrive doc), `limet-gate` (valida §1.5 + drift), `limet-analyzer` (analizza progetto → doc `docs/`) |
 | **MCP** (3) | `cerebro` (RAG Qdrant), `graphify` (knowledge graph codice), `db` (SQL read-only) |
-| **Dashboard** | init / progetti / re-index / setup (config per-progetto) su :8787 |
+| **Dashboard** | init / progetti / re-index / setup / analizza (config per-progetto) su :8787 |
 | **Comandi** | `/limet-dashboard` (avvia), `/limet-dashboard-stop` (ferma) |
 
 ## Ciclo di vita
@@ -86,6 +86,13 @@ Loader condiviso: `config/loader.py` (deep-merge config.yaml ← config.local.ya
 - **Progetti** → "Collega progetti": seleziona A e B → **Collega**.
 - La ricerca Qdrant in A interroga A **e** B (collection extra).
 - Un hook (UserPromptSubmit) ricorda a ogni prompt: "sei in X, collegato a Y — usa `cerebro_search` con `project=X`".
+
+## Analisi progetto (auto-onboarding)
+
+- Per progetti **non documentati**, senza onboarding.
+- Dashboard → **Analizza**: seleziona il progetto e clicca "Richiedi analisi" → imposta `projects.<slug>.analyze: true` in `config.local.yaml`.
+- In Claude Code su quel progetto: `/limet-analyze` → spawna `limet-analyzer`, che genera in `docs/`: `architecture.md`, `module-map.md`, `dependencies.md`, `conventions.md`, `decisions.md`, `glossary.md`, `NON_TECHNICAL_SUMMARY.md`.
+- Il re-index dei doc generati resta all'utente.
 
 ## Regole binding
 

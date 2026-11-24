@@ -182,6 +182,28 @@ def set_language(body: LanguageBody):
     return {"ok": True, "language": body.lang}
 
 
+class AnalyzeBody(BaseModel):
+    project: str
+
+
+@app.post("/api/analyze")
+def request_analyze(body: AnalyzeBody):
+    """Marca un progetto per l'analisi (flag `projects.<slug>.analyze: true`)."""
+    if not body.project:
+        raise HTTPException(status_code=400, detail="project is required")
+    _save_local_config({"projects": {body.project: {"analyze": True}}})
+    return {"ok": True, "project": body.project, "analyze": True}
+
+
+@app.get("/api/analyze")
+def analyze_status(project: str = ""):
+    """Legge il flag `analyze` di un progetto."""
+    if not project:
+        raise HTTPException(status_code=400, detail="project is required")
+    proj = (_load_config().get("projects") or {}).get(project) or {}
+    return {"project": project, "analyze": bool(proj.get("analyze"))}
+
+
 def _registry():
     try:
         import project_config

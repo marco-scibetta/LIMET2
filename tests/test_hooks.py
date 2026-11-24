@@ -73,6 +73,17 @@ def test_intent_no_false_positive_on_command_name():
     assert "/limet-bug" not in r.stdout
 
 
+def test_intent_analyze():
+    r = _run("intent.sh", {"prompt": "analizza il progetto e documentalo", "cwd": str(ROOT)})
+    assert r.returncode == 0, r.stderr
+    assert "/limet-analyze" in r.stdout
+
+
+def test_intent_no_false_positive_analyze():
+    r = _run("intent.sh", {"prompt": "salva il file adesso", "cwd": str(ROOT)})
+    assert "/limet-analyze" not in r.stdout
+
+
 def test_intent_related_projects():
     dummy = os.environ.get("LIMET_TEST_DUMMY")
     if not dummy:

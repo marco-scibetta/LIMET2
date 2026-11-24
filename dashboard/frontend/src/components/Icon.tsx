@@ -38,6 +38,12 @@ const ICONS: Record<string, ReactNode> = {
       <circle cx="13" cy="18" r="2" />
     </>
   ),
+  analyze: (
+    <>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m21 21-4.3-4.3" />
+    </>
+  ),
   artifacts: (
     <>
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
