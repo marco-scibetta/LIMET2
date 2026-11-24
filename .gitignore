@@ -35,3 +35,5 @@ limet/TEST_EXECUTION.md
 Thumbs.db
 .idea/
 .vscode/
+*.stackdump
+feature-assignee-task.md

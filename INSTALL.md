@@ -1,11 +1,11 @@
 # LIMET 2.0 — Install
 
-Plugin spec-driven engineering per Claude Code. Un solo repo git, nessun marketplace pubblico: il repo stesso fa da marketplace.
+Spec-driven engineering plugin for Claude Code. One git repo, no public marketplace: the repo itself is the marketplace.
 
-## Requisiti
+## Requirements
 
 - Claude Code CLI (`claude`)
-- Accesso git al repo `marco-scibetta/LIMET2`
+- Git access to the `marco-scibetta/LIMET2` repo
 
 ## Install
 
@@ -14,25 +14,26 @@ claude plugin marketplace add marco-scibetta/LIMET2
 claude plugin install limet@limet-marketplace
 ```
 
-Il primo comando registra il repo come sorgente (marketplace). Il secondo installa il plugin `limet`.
+The first command registers the repo as a source (marketplace). The second installs the `limet` plugin.
 
-## Verifica
+## Verify
 
-Apri Claude Code in un progetto e chiedi in linguaggio naturale, es. *"voglio aggiungere una feature di login"*: il flusso LIMET parte (proposta → spec → plan → task → test → archive).
+Open Claude Code in a project and ask in natural language, e.g. *"I want to add a login feature"*: the LIMET flow starts (proposal → spec → plan → task → test → archive).
 
-Skill disponibili dopo l'install:
+Skills available after install:
 
-- `limet-new` — nuovo ciclo
-- `limet-task` — esegue un task
-- `limet-test` — piano test
-- `limet-archive` — archivia
-- `limet-bug` — report bug
+- `limet-new` — new cycle
+- `limet-task` — run a task
+- `limet-test` — test plan
+- `limet-archive` — archive
+- `limet-bug` — bug report
+- `limet-analyze` — analyze an undocumented project
 
-Comando slash: `/limet-dashboard` (avvia la dashboard su :8787).
+Slash command: `/limet-dashboard` (launch the dashboard on :8787).
 
-## Update (dopo nuove feature)
+## Update (after new features)
 
-Dentro Claude Code: `/plugin` → update, oppure riesegui i due comandi sopra.
+Inside Claude Code: `/plugin` → update, or re-run the two commands above.
 
 ## Uninstall
 

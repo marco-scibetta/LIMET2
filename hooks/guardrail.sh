@@ -21,19 +21,19 @@ except Exception:
 
 # Build/test autonomi → blocca sempre.
 if printf '%s' "$cmd" | grep -Eq '(mvnw|gradlew|mvn[[:space:]]|npm[[:space:]]+(test|run[[:space:]]+(test|build))|yarn[[:space:]]+(test|build)|pnpm[[:space:]]+(test|build)|pytest|python[[:space:]]+-m[[:space:]]+(pytest|unittest)|cargo[[:space:]]+(test|build)|go[[:space:]]+(test|build)|make[[:space:]]+(test|build))'; then
-  echo "LIMET: build/test non in autonomia. Fornisci il comando all'utente e attendi l'esito." >&2
+  echo "LIMET: build/test must not run autonomously. Give the command to the user and wait for the outcome." >&2
   exit 2
 fi
 
 # Effetti persistenti → blocca senza autorizzazione esplicita.
 if printf '%s' "$cmd" | grep -Eq '(git[[:space:]]+(commit|push|rebase|merge)|migrate|deploy|kubectl[[:space:]]+apply|terraform[[:space:]]+apply)'; then
-  echo "LIMET: comando a effetti persistenti (commit/push/migrate/deploy). Richiede autorizzazione esplicita dell'utente." >&2
+  echo "LIMET: command with persistent effects (commit/push/migrate/deploy). Requires explicit user authorization." >&2
   exit 2
 fi
 
 # Distruttivo irreversibile → blocca sempre.
 if printf '%s' "$cmd" | grep -Eq '(git[[:space:]]+(reset[[:space:]]+--hard|clean|checkout[[:space:]]+--|branch[[:space:]]+-D|stash[[:space:]]+drop)|rm[[:space:]]+-[rRfF])'; then
-  echo "LIMET: comando distruttivo irreversibile. Richiede autorizzazione esplicita dell'utente." >&2
+  echo "LIMET: irreversible destructive command. Requires explicit user authorization." >&2
   exit 2
 fi
 

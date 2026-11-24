@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "limet"
 version = "2.0.0"
-description = "Spec-driven engineering framework with traceability (Claude Code plugin)."
+description = "Spec-driven engineering plugin for Claude Code."
 requires-python = ">=3.10"
 dependencies = [
     "graphifyy[mcp]==0.9.32",

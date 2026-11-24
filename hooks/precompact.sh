@@ -32,22 +32,22 @@ else:
 with open(task_list, "r", encoding="utf-8") as f:
     content = f.read()
 
-parts = ["LIMET: pre-compattazione — ciclo attivo `%s`." % slug]
+parts = ["LIMET: pre-compact — active cycle `%s`." % slug]
 
 incomplete = []
 for m in re.finditer(r'^\|\s*(\d+)\s*\|[^|]*\|[^|]*\|\s*`?(pending|in_progress|blocked)`?', content, re.M):
     incomplete.append(m.group(1))
 if incomplete:
-    parts.append("Task non conclusi: #%s." % ", ".join(incomplete))
+    parts.append("Unfinished tasks: #%s." % ", ".join(incomplete))
 else:
-    parts.append("Tutti i task conclusi.")
+    parts.append("All tasks completed.")
 
 # File toccati di recente (registro modifiche), per ricordare cosa è stato cambiato.
 reg = re.search(r'## Registro modifiche.*', content, re.S)
 if reg:
     rows = re.findall(r'^\|\s*(?:—|\d+)\s*\|\s*`([^`]+)`', reg.group(0), re.M)
     if rows:
-        parts.append("File toccati: " + ", ".join(rows[-10:]) + ".")
+        parts.append("Touched files: " + ", ".join(rows[-10:]) + ".")
 
 msg = " ".join(parts)
 print(json.dumps({

@@ -1,24 +1,24 @@
 ---
-description: Ferma la dashboard LIMET (termina il processo in ascolto sulla porta :8787)
+description: Stop the LIMET dashboard (terminate the process listening on port :8787)
 ---
 
-Ferma la dashboard LIMET chiudendo il processo che ascolta sulla porta 8787.
+Stop the LIMET dashboard by closing the process listening on port 8787.
 
-Esegui (PowerShell tool):
+Run (PowerShell tool):
 
 ```
 $pids = Get-NetTCPConnection -LocalPort 8787 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique
 if ($pids) {
     $pids | ForEach-Object { Stop-Process -Id $_ -Force }
-    "Dashboard fermata."
+    "Dashboard stopped."
 } else {
-    "Nessuna dashboard attiva su http://127.0.0.1:8787"
+    "No dashboard active on http://127.0.0.1:8787"
 }
 ```
 
-Se `Get-NetTCPConnection` non è disponibile, fallback:
-`netstat -ano | findstr :8787` → prendi il PID nella colonna finale della riga `LISTENING`,
-poi `taskkill /PID <pid> /F`.
+If `Get-NetTCPConnection` is not available, fallback:
+`netstat -ano | findstr :8787` → take the PID in the last column of the `LISTENING` row,
+then `taskkill /PID <pid> /F`.
 
-Rispondi all'utente solo con l'esito ("Dashboard fermata." oppure
-"Nessuna dashboard attiva su http://127.0.0.1:8787").
+Reply to the user only with the outcome ("Dashboard stopped." or
+"No dashboard active on http://127.0.0.1:8787").

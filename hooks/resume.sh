@@ -40,7 +40,7 @@ if not incomplete:
     sys.exit(0)
 
 ids = ", ".join(incomplete)
-msg = "LIMET: ciclo attivo `%s` — task non conclusi: #%s. Riprendi dal primo." % (slug, ids)
+msg = "LIMET: active cycle `%s` — unfinished tasks: #%s. Resume from the first." % (slug, ids)
 print(json.dumps({
     "hookSpecificOutput": {
         "hookEventName": "SessionStart",

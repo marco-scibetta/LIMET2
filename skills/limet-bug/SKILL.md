@@ -1,72 +1,72 @@
 ---
 name: limet-bug
-description: Crea un bug report strutturato.
+description: Create a structured bug report.
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Write, Edit
 ---
 
 # LIMET — bug ($ARGUMENTS)
 
-Scrivi `BUG_REPORT.md` dal contenuto di `$ARGUMENTS`, seguendo il template sotto.
+Write `BUG_REPORT.md` from the content of `$ARGUMENTS`, following the template below.
 
-**Dove**: se esiste una cartella attiva `limet/changes/<data-slug>/`, scrivi `BUG_REPORT.md` lì dentro.
-Altrimenti crea `limet/changes/<data-slug>/` con `<data-slug>` = `YYYY-MM-DD-slug` derivato da
-`$ARGUMENTS` (es. `2026-11-20-pulsante-salva-non-funziona`).
+**Where**: if an active `limet/changes/<data-slug>/` folder exists, write `BUG_REPORT.md` there.
+Otherwise create `limet/changes/<data-slug>/` with `<data-slug>` = `YYYY-MM-DD-slug` derived from
+`$ARGUMENTS` (e.g. `2026-11-20-save-button-does-not-work`).
 
-## Regole binding
+## Binding rules
 
-- Distingui **comportamento osservato** (fatti, evidenze) da **ipotesi**.
-- La causa radice va scritta solo dopo l'investigazione, con riferimento puntuale a codice/log.
-- Strategia di verifica obbligatoria: test di regressione che **fallisce col bug presente** e passa dopo il fix.
+- Distinguish **observed behavior** (facts, evidence) from **hypotheses**.
+- Write the root cause only after investigation, with a precise reference to code/log.
+- Mandatory verification strategy: a regression test that **fails with the bug present** and passes after the fix.
 
 ---
 
-## Template BUG_REPORT
+## BUG_REPORT template
 
 ```markdown
-# Bug report — [titolo breve del difetto]
+# Bug report — [short defect title]
 
-## Metadati
-- Data segnalazione: [YYYY-MM-DD]
-- Segnalato da: [...]
-- Stato: `APERTO | IN ANALISI | IN FIX | RISOLTO | NON RIPRODUCIBILE | NON UN BUG`
-- Severità: `bloccante | alta | media | bassa`
+## Metadata
+- Report date: [YYYY-MM-DD]
+- Reported by: [...]
+- Status: `OPEN | ANALYZING | IN FIX | RESOLVED | NOT REPRODUCIBLE | NOT A BUG`
+- Severity: `blocking | high | medium | low`
 
-## Comportamento osservato
-[fatti + evidenze: log, messaggi di errore, screenshot, passi che lo hanno prodotto.]
+## Observed behavior
+[facts + evidence: logs, error messages, screenshots, steps that produced it.]
 
-## Comportamento atteso
-[cosa dovrebbe succedere secondo la specifica.]
+## Expected behavior
+[what should happen according to the spec.]
 
-## Passi per riprodurre
-1. [passo 1]
-2. [passo 2]
+## Steps to reproduce
+1. [step 1]
+2. [step 2]
 
-## Ambiente
-- Versione/branch/commit: [...]
-- Ambiente: [locale/test/produzione]
-- Dati di test necessari: [...]
+## Environment
+- Version/branch/commit: [...]
+- Environment: [local/test/production]
+- Required test data: [...]
 
-## Analisi della causa radice
-- Causa identificata: [...]
-- File/componente coinvolto: [percorso, righe]
-- Perché accade: [...]
+## Root cause analysis
+- Identified cause: [...]
+- File/component involved: [path, lines]
+- Why it happens: [...]
 
-## Impatto
-- Chi/cosa è affetto: [...]
-- Da quando: [versione/commit, se noto]
-- Workaround: [sì/no + descrizione]
+## Impact
+- Who/what is affected: [...]
+- Since when: [version/commit, if known]
+- Workaround: [yes/no + description]
 
-## Fix proposto
-[modifica minimale sulla causa radice, non solo sul sintomo.]
+## Proposed fix
+[minimal change to the root cause, not just the symptom.]
 
-## Strategia di verifica (obbligatoria)
-- Unit test di regressione: [deve fallire col bug e passare dopo il fix]
-- Test e2e: [se necessario]
+## Verification strategy (mandatory)
+- Regression unit test: [must fail with the bug and pass after the fix]
+- E2E test: [if necessary]
 
-## Task di verifica collegati
+## Linked verification tasks
 - [...]
 
-## Esito (a chiusura)
-- Data risoluzione / Commit/PR / Note
+## Outcome (at closure)
+- Resolution date / Commit/PR / Notes
 ```

@@ -1,59 +1,59 @@
 ---
 name: limet-archive
-description: Archivia il lavoro concluso e verificato.
+description: Archive finished and verified work.
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Write, Edit, Bash
 ---
 
 # LIMET — archive
 
-1. Verifica che il lavoro sia **concluso e verificato** (task `done`, test eseguiti e registrati).
-   Se manca la verifica, non archiviare: segnalalo e chiedi l'esito.
-2. Sposta `limet/changes/<data-slug>/` in `limet/archive/<data-slug>/`.
-3. Genera la voce di archivio come riassunto finale (template sotto) — non riscrivere la storia:
-   i documenti di dettaglio restano collegati per riferimento.
-4. Ricorda all'utente il re-index (mai eseguito dall'agente).
+1. Verify the work is **finished and verified** (tasks `done`, tests run and recorded).
+   If verification is missing, do not archive: flag it and ask for the outcome.
+2. Move `limet/changes/<data-slug>/` to `limet/archive/<data-slug>/`.
+3. Generate the archive entry as a final summary (template below) — do not rewrite history:
+   the detailed documents remain linked by reference.
+4. Remind the user to re-index (never run by the agent).
 
-## Regole binding
+## Binding rules
 
-- Archivia solo lavoro verificato; senza verifica → fermati e segnala.
-- Non eseguire commit/push senza autorizzazione esplicita.
+- Archive only verified work; without verification → stop and flag it.
+- Never commit/push without explicit authorization.
 
 ---
 
-## Template ARCHIVE_ENTRY
+## ARCHIVE_ENTRY template
 
 ```markdown
-# Voce di archivio — [nome modifica]
+# Archive entry — [change name]
 
-## Metadati
-- Nome modifica: [...]
-- Tipo: `feature | bug fix | refactor | altro`
-- Data conclusione: [YYYY-MM-DD HH:MM]
-- Autore/i: [...]
+## Metadata
+- Change name: [...]
+- Type: `feature | bug fix | refactor | other`
+- Completion date: [YYYY-MM-DD HH:MM]
+- Author(s): [...]
 
-## Riepilogo
-[3-5 righe, comprensibili a distanza di mesi senza contesto.]
+## Summary
+[3-5 lines, understandable months later without context.]
 
-## Documenti collegati (riferimento, non copia)
-- Piano/proposta: [link]
-- Elenco task: [link]
+## Linked documents (reference, not copy)
+- Plan/proposal: [link]
+- Task list: [link]
 - Test plan/execution: [link]
-- Sintesi non tecnica: [link, se presente]
-- Bug report: [link, se applicabile]
+- Non-technical summary: [link, if present]
+- Bug report: [link, if applicable]
 
-## Decisioni chiave prese durante il lavoro
-[domande contestuali più rilevanti + risposte, per non perdere il "perché".]
+## Key decisions made during the work
+[most relevant contextual questions + answers, so the "why" is not lost.]
 
-## Esito finale della verifica
-- Unit test: [OK/KO, riferimento]
-- Test e2e: [OK/KO, riferimento]
-- Problemi noti residui: [...]
+## Final verification outcome
+- Unit tests: [OK/KO, reference]
+- E2E tests: [OK/KO, reference]
+- Known residual issues: [...]
 
-## Lezioni apprese (opzionale)
+## Lessons learned (optional)
 [...]
 
-## Re-indicizzazione del contesto
-- [ ] Ricorda all'utente: Launcher → Re-index → Incrementale → clic Re-index.
-      Il re-index spetta all'utente, mai all'agente.
+## Context re-indexing
+- [ ] Remind the user: Launcher → Re-index → Incremental → click Re-index.
+      Re-indexing belongs to the user, never the agent.
 ```

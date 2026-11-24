@@ -42,7 +42,7 @@ limet/                          ← UNICO repo self-contained
 ```json
 {
   "name": "limet",
-  "description": "Spec-driven engineering framework with traceability: proposal → spec → plan → task → test → archive.",
+  "description": "Spec-driven engineering plugin for Claude Code: proposal → spec → plan → task → test → archive.",
   "version": "2.0.0",
   "author": "LIMET",
   "homepage": "https://github.com/<org>/limet"

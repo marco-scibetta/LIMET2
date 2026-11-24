@@ -1,89 +1,89 @@
 ---
 name: limet-test
-description: Genera il piano di test e registra l'esito reale dei test.
+description: Generate the test plan and record the actual test outcome.
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Write, Edit
 ---
 
 # LIMET — test
 
-Genera/aggiorna in `limet/changes/<data-slug>/`:
+Generate/update in `limet/changes/<data-slug>/`:
 
-1. `TEST_PLAN.md` — unit + e2e, **prima** del codice, con autorevisione qualità (§5.1).
-2. `TEST_EXECUTION.md` — **sempre generato**: se i test non sono ancora stati eseguiti, genera la
-   struttura con i campi "da compilare a esecuzione avvenuta"; se sono stati eseguiti, incolla i
-   log reali (non riassunti a memoria).
+1. `TEST_PLAN.md` — unit + e2e, **before** the code, with quality self-review (§5.1).
+2. `TEST_EXECUTION.md` — **always generated**: if tests have not been run yet, generate the
+   structure with "to be filled once executed" fields; if they have been run, paste the real
+   logs (not summaries from memory).
 
-## Regole binding
+## Binding rules
 
-- Non eseguire i test tu: fornisci i comandi, l'utente li esegue e riporta l'esito. Suggerisci `!bash scripts/run-tests.sh <comando>` (esito in TEST_EXECUTION, log distrutto se OK).
-- Autorevisione qualità obbligatoria prima di dichiarare completo il piano.
-- Ogni task prevede unit + e2e + lint/type (se configurati), anche con "n/a" giustificato.
+- Do not run the tests yourself: provide the commands, the user runs them and reports the outcome. Suggest `!bash scripts/run-tests.sh <command>` (outcome in TEST_EXECUTION, log destroyed if OK).
+- Quality self-review is mandatory before declaring the plan complete.
+- Every task has unit + e2e + lint/type (if configured), even with justified "n/a".
 
 ---
 
-## Template TEST_PLAN
+## TEST_PLAN template
 
 ```markdown
-# Piano di test — [nome]
+# Test plan — [name]
 
-## Riferimenti
-- Piano/proposta collegata: [...]
-- Task collegato/i: [...]
+## References
+- Linked plan/proposal: [...]
+- Linked task(s): [...]
 
-## Ambito della verifica
+## Verification scope
 [...]
 
-## Unit test previsti
-| # | Cosa verifica | File/classe di test | Caso (happy / edge / regressione) |
-| - | -------------- | -------------------- | ---------------------------------- |
+## Planned unit tests
+| # | What it verifies | Test file/class | Case (happy / edge / regression) |
+| - | ---------------- | --------------- | -------------------------------- |
 
-### Autorevisione della qualità (obbligatoria)
-- Sabotaggio mentale: quale alterazione del codice NON farebbe fallire nessun test?
-- [ ] Ogni assert può fallire per il motivo dichiarato
-- [ ] Atteso non derivato dall'oggetto sotto test
-- [ ] Contratto verificato (input assenti/vuoti/non validi), non solo happy path
+### Quality self-review (mandatory)
+- Mental sabotage: which code change would NOT make any test fail?
+- [ ] Every assert can fail for the stated reason
+- [ ] Expected not derived from the object under test
+- [ ] Contract verified (missing/empty/invalid inputs), not only happy path
 
-## Test e2e previsti
-| # | Scenario | Precondizioni | Passi principali | Esito atteso |
-| - | -------- | -------------- | ------------------ | -------------- |
+## Planned e2e tests
+| # | Scenario | Preconditions | Main steps | Expected outcome |
+| - | -------- | ------------- | ---------- | ---------------- |
 
-## Dati di test necessari
+## Required test data
 [...]
 
-## Casi esclusi dal test (e perché)
+## Cases excluded from testing (and why)
 - [...]
 
-## Chi esegue
-- Scrittura test: [...] / Esecuzione: [...]
+## Who runs
+- Test authoring: [...] / Execution: [...]
 
-## Comandi di test rieseguibili
-- [comando esatto per rieseguire ogni test]
+## Re-runnable test commands
+- [exact command to re-run each test]
 ```
 
-## Template TEST_EXECUTION
+## TEST_EXECUTION template
 
 ```markdown
-# Esecuzione test — [nome]
+# Test execution — [name]
 
-## Riferimenti
-- Piano collegato: [...]
+## References
+- Linked plan: [...]
 
-## Metadati esecuzione
-- Data/ora: [YYYY-MM-DD HH:MM] / Eseguito da: [...] / Ambiente: [...] / Comando eseguito: [...]
+## Execution metadata
+- Date/time: [YYYY-MM-DD HH:MM] / Run by: [...] / Environment: [...] / Command run: [...]
 
-## Esito unit test
-- Totale / Passati / Falliti / Saltati
-- Log (incollare output reale del runner)
+## Unit test outcome
+- Total / Passed / Failed / Skipped
+- Log (paste the runner's real output)
 
-## Esito test e2e
-| # | Scenario | Esito (OK / KO / non eseguito) | Note |
-| - | -------- | ------------------------------ | ---- |
+## E2E test outcome
+| # | Scenario | Outcome (OK / KO / not run) | Notes |
+| - | -------- | -------------------------- | ----- |
 
-## Anomalie riscontrate
+## Anomalies found
 - [...]
 
-## Conclusione
-- Esito complessivo: `OK | KO | PARZIALE`
-- Il task può passare a `done`? [sì/no + motivazione]
+## Conclusion
+- Overall outcome: `OK | KO | PARTIAL`
+- Can the task move to `done`? [yes/no + reason]
 ```

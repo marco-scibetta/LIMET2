@@ -34,8 +34,8 @@ ids = ", ".join(incomplete)
 root = os.environ.get("CLAUDE_PLUGIN_ROOT") or ""
 run = ""
 if root:
-    run = ' Esegui i test: !bash "%s/scripts/run-tests.sh" (o aggiungi il comando esatto).' % root
-msg = "LIMET: task non conclusi/verificati: #%s.%s Poi /limet-test e /limet-archive." % (ids, run)
+    run = ' Run the tests: !bash "%s/scripts/run-tests.sh" (or add the exact command).' % root
+msg = "LIMET: unfinished/unverified tasks: #%s.%s Then /limet-test and /limet-archive." % (ids, run)
 print(json.dumps({
     "hookSpecificOutput": {
         "hookEventName": "Stop",

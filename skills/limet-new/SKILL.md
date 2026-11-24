@@ -1,267 +1,266 @@
 ---
 name: limet-new
-description: 'Avvia un ciclo LIMET per una feature o modifica: genera proposta, spec, piano, task, test ed e2e.'
+description: 'Start a LIMET cycle for a feature or change: generates proposal, spec, plan, task list, test plan and e2e.'
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Write
 ---
 
-# LIMET — nuovo ciclo ($ARGUMENTS)
+# LIMET — new cycle ($ARGUMENTS)
 
-Genera in `limet/changes/<data-slug>/` i documenti seguenti, **in ordine**, partendo dal contenuto di `$ARGUMENTS`.
-`<data-slug>` = `YYYY-MM-DD-slug` derivato da `$ARGUMENTS` (es. `2026-11-20-login-page`).
-Scrivi nella lingua configurata in `config/config.yaml` + `config/config.local.yaml` (chiave `language`, valori `it`/`en`); se assente, nella lingua dell'utente. Ogni documento è istanziato dal template inline sotto, e non deve
-restare vuoto.
+Generate in `limet/changes/<data-slug>/` the documents below, **in order**, starting from the content of `$ARGUMENTS`.
+`<data-slug>` = `YYYY-MM-DD-slug` derived from `$ARGUMENTS` (e.g. `2026-11-20-login-page`).
+Write in the language configured in `config/config.yaml` + `config/config.local.yaml` (key `language`, values `it`/`en`); if absent, in the user's language. Each document is instantiated from the inline template below and must not stay empty.
 
-## Documenti da generare
+## Documents to generate
 
-1. `CHANGE_PROPOSAL.md` — il *perché*: problema, cosa cambia, impatto.
-2. `SPEC.md` — il *cosa* verificabile: requisiti + scenari dato/quando/allora.
-3. `PLAN.md` — il *come* a livello di disegno: approccio, alternative, rischi.
-4. `TASK_LIST.md` — task granulari con stato, dipendenze, strategia di test, registro modifiche vuoto.
-5. `TEST_PLAN.md` — unit + e2e + lint/type (se configurati), con comandi di riesecuzione.
-6. `E2E_VERIFICATION.md` — checklist passo-passo per la verifica manuale.
-7. `DECISIONS.md` — solo se emergono decisioni hard-to-reverse (ADR-lite).
+1. `CHANGE_PROPOSAL.md` — the *why*: problem, what changes, impact.
+2. `SPEC.md` — the *what*, verifiable: requirements + given/when/then scenarios.
+3. `PLAN.md` — the *how* at design level: approach, alternatives, risks.
+4. `TASK_LIST.md` — granular tasks with status, dependencies, test strategy, empty change log.
+5. `TEST_PLAN.md` — unit + e2e + lint/type (if configured), with re-run commands.
+6. `E2E_VERIFICATION.md` — step-by-step checklist for manual verification.
+7. `DECISIONS.md` — only if hard-to-reverse decisions emerge (ADR-lite).
 
-## Regole binding
+## Binding rules
 
-- Ogni scelta ambigua → domanda esplicita all'utente con data. **Mai assumere in silenzio.**
-- Ogni task deve avere una strategia di verifica (unit + e2e + lint/type se configurati), anche con "n/a" giustificato.
-- Non eseguire build/test: fornisci i comandi, l'utente li esegue e riporta l'esito.
-- Assicura che il `.gitignore` del progetto contenga `limet/.test-logs/` (aggiungi la riga se assente, così i log test transitori non finiscono nel repo).
-- Prima di implementare un task, dai un **brief di 2-3 righe** (cosa, file toccati, verifica) e procedi senza attendere conferma.
-- Non eseguire commit/push/migrate/deploy senza autorizzazione esplicita.
+- Any ambiguous choice → explicit question to the user with a date. **Never assume silently.**
+- Every task must have a verification strategy (unit + e2e + lint/type if configured), even with justified "n/a".
+- Never run build/test: provide the commands, the user runs them and reports the outcome.
+- Ensure the project `.gitignore` contains `limet/.test-logs/` (add the line if missing, so transient test logs don't end up in the repo).
+- Before implementing a task, give a **2-3 line brief** (what, files touched, linked verification) and proceed without waiting for confirmation.
+- Never commit/push/migrate/deploy without explicit authorization.
 
 ---
 
-## Template CHANGE_PROPOSAL
+## CHANGE_PROPOSAL template
 
 ```markdown
-# Proposta di modifica — [nome capability/change]
+# Change proposal — [capability/change name]
 
-## Metadati
-- Data creazione: [YYYY-MM-DD]
-- Stato: `DRAFT | APPROVATA | IN CORSO | COMPLETATA | ABBANDONATA`
-- Approvata da / data: [chi — YYYY-MM-DD]
-- Specifiche collegate: [file SPEC]
-- Disegno collegato: [file PLAN/DESIGN]
+## Metadata
+- Creation date: [YYYY-MM-DD]
+- Status: `DRAFT | APPROVED | IN PROGRESS | COMPLETED | ABANDONED`
+- Approved by / date: [who — YYYY-MM-DD]
+- Linked spec: [SPEC file]
+- Linked design: [PLAN/DESIGN file]
 
-## Perché
-[Problema/opportunità; perché ora; cosa succede se non si fa.]
+## Why
+[Problem/opportunity; why now; what happens if not done.]
 
-## Cosa cambia (riepilogo)
-- [cambiamento 1]
-- [cambiamento 2]
+## What changes (summary)
+- [change 1]
+- [change 2]
 
 ## Capability
-### Nuove capability
-- `nome`: [descrizione]
-### Capability modificate
-- `nome`: [cosa cambia e perché]
-### Capability rimosse/deprecate
-- `nome`: [motivo + piano di migrazione]
+### New capabilities
+- `name`: [description]
+### Modified capabilities
+- `name`: [what changes and why]
+### Removed/deprecated capabilities
+- `name`: [reason + migration plan]
 
-## Impatto
-- Codice/moduli interessati: [...]
-- API/contratti interessati: [...] (compatibilità all'indietro)
-- Dipendenze esterne: [...]
-- Dati esistenti: [migrazione? retrocompatibile?]
+## Impact
+- Code/modules affected: [...]
+- API/contracts affected: [...] (backward compatibility)
+- External dependencies: [...]
+- Existing data: [migration? backward-compatible?]
 
-## Domande contestuali aperte
-| # | Domanda | Risposta | Data | Da chi |
-| - | ------- | -------- | ---- | ------ |
+## Open contextual questions
+| # | Question | Answer | Date | By |
+| - | -------- | ------ | ---- | -- |
 
-## Strategia di verifica
-- Unit test: [rif. TEST_PLAN.md]
-- Test e2e: [rif. E2E_VERIFICATION.md]
+## Verification strategy
+- Unit tests: [ref. TEST_PLAN.md]
+- E2E tests: [ref. E2E_VERIFICATION.md]
 
-## Esito (a chiusura, prima dell'archiviazione)
-- Data: [...]
-- Sintesi: [...]
-- Scostamenti rispetto alla proposta originale: [...]
+## Outcome (at closure, before archiving)
+- Date: [...]
+- Summary: [...]
+- Deviations from the original proposal: [...]
 ```
 
-## Template SPEC
+## SPEC template
 
 ```markdown
-# Specifica — Capability: [nome]
+# Spec — Capability: [name]
 
-## Metadati
-- Proposta collegata: [file CHANGE_PROPOSAL]
-- Stato: `DRAFT | APPROVATA | IMPLEMENTATA`
-- Versione: [N]
+## Metadata
+- Linked proposal: [CHANGE_PROPOSAL file]
+- Status: `DRAFT | APPROVED | IMPLEMENTED`
+- Version: [N]
 
-## Descrizione della capability
-[Comportamento osservabile, non implementazione.]
+## Capability description
+[Observable behavior, not implementation.]
 
-## Requisiti
-### Requisito N: [titolo breve]
-[Descrizione.]
+## Requirements
+### Requirement N: [short title]
+[Description.]
 
-**Scenari** (dato/quando/allora):
-- **Dato** [precondizione], **quando** [azione], **allora** [risultato atteso].
-- **Dato** [edge case], **quando** [...], **allora** [...].
+**Scenarios** (given/when/then):
+- **Given** [precondition], **when** [action], **then** [expected result].
+- **Given** [edge case], **when** [...], **then** [...].
 
-## Vincoli e casi limite
-- [vincolo / caso limite]
+## Constraints and edge cases
+- [constraint / edge case]
 
-## Fuori specifica (esplicitamente non coperto)
-- [comportamento non garantito]
+## Out of scope (explicitly not covered)
+- [behavior not guaranteed]
 
-## Tracciabilità verso i test
-| Requisito | Unit test | Test e2e |
+## Traceability to tests
+| Requirement | Unit test | E2E test |
 | --- | --- | --- |
-| Requisito 1 | [rif.] | [rif.] |
+| Requirement 1 | [ref.] | [ref.] |
 ```
 
-## Template PLAN
+## PLAN template
 
 ```markdown
-# Piano — [nome feature / bug fix]
+# Plan — [feature / bug fix name]
 
-## Metadati
-- Data creazione: [YYYY-MM-DD]
-- Stato: `DRAFT | APPROVATO | IN CORSO | COMPLETATO | ABBANDONATO`
-- Approvato da / data: [chi — YYYY-MM-DD]
+## Metadata
+- Creation date: [YYYY-MM-DD]
+- Status: `DRAFT | APPROVED | IN PROGRESS | COMPLETED | ABANDONED`
+- Approved by / date: [who — YYYY-MM-DD]
 
-## 1. Obiettivo
-[2-4 frasi: cosa e perché, non ancora come.]
+## 1. Goal
+[2-4 sentences: what and why, not yet how.]
 
-## 2. Perimetro (scope)
-### Dentro perimetro
+## 2. Scope
+### In scope
 - [...]
-### Fuori perimetro
-- [...] (motivo)
+### Out of scope
+- [...] (reason)
 
-## 3. Stato attuale
-[Verificato per fatti, non per assunzione.]
-- [componente]: [cosa fa oggi]
+## 3. Current state
+[Verified by facts, not assumption.]
+- [component]: [what it does today]
 
-## 4. Domande contestuali aperte
-| # | Domanda | Risposta | Data | Da chi |
+## 4. Open contextual questions
+| # | Question | Answer | Date | By |
 
-## 5. Approccio proposto
-[Disegno: componenti toccati, logica introdotta/modificata.]
+## 5. Proposed approach
+[Design: components touched, logic introduced/modified.]
 
-### Alternative considerate e scartate
-- **Alternativa A**: [descrizione] — scartata perché [motivo].
+### Alternatives considered and rejected
+- **Alternative A**: [description] — rejected because [reason].
 
-## 6. Elenco attività
-[Il dettaglio granulare va in TASK_LIST.md — genera sempre TASK_LIST.md.]
+## 6. Activity list
+[The granular detail goes in TASK_LIST.md — always generate TASK_LIST.md.]
 
-## 7. Strategia di verifica (obbligatoria)
-- Unit test: [sì/no + rif. TEST_PLAN.md]
-- Test e2e: [sì/no + rif. E2E_VERIFICATION.md]
+## 7. Verification strategy (mandatory)
+- Unit tests: [yes/no + ref. TEST_PLAN.md]
+- E2E tests: [yes/no + ref. E2E_VERIFICATION.md]
 
-## 8. Rischi e impatti
-- [rischio] — mitigazione: [...]
-- Compatibilità all'indietro: [...]
+## 8. Risks and impacts
+- [risk] — mitigation: [...]
+- Backward compatibility: [...]
 
-## 9. Note operative
-- Commit/push: [chi li esegue]
+## 9. Operational notes
+- Commit/push: [who performs them]
 ```
 
-## Template TASK_LIST
+## TASK_LIST template
 
 ```markdown
-# Elenco task — [nome]
+# Task list — [name]
 
-## Legenda stato
-- `pending` / `in_progress` / `blocked` / `done` (completato **e verificato**; annotare `YYYY-MM-DD HH:MM`)
+## Status legend
+- `pending` / `in_progress` / `blocked` / `done` (completed **and verified**; annotate `YYYY-MM-DD HH:MM`)
 
-## Tabella task
-| # | Titolo | Scopo (non tecnico) | Stato | Dipende da | Dettaglio | Note |
-| - | ------ | ------------------- | ----- | ---------- | --------- | ---- |
+## Task table
+| # | Title | Purpose (non-technical) | Status | Depends on | Detail | Notes |
+| - | ----- | ----------------------- | ------ | ---------- | ------ | ----- |
 
-## Strategia di test — obbligatoria per ogni task
-| # task | Unit test previsti | Test e2e previsti | Se omesso, motivazione |
-| ------ | ------------------ | ----------------- | ---------------------- |
+## Test strategy — mandatory for every task
+| # task | Planned unit tests | Planned e2e tests | If omitted, justification |
+| ------ | ------------------ | ----------------- | ------------------------ |
 
-## Registro modifiche — una riga per file toccato
-| Task | File | Tipo | Cosa è cambiato | Perché | Verifica collegata |
-| ---- | ---- | ---- | --------------- | ------ | ------------------ |
+## Change log — one row per touched file
+| Task | File | Type | What changed | Why | Linked verification |
+| ---- | ---- | ---- | ------------ | --- | ------------------- |
 
-## Esito implementazione (a lavoro concluso)
-- Data / Sintesi esito / Scostamenti / Esito test
+## Implementation outcome (at closure)
+- Date / Summary / Deviations / Test outcome
 ```
 
-## Template TEST_PLAN
+## TEST_PLAN template
 
 ```markdown
-# Piano di test — [nome]
+# Test plan — [name]
 
-## Riferimenti
-- Piano/proposta collegata: [...]
-- Task collegato/i: [...]
+## References
+- Linked plan/proposal: [...]
+- Linked task(s): [...]
 
-## Ambito della verifica
+## Verification scope
 [...]
 
-## Unit test previsti
-| # | Cosa verifica | File/classe di test | Caso (happy / edge / regressione) |
-| - | -------------- | -------------------- | ---------------------------------- |
+## Planned unit tests
+| # | What it verifies | Test file/class | Case (happy / edge / regression) |
+| - | ---------------- | --------------- | -------------------------------- |
 
-### Autorevisione della qualità (obbligatoria)
-- Sabotaggio mentale: quale alterazione del codice NON farebbe fallire nessun test?
-- [ ] Ogni assert può fallire per il motivo dichiarato
-- [ ] Atteso non derivato dall'oggetto sotto test
-- [ ] Contratto verificato (input assenti/vuoti/non validi), non solo happy path
+### Quality self-review (mandatory)
+- Mental sabotage: which code change would NOT make any test fail?
+- [ ] Every assert can fail for the stated reason
+- [ ] Expected not derived from the object under test
+- [ ] Contract verified (missing/empty/invalid inputs), not only happy path
 
-## Test e2e previsti
-| # | Scenario | Precondizioni | Passi principali | Esito atteso |
-| - | -------- | -------------- | ------------------ | -------------- |
+## Planned e2e tests
+| # | Scenario | Preconditions | Main steps | Expected outcome |
+| - | -------- | ------------- | ---------- | ---------------- |
 
-## Dati di test necessari
+## Required test data
 [...]
 
-## Casi esclusi dal test (e perché)
+## Cases excluded from testing (and why)
 - [...]
 
-## Chi esegue
-- Scrittura test: [...] / Esecuzione: [...]
+## Who runs
+- Test authoring: [...] / Execution: [...]
 
-## Comandi di test rieseguibili
-- [comando esatto per rieseguire ogni test]
+## Re-runnable test commands
+- [exact command to re-run each test]
 ```
 
-## Template E2E_VERIFICATION
+## E2E_VERIFICATION template
 
 ```markdown
-# Verifica e2e manuale — [nome]
+# Manual e2e verification — [name]
 
-## Riferimenti
-- Piano/task collegato: [...]
-- Ambiente di verifica: [locale/test/staging/produzione]
+## References
+- Linked plan/task: [...]
+- Verification environment: [local/test/staging/production]
 
-## Precondizioni
+## Preconditions
 - [...]
 
-## Stato pre-verifica (controllo PRIMA dei passi)
-- Controllo: [...] (es. SELECT/SQL, file, config)
+## Pre-verification state (check BEFORE the steps)
+- Check: [...] (e.g. SELECT/SQL, file, config)
 
-## Passi di verifica
-1. [Passo 1 — azione precisa]
-   - **Esito atteso**: [...]
+## Verification steps
+1. [Step 1 — precise action]
+   - **Expected outcome**: [...]
 2. [...]
 
-## Stato post-verifica (controllo DOPO i passi)
-- Controllo: [...]
+## Post-verification state (check AFTER the steps)
+- Check: [...]
 
-## Casi limite da verificare
+## Edge cases to verify
 - [...]
 
-## Esito esecuzione (da compilare da chi esegue)
-- Data/ora / Eseguito da / Esito (`OK | KO`) / Note
+## Execution outcome (to be filled by who runs it)
+- Date/time / Run by / Outcome (`OK | KO`) / Notes
 ```
 
-## Template DECISIONS (ADR-lite — solo se emergono decisioni hard-to-reverse)
+## DECISIONS template (ADR-lite — only if hard-to-reverse decisions emerge)
 
 ```markdown
-# Decisioni (ADR-lite)
+# Decisions (ADR-lite)
 
-| # | Decisione | Stato | Data | Contesto | Conseguenze |
-| - | --------- | ----- | ---- | -------- | ----------- |
-| 1 | [...]     | `accepted` | [YYYY-MM-DD] | [perché] | [...] |
+| # | Decision | Status | Date | Context | Consequences |
+| - | -------- | ------ | ---- | ------- | ------------ |
+| 1 | [...]    | `accepted` | [YYYY-MM-DD] | [why] | [...] |
 ```
 
-> Stato: `accepted` o `superseded` (con riferimento alla decisione che la sostituisce).
-> Registra solo decisioni hard-to-reverse; non il lifecycle ADR completo.
+> Status: `accepted` or `superseded` (with reference to the decision that replaces it).
+> Record only hard-to-reverse decisions; not the full ADR lifecycle.

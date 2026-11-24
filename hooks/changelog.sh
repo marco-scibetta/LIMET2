@@ -40,7 +40,7 @@ rel = os.path.relpath(fp, cwd)
 if rel.startswith("limet/changes") or rel.startswith("limet/archive") or rel.startswith("..") or re.search(r'(^|/)(\.git|node_modules|__pycache__|dist|build|\.vite|graphify-out|\.claude)(/|$)', rel):
     sys.exit(0)
 
-tipo = "creato" if tool == "Write" else "modificato"
+tipo = "created" if tool == "Write" else "modified"
 
 with open(task_list, "r", encoding="utf-8") as f:
     content = f.read()
@@ -49,7 +49,7 @@ with open(task_list, "r", encoding="utf-8") as f:
 if rel in content:
     sys.exit(0)
 
-row = "| —    | `%s` | %s | (auto) | (da completare) | (da verificare) |" % (rel, tipo)
+row = "| —    | `%s` | %s | (auto) | (to complete) | (to verify) |" % (rel, tipo)
 
 lines = content.splitlines()
 idx = None

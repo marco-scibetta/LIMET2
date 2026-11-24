@@ -1,25 +1,25 @@
 ---
 name: limet-analyze
-description: 'Analizza un progetto non documentato: genera i documenti onboarding in docs/ tramite il subagent limet-analyzer.'
+description: 'Analyze an undocumented project: generate onboarding docs in docs/ via the limet-analyzer subagent.'
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Agent
 ---
 
-# LIMET — analisi progetto ($ARGUMENTS)
+# LIMET — analyze project ($ARGUMENTS)
 
-Avvia l'analisi del progetto corrente per generare documenti onboarding in `docs/`.
+Start the analysis of the current project to generate onboarding documents in `docs/`.
 
-## Flusso
+## Flow
 
-1. Determina lo slug del progetto dal nome della directory corrente (come fa `hooks/intent.sh`).
-2. Verifica il flag `analyze` in `config/config.yaml` + `config/config.local.yaml`:
-   - se `projects.<slug>.analyze` è `true`, procedi;
-   - altrimenti chiedi conferma all'utente prima di procedere (mai assumere).
-3. Spawna il subagent `limet-analyzer` (subagent_type `limet:limet-analyzer`) sul progetto corrente.
-4. Al termine, verifica che in `docs/` esistano i 7 documenti attesi e riporta l'esito.
+1. Determine the project slug from the current directory name (as `hooks/intent.sh` does).
+2. Check the `analyze` flag in `config/config.yaml` + `config/config.local.yaml`:
+   - if `projects.<slug>.analyze` is `true`, proceed;
+   - otherwise ask the user for confirmation before proceeding (never assume).
+3. Spawn the `limet-analyzer` subagent (subagent_type `limet:limet-analyzer`) on the current project.
+4. At the end, verify that the 7 expected documents exist in `docs/` and report the outcome.
 
-## Regole binding
+## Binding rules
 
-- Non eseguire build/test; non modificare il codice del progetto target.
-- Il re-index dei documenti generati resta all'utente (mai indicizzare in autonomia).
-- Se il flag non è attivo e l'utente non conferma, fermati senza procedere.
+- Do not run build/test; do not modify the target project's code.
+- Re-indexing the generated documents belongs to the user (never index autonomously).
+- If the flag is inactive and the user does not confirm, stop without proceeding.

@@ -1,37 +1,37 @@
 ---
 name: limet-task
-description: 'Esegue un task del TASK_LIST: brief, implementazione e change log.'
+description: 'Run a task from the TASK_LIST: brief, implementation and change log.'
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Write, Edit
 ---
 
-# LIMET — esegui task ($ARGUMENTS)
+# LIMET — run task ($ARGUMENTS)
 
-`$ARGUMENTS` = id del task (es. `3` o `task3`).
+`$ARGUMENTS` = task id (e.g. `3` or `task3`).
 
-## Flusso
+## Flow
 
-1. Leggi il `TASK_LIST.md` attivo in `limet/changes/<data-slug>/` e individua il task richiesto.
-2. **Brief obbligatorio** (prima di toccare qualsiasi file): 2-3 righe con *cosa farai*, *file che
-   toccherai*, *verifica collegata*. Poi procedi **senza attendere conferma**.
-3. Implementa il task, restando dentro il perimetro dichiarato.
-4. Registra ogni file creato/modificato nella sezione **"Registro modifiche"** di `TASK_LIST.md`
-   (una riga per file: task, percorso, tipo, cosa è cambiato, perché, verifica collegata).
-5. **Non marcare `done`** finché la verifica non è eseguita: dai all'utente i comandi di test/verifica
-   e resta in standby finché non arriva l'esito.
+1. Read the active `TASK_LIST.md` in `limet/changes/<data-slug>/` and locate the requested task.
+2. **Mandatory brief** (before touching any file): 2-3 lines with *what you will do*, *files you will touch*,
+   *linked verification*. Then proceed **without waiting for confirmation**.
+3. Implement the task, staying within the declared scope.
+4. Record every created/modified file in the **"Change log"** section of `TASK_LIST.md`
+   (one row per file: task, path, type, what changed, why, linked verification).
+5. **Do not mark `done`** until verification is run: give the user the test/verification commands
+   and stay on standby until the outcome arrives.
 
-## Regole binding
+## Binding rules
 
-- Ogni scelta ambigua → domanda esplicita all'utente con data. **Mai assumere in silenzio.**
-- Non eseguire build/test: fornisci i comandi, l'utente li esegue e riporta l'esito.
-- Non eseguire commit/push/migrate/deploy senza autorizzazione esplicita.
-- Resta nel perimetro del task; ogni scostamento → segnala e chiedi approvazione.
+- Any ambiguous choice → explicit question to the user with a date. **Never assume silently.**
+- Never run build/test: provide the commands, the user runs them and reports the outcome.
+- Never commit/push/migrate/deploy without explicit authorization.
+- Stay within the task scope; any deviation → flag it and ask for approval.
 
-## Formato del brief
+## Brief format
 
 ```text
-Brief #<id> — <titolo>
-- Cosa: <una riga>
-- File toccati: <elenco>
-- Verifica: <comando o controllo>
+Brief #<id> — <title>
+- What: <one line>
+- Files touched: <list>
+- Verification: <command or check>
 ```
