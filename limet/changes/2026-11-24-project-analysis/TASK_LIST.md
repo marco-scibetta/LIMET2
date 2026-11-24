@@ -75,3 +75,5 @@
 | —    | `docs\OPTIMIZATIONS.md` | modificato | (auto) | (da completare) | (da verificare) |
 | —    | `docs\DASHBOARD.md` | modificato | (auto) | (da completare) | (da verificare) |
 | —    | `docs\HOOKS.md` | modificato | (auto) | (da completare) | (da verificare) |
+| —    | `scripts\run-tests.sh` | modificato | (auto) | (da completare) | (da verificare) |
+| —    | `agents\limet-gate.md` | modificato | (auto) | (da completare) | (da verificare) |

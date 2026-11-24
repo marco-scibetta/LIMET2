@@ -45,9 +45,10 @@ else
     printf '\n## Esito test\n'
     printf -- '- Data: %s\n' "$TS"
     printf -- '- Comando: `%s`\n' "$CMD"
-    printf -- '- Esito: FAIL (exit %s)\n\n' "$RC"
-    printf '## Fallimenti (ultime 30 righe)\n```\n'
-    tail -n 30 "$LOGDIR/raw.log"
+    printf -- '- Esito: FAIL (exit %s)\n' "$RC"
+    printf -- '- Log completo: `%s`\n\n' "$LOGDIR/raw.log"
+    printf '## Coda output (ultime 60 righe)\n```\n'
+    tail -n 60 "$LOGDIR/raw.log"
     printf '```\n'
   } >> "$CHANGE/TEST_EXECUTION.md"
   echo "FAIL (exit $RC) — log completo in $LOGDIR/raw.log"

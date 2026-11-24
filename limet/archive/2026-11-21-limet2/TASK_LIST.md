@@ -56,6 +56,10 @@
 > **Amendment 5 (2026-11-24)**: aggiunta feature "Analisi progetto / auto-onboarding" — nuovo subagent
 > `limet-analyzer` + skill `/limet-analyze` + flag config `analyze` + intento hook + pagina dashboard
 > "Analizza" (`/api/analyze`). Doc onboarding generati in `docs/`. Vedi `limet/changes/2026-11-24-project-analysis/`.
+>
+> **Amendment 6 (2026-11-24)**: `run-tests.sh` su FAIL ora scrive nel summary anche il puntatore a
+> `raw.log` + la coda output (60 righe, language-agnostic — nessun parsing della firma). Il summary
+> basta a valutare l'esito senza rilanciare i test. Test `test_run_tests_fail_keeps_log` rafforzato.
 
 ## Legenda stato
 

@@ -194,7 +194,10 @@ def test_run_tests_fail_keeps_log(tmp_path):
     r = _run_script("run-tests.sh", ["sh", "-c", "echo boom; exit 3"], tmp_path)
     assert r.returncode == 0, r.stderr
     exec_file = change / "TEST_EXECUTION.md"
-    assert "FAIL" in exec_file.read_text(encoding="utf-8")
+    content = exec_file.read_text(encoding="utf-8")
+    assert "FAIL" in content
+    assert "boom" in content          # coda output nel summary (self-sufficient)
+    assert "raw.log" in content       # puntatore al log completo nel summary
     logdir = tmp_path / "limet" / ".test-logs"
     raw = logdir / "raw.log"
     assert raw.exists()

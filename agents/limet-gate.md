@@ -15,8 +15,9 @@ Controlla il `TASK_LIST.md` attivo in `limet/changes/<data-slug>/` e i file di t
 5. Lint/typecheck eseguito con esito registrato — se il progetto ha lint/type configurati (`ruff`/`mypy`
    in `pyproject.toml`, `eslint`, `tsc`/`tsconfig.json`); altrimenti "n/a" con giustificazione.
 
-> **Lettura mirata (costo token)**: leggi solo `TEST_EXECUTION.md` (sezioni "Esito test"/"Conclusione").
-> Non leggere mai `raw.log` (log pieno, può essere enorme) né l'intero file se grande. Usa `Grep`
+> **Lettura mirata (costo token)**: leggi solo `TEST_EXECUTION.md` (sezioni "Esito test"/"Coda output").
+> Il summary su FAIL contiene già exit code + puntatore a `raw.log` + coda di 60 righe: basta per
+> valutare `OK`/`FAIL` **senza rilanciare i test**. Leggi `raw.log` solo se la coda non basta. Usa `Grep`
 > sulle righe di esito, non `Read` dell'intero file.
 
 ## Fresh-eyes review

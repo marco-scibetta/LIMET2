@@ -35,7 +35,7 @@ limet-new → limet-task → limet-test → (limet-bug) → limet-archive
 
 1. **new** — genera i documenti in `limet/changes/<data-slug>/`.
 2. **task** — esegue un task con brief di 2-3 righe e aggiorna il change log.
-3. **test** — genera TEST_PLAN + TEST_EXECUTION con comandi rieseguibili. L'esecuzione spetta all'utente: `!bash scripts/run-tests.sh` (o `!bash scripts/run-tests.sh <comando>`) registra l'esito in TEST_EXECUTION senza sporcare il contesto e distrugge i log temporanei se OK.
+3. **test** — genera TEST_PLAN + TEST_EXECUTION con comandi rieseguibili. L'esecuzione spetta all'utente: `!bash scripts/run-tests.sh` (o `!bash scripts/run-tests.sh <comando>`) registra l'esito in TEST_EXECUTION senza sporcare il contesto e distrugge i log temporanei se OK. Su FAIL mantiene `raw.log` e scrive nel summary exit code + puntatore al log + coda di 60 righe (basta per valutare senza rilanciare i test).
 4. **bug** — report bug strutturato (se serve).
 5. **archive** — sposta il lavoro verificato in `limet/archive/<slug>/`.
 
