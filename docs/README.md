@@ -1,41 +1,31 @@
-# LIMET 2.0 — indice
+# LIMET 2.0 — index
 
-**L**ightweight **I**terative **M**ethod for **E**ngineering with **T**raceability — versione 2.0, **nativa Claude Code**.
+**L**ightweight **I**terative **M**ethod for **E**ngineering with **T**raceability — version 2.0, **native Claude Code**.
 
-LIMET 2.0 è la riscrittura di LIMET 1.0 per sfruttare le feature native di Claude Code: **skill, hook, subagent, plugin, MCP, slash command**. Stessa filosofia (leggero, spec-driven, traceability, test non-negoziabile), ma ottimizzata: **Claude genera i documenti, non l'umano li riempie**.
+LIMET 2.0 is the rewrite of LIMET 1.0 to leverage Claude Code's native features: **skills, hooks, subagents, plugins, MCP, slash commands**. Same philosophy (lightweight, spec-driven, traceability, non-negotiable testing), but optimized: **Claude generates the documents, the human doesn't fill them**.
 
-## Differenza chiave 1.0 → 2.0
+## Document index
 
-| | LIMET 1.0 | LIMET 2.0 |
-|---|---|---|
-| Template | 18 .md da riempire a mano | **6 skill** che Claude esegue |
-| Regole (§1.3, §1.5) | testo in CLAUDE.md | **hook** (enforcement) |
-| Attivazione | script PowerShell/bash | **plugin** install |
-| CEREBRO/Graphify | skill-guida + script Python/CLI | **MCP** (tool nativi) |
-| Target | tool-agnostic (Copilot/Claude) | **Claude-only** |
-
-## Indice dei documenti
-
-| Doc | Cosa contiene |
+| Doc | What it contains |
 |---|---|
-| [ARCHITECTURE.md](ARCHITECTURE.md) | architettura complessiva + mappatura 1.0→2.0 |
-| [SKILLS.md](SKILLS.md) | le 6 skill (ciclo di vita + analisi) con esempio SKILL.md |
-| [HOOKS.md](HOOKS.md) | i 6 hook (resume, intent, guardrail, changelog, precompact, reminder) con hooks.json |
-| [SUBAGENTS.md](SUBAGENTS.md) | i 3 subagent (writer, gate, analyzer) |
-| [MCP.md](MCP.md) | cerebro + graphify + db come MCP |
-| [PLUGIN.md](PLUGIN.md) | packaging/distribuzione del plugin `limet` |
-| [OPTIMIZATIONS.md](OPTIMIZATIONS.md) | le ottimizzazioni e le motivazioni |
-| [MIGRATION.md](MIGRATION.md) | come migrare da LIMET 1.0 a 2.0 |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | overall architecture + 1.0→2.0 mapping |
+| [SKILLS.md](SKILLS.md) | the 6 skills (lifecycle + analysis) with a SKILL.md example |
+| [HOOKS.md](HOOKS.md) | the 6 hooks (resume, intent, guardrail, changelog, precompact, reminder) with hooks.json |
+| [SUBAGENTS.md](SUBAGENTS.md) | the 3 subagents (writer, gate, analyzer) |
+| [MCP.md](MCP.md) | cerebro + graphify + db as MCP |
+| [PLUGIN.md](PLUGIN.md) | packaging/distribution of the `limet` plugin |
+| [OPTIMIZATIONS.md](OPTIMIZATIONS.md) | the optimizations and their motivations |
+| [MIGRATION.md](MIGRATION.md) | how to migrate from LIMET 1.0 to 2.0 |
 
-## Il ciclo di vita (in una riga)
+## The lifecycle (in one line)
 
-`/limet-new` (proposta→spec→plan) → `/limet-task` (implementa, change log automatico) → `/limet-test` (verifica) → `/limet-archive`. Con `/limet-bug` per i bug e `/limet-analyze` per l'analisi di un progetto non documentato.
+`/limet-new` (proposal→spec→plan) → `/limet-task` (implement, automatic change log) → `/limet-test` (verify) → `/limet-archive`. With `/limet-bug` for bugs and `/limet-analyze` for analyzing an undocumented project.
 
-## Stato
+## Status
 
-- Implementazione **completata**: plugin, skill, hook, subagent, MCP, dashboard.
-- Linguaggio: italiano (README root bilingue IT/EN).
+- Implementation **completed**: plugin, skills, hooks, subagents, MCP, dashboard.
+- Language: English.
 
-## Come nasce LIMET 2.0 (dogfooding)
+## How LIMET 2.0 was born (dogfooding)
 
-LIMET 2.0 si è sviluppato **usando LIMET stesso**: il metodo spec-driven applicato alla propria costruzione. Questi documenti sono stati i primi artefatti LIMET, e il progetto si è costruito col proprio metodo (`/limet-new` → task → test → archive).
+LIMET 2.0 was developed **using LIMET itself**: the spec-driven method applied to its own construction. These documents were the first LIMET artifacts, and the project was built with its own method (`/limet-new` → task → test → archive).

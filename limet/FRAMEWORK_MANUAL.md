@@ -1,47 +1,47 @@
-# LIMET 2.0 — Manuale
+# LIMET 2.0 — Manual
 
-Spec-driven engineering per Claude Code, come plugin self-contained.
+Spec-driven engineering for Claude Code, as a self-contained plugin.
 
-## Cos'è
+## What it is
 
-LIMET sostituisce il flusso manuale 1.0 con un plugin Claude Code che guida
-lo sviluppo spec-driven con tracciabilità completa: proposal → spec → plan → task → test → archive.
+LIMET replaces the manual 1.0 flow with a Claude Code plugin that guides
+spec-driven development with full traceability: proposal → spec → plan → task → test → archive.
 
-## Installazione
+## Installation
 
 ```bash
-pip install -e .            # dipendenze Python (qdrant-client, fastapi, graphifyy, …)
+pip install -e .            # Python dependencies (qdrant-client, fastapi, graphifyy, …)
 claude plugin marketplace add ./
 claude plugin install limet
-claude plugin validate .    # non-strict: il warning CLAUDE.md alla root è by-design
+claude plugin validate .    # non-strict: the root CLAUDE.md warning is by design
 ```
 
-## Architettura
+## Architecture
 
-| Componente | Cosa fa |
-| ---------- | ------- |
-| **Skill** (6) | `/limet-new`, `/limet-task`, `/limet-test`, `/limet-bug`, `/limet-archive`, `/limet-analyze` |
-| **Hook** (6) | `resume.sh` (riprende ciclo attivo), `intent.sh` (rileva intento), `guardrail.sh` (blocca build/commit/distruttivi), `changelog.sh` (registro auto), `precompact.sh` (stato pre-compattazione), `reminder.sh` (ricorda test/archive) |
-| **Subagent** (3) | `limet-writer` (scrive doc), `limet-gate` (valida §1.5 + drift), `limet-analyzer` (analizza progetto → doc `docs/`) |
-| **MCP** (3) | `cerebro` (RAG Qdrant), `graphify` (knowledge graph codice), `db` (SQL read-only) |
-| **Dashboard** | init / progetti / re-index / setup / analizza (config per-progetto) su :8787 |
-| **Comandi** | `/limet-dashboard` (avvia), `/limet-dashboard-stop` (ferma) |
+| Component | What it does |
+| --------- | ------------ |
+| **Skills** (6) | `/limet-new`, `/limet-task`, `/limet-test`, `/limet-bug`, `/limet-archive`, `/limet-analyze` |
+| **Hooks** (6) | `resume.sh` (resumes active cycle), `intent.sh` (detects intent), `guardrail.sh` (blocks build/commit/destructive), `changelog.sh` (auto log), `precompact.sh` (pre-compact state), `reminder.sh` (reminds test/archive) |
+| **Subagents** (3) | `limet-writer` (writes docs), `limet-gate` (validates §1.5 + drift), `limet-analyzer` (analyzes project → `docs/` docs) |
+| **MCP** (3) | `cerebro` (Qdrant RAG), `graphify` (code knowledge graph), `db` (read-only SQL) |
+| **Dashboard** | init / projects / re-index / setup / analyze (per-project config) on :8787 |
+| **Commands** | `/limet-dashboard` (launch), `/limet-dashboard-stop` (stop) |
 
-## Ciclo di vita
+## Lifecycle
 
 ```
 limet-new → limet-task → limet-test → (limet-bug) → limet-archive
 ```
 
-1. **new** — genera i documenti in `limet/changes/<data-slug>/`.
-2. **task** — esegue un task con brief di 2-3 righe e aggiorna il change log.
-3. **test** — genera TEST_PLAN + TEST_EXECUTION con comandi rieseguibili. L'esecuzione spetta all'utente: `!bash scripts/run-tests.sh` (o `!bash scripts/run-tests.sh <comando>`) registra l'esito in TEST_EXECUTION senza sporcare il contesto e distrugge i log temporanei se OK. Su FAIL mantiene `raw.log` e scrive nel summary exit code + puntatore al log + coda di 60 righe (basta per valutare senza rilanciare i test).
-4. **bug** — report bug strutturato (se serve).
-5. **archive** — sposta il lavoro verificato in `limet/archive/<slug>/`.
+1. **new** — generates the documents in `limet/changes/<data-slug>/`.
+2. **task** — runs a task with a 2-3 line brief and updates the change log.
+3. **test** — generates TEST_PLAN + TEST_EXECUTION with re-runnable commands. Execution belongs to the user: `!bash scripts/run-tests.sh` (or `!bash scripts/run-tests.sh <command>`) records the outcome in TEST_EXECUTION without polluting the context and destroys temporary logs if OK. On FAIL it keeps `raw.log` and writes into the summary exit code + a pointer to the log + a 60-line tail (enough to assess without re-running the tests).
+4. **bug** — structured bug report (if needed).
+5. **archive** — moves the verified work to `limet/archive/<slug>/`.
 
-## Configurazione (per-progetto)
+## Configuration (per-project)
 
-`config/config.yaml` (default committed) + `config/config.local.yaml` (override + segreti, gitignored).
+`config/config.yaml` (committed defaults) + `config/config.local.yaml` (overrides + secrets, gitignored).
 
 ```yaml
 # config.yaml
@@ -53,51 +53,52 @@ projects:
 ```
 
 ```yaml
-# config.local.yaml (password mai in config.yaml)
+# config.local.yaml (password never in config.yaml)
 projects:
   <slug>:
     db: { password: "..." }
 ```
 
-Loader condiviso: `config/loader.py` (deep-merge config.yaml ← config.local.yaml).
+Shared loader: `config/loader.py` (deep-merge config.yaml ← config.local.yaml).
 
 ## Dashboard
 
-- `python dashboard/run.py` (builda se serve + serve API/UI su :8787).
-- **Init**: nome progetto (combobox progetti esistenti) + percorso docs → fa register + graphify extract + ingestion Qdrant.
-- **Re-index**: combobox progetto + percorso docs, modalità incrementale/forza/pulizia.
-- **Setup**: combobox progetto → sezioni Qdrant/Ollama/DB → salva in config.local.yaml.
+- `python dashboard/run.py` (builds if needed + serves API/UI on :8787).
+- **Init**: project name (existing-projects combo) + docs path → does register + graphify extract + Qdrant ingestion.
+- **Re-index**: project combo + docs path, incremental/force/clean modes.
+- **Setup**: project combo → Qdrant/Ollama/DB sections → saves to config.local.yaml.
+- **Analyze**: project combo → marks the project for analysis.
 
-## Lingua (IT/EN)
+## Language (IT/EN)
 
-- Flag 🇮🇹/🇬🇧 in alto a destra nella dashboard → cambia l'interfaccia e imposta `language` in `config.local.yaml`.
-- Skill e agent leggono `language` da `config/config.yaml` → i documenti prodotti sono nella lingua scelta.
+- The 🇮🇹/🇬🇧 flag at the top right of the dashboard → changes the interface and sets `language` in `config.local.yaml`.
+- Skills and agents read `language` from `config/config.yaml` → the produced documents are in the chosen language.
 
-## Progetti multi-modulo (workspace)
+## Multi-module projects (workspace)
 
-- Cartella `X/` con più moduli (`X/module-a`, `X/module-b`), ognuno con la sua `docs/`.
-- **Init** + spunta **"Workspace"** → registra `X` con tutti i docs (root + moduli) in **una** collection Qdrant, **un** grafo Graphify, **un** db.
-- Ogni modulo ha la sua `limet/` (via cwd), ma Qdrant/Graphify/DB sono condivisi.
-- Feature cross-modulo: sessione in `X`; feature locale: sessione nel modulo.
+- A folder `X/` with multiple modules (`X/module-a`, `X/module-b`), each with its own `docs/`.
+- **Init** + check **"Workspace"** → registers `X` with all docs (root + modules) in **one** Qdrant collection, **one** Graphify graph, **one** db.
+- Each module has its own `limet/` (via cwd), but Qdrant/Graphify/DB are shared.
+- Cross-module feature: session in `X`; local feature: session in the module.
 
-## Progetti correlati (link)
+## Linked projects
 
-- Due progetti indipendenti A e B che interagiscono.
-- **Progetti** → "Collega progetti": seleziona A e B → **Collega**.
-- La ricerca Qdrant in A interroga A **e** B (collection extra).
-- Un hook (UserPromptSubmit) ricorda a ogni prompt: "sei in X, collegato a Y — usa `cerebro_search` con `project=X`".
+- Two independent projects A and B that interact.
+- **Projects** → "Link projects": select A and B → **Link**.
+- Qdrant search in A queries A **and** B (extra collection).
+- A hook (UserPromptSubmit) reminds at every prompt: "you are in X, linked to Y — use `cerebro_search` with `project=X`".
 
-## Analisi progetto (auto-onboarding)
+## Project analysis (auto-onboarding)
 
-- Per progetti **non documentati**, senza onboarding.
-- Dashboard → **Analizza**: seleziona il progetto e clicca "Richiedi analisi" → imposta `projects.<slug>.analyze: true` in `config.local.yaml`.
-- In Claude Code su quel progetto: `/limet-analyze` → spawna `limet-analyzer`, che genera in `docs/`: `architecture.md`, `module-map.md`, `dependencies.md`, `conventions.md`, `decisions.md`, `glossary.md`, `NON_TECHNICAL_SUMMARY.md`.
-- Il re-index dei doc generati resta all'utente.
+- For **undocumented** projects, without onboarding.
+- Dashboard → **Analyze**: select the project and click "Request analysis" → sets `projects.<slug>.analyze: true` in `config.local.yaml`.
+- In Claude Code on that project: `/limet-analyze` → spawns `limet-analyzer`, which generates in `docs/`: `architecture.md`, `module-map.md`, `dependencies.md`, `conventions.md`, `decisions.md`, `glossary.md`, `NON_TECHNICAL_SUMMARY.md`.
+- Re-indexing the generated docs belongs to the user.
 
-## Regole binding
+## Binding rules
 
-- Spec first: proposal/plan prima di codice non banale.
-- Ambiguità → domanda esplicita con data, mai assumere.
-- Nessun task `done` senza strategia di verifica (unit + e2e + lint/type se configurati).
-- Mai build/test in autonomia: dai il comando, l'utente lo esegue.
-- Mai commit/push/migrate/deploy senza autorizzazione.
+- Spec first: proposal/plan before non-trivial code.
+- Ambiguity → explicit question with a date, never assume.
+- No task `done` without a verification strategy (unit + e2e + lint/type if configured).
+- Never build/test autonomously: give the command, the user runs it.
+- Never commit/push/migrate/deploy without authorization.

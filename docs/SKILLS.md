@@ -1,67 +1,67 @@
 # LIMET 2.0 — Skills
 
-Le skill sono il **ciclo di vita** di LIMET. **NON vanno lanciate a mano**: si attivano **automaticamente** dal CLAUDE.md (policy always-on) e dall'hook `UserPromptSubmit` (rilevamento intento). L'utente **parla normalmente** ("voglio aggiungere una feature X" / "c'è un bug Y") e Claude avvia il flusso da solo — **come LIMET 1.0, nessun comando da digitare**.
+The skills are LIMET's **lifecycle**. They are **NOT meant to be run by hand**: they activate **automatically** from CLAUDE.md (always-on policy) and from the `UserPromptSubmit` hook (intent detection). The user **talks normally** ("I want to add feature X" / "there is bug Y") and Claude starts the flow on its own — **like LIMET 1.0, no command to type**.
 
-I comandi `/limet-*` esistono solo come **scorciatoie opzionali** per il controllo esplicito, non sono il modo primario di interazione.
+The `/limet-*` commands exist only as **optional shortcuts** for explicit control, not as the primary interaction.
 
-Frontmatter standard (AgentSkills.io): `name`, `description`, `allowed-tools`, `user-invocable`. Progressive disclosure: metadata → SKILL.md body → file reference.
+Standard frontmatter (AgentSkills.io): `name`, `description`, `allowed-tools`, `user-invocable`. Progressive disclosure: metadata → SKILL.md body → file reference.
 
-## Le 6 skill
+## The 6 skills
 
-| Skill | Cosa fa | Input | Output |
+| Skill | What it does | Input | Output |
 |---|---|---|---|
-| `/limet-new` | ciclo completo: proposta + spec + plan + task + test + e2e | `$ARGUMENTS` = idea/feature | `limet/` con tutti i doc |
-| `/limet-task` | esegue un task + change log | `$1` = id task (es. `task3`) | codice + change log |
-| `/limet-test` | genera/esegue il piano test | — | TEST_PLAN + TEST_EXECUTION |
-| `/limet-archive` | archivia il lavoro concluso | — | `limet/archive/<data-slug>/` |
-| `/limet-bug` | report bug strutturato | `$ARGUMENTS` = descrizione | BUG_REPORT.md |
-| `/limet-analyze` | analizza un progetto non documentato → doc onboarding in `docs/` | — | `docs/` (7 doc) |
+| `/limet-new` | full cycle: proposal + spec + plan + task + test + e2e | `$ARGUMENTS` = idea/feature | `limet/` with all docs |
+| `/limet-task` | runs a task + change log | `$1` = task id (e.g. `task3`) | code + change log |
+| `/limet-test` | generates/runs the test plan | — | TEST_PLAN + TEST_EXECUTION |
+| `/limet-archive` | archives finished work | — | `limet/archive/<data-slug>/` |
+| `/limet-bug` | structured bug report | `$ARGUMENTS` = description | BUG_REPORT.md |
+| `/limet-analyze` | analyzes an undocumented project → onboarding docs in `docs/` | — | `docs/` (7 docs) |
 
-I template di supporto (glossary, conventions, codebase-analysis, architecture, module-map, summary, **decisions**) si generano **ad hoc** dentro `/limet-new`, non come skill separate.
+The support templates (glossary, conventions, codebase-analysis, architecture, module-map, summary, **decisions**) are generated **ad hoc** inside `/limet-new`, not as separate skills.
 
-**`decisions.md` = ADR-lite** (idea da ECC): le decisioni **hard-to-reverse** ("perché usiamo l'universo point-in-time?") meritano un record dedicato datato con stato (*accepted / superseded*), separato da spec/plan. Non il lifecycle ADR completo — solo un log leggero.
+**`decisions.md` = ADR-lite** (idea from ECC): **hard-to-reverse** decisions ("why do we use the point-in-time universe?") deserve a dedicated dated record with status (*accepted / superseded*), separate from spec/plan. Not the full ADR lifecycle — just a light log.
 
-## Esempio SKILL.md — `/limet-new`
+## SKILL.md example — `/limet-new`
 
 ```markdown
 ---
 name: limet-new
-description: Avvia un ciclo LIMET per una nuova feature. Genera Change Proposal, SPEC, PLAN, TASK_LIST, TEST_PLAN e E2E_VERIFICATION. Usa quando l'utente chiede una nuova feature o dice "/limet-new <idea>".
+description: Start a LIMET cycle for a new feature. Generates Change Proposal, SPEC, PLAN, TASK_LIST, TEST_PLAN and E2E_VERIFICATION. Use when the user asks for a new feature or says "/limet-new <idea>".
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Write
 ---
 
-# LIMET — nuovo ciclo ($ARGUMENTS)
+# LIMET — new cycle ($ARGUMENTS)
 
-Genera in `limet/` i seguenti documenti, in ordine, dal contenuto di $ARGUMENTS:
+Generate in `limet/` the following documents, in order, from the content of $ARGUMENTS:
 
-1. `CHANGE_PROPOSAL.md` — cosa, perché, impatto (template inline sotto).
-2. `SPEC.md` — cosa deve fare (behaviour, non implementazione).
-3. `PLAN.md` — come, a design level.
-4. `TASK_LIST.md` — task granulari, con sezione "Change log" vuota.
-5. `TEST_PLAN.md` — unit + e2e + lint/type (se configurati), con comando di riesecuzione.
-6. `E2E_VERIFICATION.md` — passi end-to-end.
-7. `DECISIONS.md` — decisioni hard-to-reverse (ADR-lite), solo se emergono.
+1. `CHANGE_PROPOSAL.md` — what, why, impact (inline template below).
+2. `SPEC.md` — what it must do (behavior, not implementation).
+3. `PLAN.md` — how, at design level.
+4. `TASK_LIST.md` — granular tasks, with an empty "Change log" section.
+5. `TEST_PLAN.md` — unit + e2e + lint/type (if configured), with re-run command.
+6. `E2E_VERIFICATION.md` — end-to-end steps.
+7. `DECISIONS.md` — hard-to-reverse decisions (ADR-lite), only if they emerge.
 
-Regole (binding):
-- Ogni scelta ambigua → domanda esplicita all'utente (mai assumere).
-- Ogni task deve avere una strategia di verifica (unit + e2e + lint/type se configurati), anche "n/a" giustificato.
-- Non eseguire build/test: fornisci i comandi, l'utente li esegue.
+Rules (binding):
+- Any ambiguous choice → explicit question to the user (never assume).
+- Every task must have a verification strategy (unit + e2e + lint/type if configured), even justified "n/a".
+- Never run build/test: provide the commands, the user runs them.
 
-## Template CHANGE_PROPOSAL
-(contenuto del template 1.0, inline)
-## Template SPEC
+## CHANGE_PROPOSAL template
+(1.0 template content, inline)
+## SPEC template
 (...)
 ```
 
-## Regole condivise da tutte le skill
+## Rules shared by all skills
 
-1. **Mai assumere**: scelte ambigue → domanda esplicita con data.
-2. **Mai build/test autonomi**: fornisci il comando, l'utente esegue e riporta l'esito.
-3. **Traceability**: ogni file creato/modificato finisce nel change log (via hook PostToolUse).
-4. **Lingua**: rispondi nella lingua dell'utente.
-5. **Brief prima di ogni task**: prima di implementare, dai un brief di 2-3 righe (cosa farai, file toccati, verifica collegata), poi procedi senza attendere conferma.
+1. **Never assume**: ambiguous choices → explicit question with a date.
+2. **Never build/test autonomously**: provide the command, the user runs it and reports the outcome.
+3. **Traceability**: every created/modified file ends up in the change log (via the PostToolUse hook).
+4. **Language**: reply in the user's language.
+5. **Brief before every task**: before implementing, give a 2-3 line brief (what, files touched, linked verification), then proceed without waiting for confirmation.
 
-## Perché 6 e non 18
+## Why 6 and not 18
 
-I 18 template 1.0 erano "documenti da riempire a mano". In 2.0, il **flusso** li genera insieme (`/limet-new`), il **change log** è automatico (hook), l'**archivio** è una skill, il **bug** è una skill. Il resto è supporto generato a richiesta. Meno attrito, stessa tracciabilità.
+The 18 1.0 templates were "documents to fill by hand". In 2.0, the **flow** generates them together (`/limet-new`), the **change log** is automatic (hook), the **archive** is a skill, the **bug** is a skill. The rest is support generated on demand. Less friction, same traceability.

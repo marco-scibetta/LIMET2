@@ -1,42 +1,42 @@
 # LIMET 2.0 — MCP: cerebro + graphify + db
 
-Tre "context provider" esposti come **server MCP**. Claude chiama i tool nativamente; i segreti stanno nel config, mai nel contesto.
+Three "context providers" exposed as **MCP servers**. Claude calls the tools natively; secrets live in the config, never in the context.
 
-## CEREBRO — RAG documentale (`mcp/cerebro/`)
+## CEREBRO — document RAG (`mcp/cerebro/`)
 
-Il codice RAG (register/ingest/query) è **dentro il repo**, avvolto in un server MCP stdio.
+The RAG code (register/ingest/query) is **inside the repo**, wrapped in a stdio MCP server.
 
-| Tool MCP | Scopo |
+| MCP tool | Purpose |
 |---|---|
-| `cerebro_search(query, project, limit)` | cerca frammenti rilevanti |
-| `cerebro_count(project)` | numero chunk |
-| `cerebro_list(project)` | collezioni Qdrant del progetto |
-| `cerebro_ingest(project)` | re-indicizza |
-| `cerebro_register(project, path)` | registra progetto |
+| `cerebro_search(query, project, limit)` | search relevant fragments |
+| `cerebro_count(project)` | chunk count |
+| `cerebro_list(project)` | the project's Qdrant collections |
+| `cerebro_ingest(project)` | re-index |
+| `cerebro_register(project, path)` | register project |
 
-Runtime esterno: **Qdrant** + **Ollama** (nativi o Docker). L'ingestion usa **batch embedding** (`/api/embed`, N chunk = 1 chiamata), non un POST per chunk.
+External runtime: **Qdrant** + **Ollama** (native or Docker). Ingestion uses **batch embedding** (`/api/embed`, N chunks = 1 call), not one POST per chunk.
 
-## GRAPHIFY — knowledge graph (MCP nativo)
+## GRAPHIFY — knowledge graph (native MCP)
 
-Graphify **non è vendorizzato**: si usa l'entry point nativo `graphify-mcp` del package `graphifyy[mcp]==0.9.32` (pinnato in `pyproject.toml`, extra `[mcp]` obbligatorio per l'SDK MCP).
+Graphify is **not vendored**: it uses the native `graphify-mcp` entry point of the `graphifyy[mcp]==0.9.32` package (pinned in `pyproject.toml`, the `[mcp]` extra is mandatory for the MCP SDK).
 
-| Tool MCP | Scopo |
+| MCP tool | Purpose |
 |---|---|
-| `graphify_query(domanda)` | domanda sul grafo |
-| `graphify_path(a, b)` | relazione tra simboli |
-| `graphify_explain(simbolo)` | spiegazione simbolo |
-| `graphify_update()` | rigenera grafo |
+| `graphify_query(question)` | question about the graph |
+| `graphify_path(a, b)` | relationship between symbols |
+| `graphify_explain(symbol)` | symbol explanation |
+| `graphify_update()` | regenerate graph |
 
-L'indicizzazione del codice avviene con `graphify extract <root> --code-only` (AST, senza LLM).
+Code indexing happens with `graphify extract <root> --code-only` (AST, no LLM).
 
-## DB — database relazionale (Postgres, read-only)
+## DB — relational database (Postgres, read-only)
 
-Terzo contesto: i dati del database applicativo. **Generico** (Postgres, poi altri driver) e **sicuro**: le credenziali non passano mai dall'LLM.
+Third context: the application database data. **Generic** (Postgres, then other drivers) and **safe**: credentials never pass through the LLM.
 
-### Config: `config/config.yaml` + `config/config.local.yaml` (per-progetto)
+### Config: `config/config.yaml` + `config/config.local.yaml` (per-project)
 
 ```yaml
-# config.yaml (committed, senza segreti)
+# config.yaml (committed, no secrets)
 projects:
   my-app:
     db:
@@ -54,22 +54,22 @@ projects:
       password: "***"
 ```
 
-Il loader condiviso `config/loader.py` fa il deep-merge. La password non è mai mostrata (mascherata in GET).
+The shared loader `config/loader.py` does the deep-merge. The password is never shown (masked in GET).
 
-### Tool
+### Tools
 
-| Tool | Scopo |
+| Tool | Purpose |
 |---|---|
-| `db_query(sql, project)` | esegue SELECT read-only, row-limited |
+| `db_query(sql, project)` | runs read-only SELECT, row-limited |
 
-### Regole di sicurezza (binding)
+### Security rules (binding)
 
-1. **Read-only**: solo SELECT (reject INSERT/UPDATE/DELETE/DDL via regex).
-2. **Row limit** (default 100 righe).
-3. **Segreti gitignored** (`config.local.yaml`), mai nel repo né nel prompt.
-4. **Nessun segreto in output**: i tool non restituiscono mai host/user/password.
+1. **Read-only**: only SELECT (reject INSERT/UPDATE/DELETE/DDL via regex).
+2. **Row limit** (default 100 rows).
+3. **Secrets gitignored** (`config.local.yaml`), never in the repo nor in the prompt.
+4. **No secrets in output**: the tools never return host/user/password.
 
-## Dichiarazione nel plugin — `.mcp.json`
+## Plugin declaration — `.mcp.json`
 
 ```json
 {
@@ -81,10 +81,10 @@ Il loader condiviso `config/loader.py` fa il deep-merge. La password non è mai 
 }
 ```
 
-## Principio
+## Principle
 
-> **Cerebro (RAG) dentro il repo, Graphify (KG) nativo, DB (dati) read-only.** I segreti stanno nel config (gitignored) e li legge solo il server MCP.
+> **Cerebro (RAG) inside the repo, Graphify (KG) native, DB (data) read-only.** Secrets live in the config (gitignored) and are read only by the MCP server.
 
-### Contesto = evidenza, non certezza
+### Context = evidence, not certainty
 
-Il contesto recuperato è **evidenza da verificare**, non verità: va confermato contro la fonte autorevole (codice, test, contratti) prima di agire. I context provider **non contengono mai segreti**.
+The retrieved context is **evidence to verify**, not truth: it must be confirmed against the authoritative source (code, tests, contracts) before acting. Context providers **never contain secrets**.

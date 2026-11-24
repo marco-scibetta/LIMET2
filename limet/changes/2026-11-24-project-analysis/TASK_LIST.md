@@ -95,3 +95,5 @@
 | —    | `hooks\precompact.sh` | modificato | (auto) | (da completare) | (da verificare) |
 | —    | `hooks\reminder.sh` | modificato | (auto) | (da completare) | (da verificare) |
 | —    | `hooks\changelog.sh` | modified | (auto) | (da completare) | (da verificare) |
+| —    | `docs\MCP.md` | created | (auto) | (to complete) | (to verify) |
+| —    | `docs\MIGRATION.md` | created | (auto) | (to complete) | (to verify) |

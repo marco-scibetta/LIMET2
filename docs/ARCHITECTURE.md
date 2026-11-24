@@ -1,81 +1,81 @@
-# LIMET 2.0 — Architettura
+# LIMET 2.0 — Architecture
 
-## Visione
+## Vision
 
-LIMET 2.0 è **un unico repo/plugin** che contiene tutto: skill, hook, subagent, MCP, e i motori **CEREBRO** (RAG documentale) e **GRAPHIFY** (knowledge graph). Niente repo esterni da installare.
+LIMET 2.0 is **one repo/plugin** containing everything: skills, hooks, subagents, MCP, and the **CEREBRO** (document RAG) and **GRAPHIFY** (knowledge graph) engines. No external repos to install.
 
-> **Self-contained**: `claude plugin install limet` + Qdrant/Ollama/Postgres (locali o Docker) = tutto pronto.
+> **Self-contained**: `claude plugin install limet` + Qdrant/Ollama/Postgres (local or Docker) = all set.
 
-## Principio guida
+## Guiding principle
 
-> **"Le guardrail stanno nei hook, non nelle istruzioni."**
-> - **Skill** = Claude interpreta (costa contesto) → per il *lavoro* (generare documenti).
-> - **Hook** = deterministico (zero contesto) → per le *regole* (bloccare, tracciare, ricordare).
-> - **Subagent** = contesto isolato → per i *ruoli* (scrivere, validare).
-> - **MCP** = tool esterni → per i *dati* (CEREBRO RAG, GRAPHIFY KG, DB SQL).
-> - **CLAUDE.md** = minimo (puntatore + regole binding) → sempre-on, in poche righe.
+> **"Guardrails live in hooks, not in instructions."**
+> - **Skill** = Claude interprets (costs context) → for the *work* (generating documents).
+> - **Hook** = deterministic (zero context) → for the *rules* (block, track, remind).
+> - **Subagent** = isolated context → for the *roles* (write, validate, analyze).
+> - **MCP** = external tools → for the *data* (CEREBRO RAG, GRAPHIFY KG, DB SQL).
+> - **CLAUDE.md** = minimal (pointer + binding rules) → always-on, in a few lines.
 
-## Componenti
+## Components
 
 ```
-limet/                              ← UNICO plugin (self-contained)
+limet/                              ← SINGLE plugin (self-contained)
 ├── .claude-plugin/plugin.json
 ├── skills/    → /limet-new, /limet-task, /limet-test, /limet-archive, /limet-bug, /limet-analyze
 ├── agents/    → limet-writer, limet-gate, limet-analyzer
 ├── hooks/     → intent (UserPromptSubmit), guardrail, changelog, reminder
 ├── commands/  → /limet-dashboard, /limet-dashboard-stop
-├── .mcp.json  → cerebro + graphify (nativo graphify-mcp) + db
+├── .mcp.json  → cerebro + graphify (native graphify-mcp) + db
 ├── mcp/
-│   ├── cerebro/                    (RAG: scripts + server MCP)
-│   └── db/                         (DB: server MCP, legge config.yaml/config.local.yaml)
+│   ├── cerebro/                    (RAG: scripts + MCP server)
+│   └── db/                         (DB: MCP server, reads config.yaml/config.local.yaml)
 ├── config/                         (config.yaml + config.local.yaml + loader.py)
-├── dashboard/                      (backend FastAPI + frontend React, port 8787)
-├── .gitignore                      (include config.local.yaml)
+├── dashboard/                      (FastAPI backend + React frontend, port 8787)
+├── .gitignore                      (includes config.local.yaml)
 ├── CLAUDE.md
 └── docs/ (manual, onboarding)
 ```
 
-Runtime esterno (infra, non codice): **Qdrant** + **Ollama** + **Postgres** — installabili **nativi o Docker** (nessuna dipendenza Docker obbligatoria). **Graphify** è un MCP nativo (`graphify-mcp`, package `graphifyy`), non vendorizzato nel repo.
+Runtime external (infra, not code): **Qdrant** + **Ollama** + **Postgres** — installable **native or Docker** (no mandatory Docker dependency). **Graphify** is a native MCP (`graphify-mcp`, package `graphifyy`), not vendored in the repo.
 
-## Mappatura 1.0 → 2.0
+## 1.0 → 2.0 mapping
 
 | LIMET 1.0 | LIMET 2.0 |
 |---|---|
-| CHANGE_PROPOSAL + SPEC + PLAN + TASK_LIST + TEST_PLAN + E2E_VERIFICATION | `/limet-new` (un flusso) |
-| TASK (esecuzione) + change log | `/limet-task` + hook PostToolUse |
+| CHANGE_PROPOSAL + SPEC + PLAN + TASK_LIST + TEST_PLAN + E2E_VERIFICATION | `/limet-new` (one flow) |
+| TASK (execution) + change log | `/limet-task` + PostToolUse hook |
 | TEST_PLAN + TEST_EXECUTION | `/limet-test` |
 | ARCHIVE_ENTRY | `/limet-archive` |
 | BUG_REPORT | `/limet-bug` |
-| DECISIONS | `/limet-new` (ADR-lite, solo se hard-to-reverse) |
-| scripts/limet.ps1/limet.sh (attivazione) | `claude plugin install limet` |
-| CEREBRO (skill-guida + Python) | `cerebro` MCP |
-| GRAPHIFY (CLI) | `graphify` MCP (nativo) |
+| DECISIONS | `/limet-new` (ADR-lite, only if hard-to-reverse) |
+| scripts/limet.ps1/limet.sh (activation) | `claude plugin install limet` |
+| CEREBRO (guide skill + Python) | `cerebro` MCP |
+| GRAPHIFY (CLI) | `graphify` MCP (native) |
 
-> I 18 template 1.0 (glossary, conventions, codebase-analysis, module-map, non-technical-summary, cross-project…) **non esistono più**: il ciclo genera solo i documenti essenziali con tracciabilità, il resto è supporto eliminato per ridurre l'attrito.
+> The 18 1.0 templates (glossary, conventions, codebase-analysis, module-map, non-technical-summary, cross-project…) **no longer exist**: the cycle generates only the essential documents with traceability, the rest is support removed to reduce friction.
 
-## Flusso dati
+## Data flow
 
 ```
-/limet-new ──► [limet-writer] genera proposal+spec+plan+task+test
+/limet-new ──► [limet-writer] generates proposal+spec+plan+task+test
                   │
                   ▼
-             /limet-task ──► [PostToolUse hook] appende change log
+             /limet-task ──► [PostToolUse hook] appends change log
                   │
                   ▼
-             /limet-test ──► verifica unit+e2e (§1.5)
+             /limet-test ──► verifies unit+e2e (§1.5)
                   │
                   ▼
-             [limet-gate] valida ──► /limet-archive
+             [limet-gate] validates ──► /limet-archive
 ```
 
-Contesto a monte: **CEREBRO** (docs RAG) + **GRAPHIFY** (codice KG) + **DB** (SQL read-only) interrogati via MCP quando serve.
+Upstream context: **CEREBRO** (docs RAG) + **GRAPHIFY** (code KG) + **DB** (SQL read-only) queried via MCP when needed.
 
-## Vincoli (filosofia mantenuta)
+## Constraints (philosophy kept)
 
-1. **Spec-driven, non vibe-driven** — il documento resta la fonte di verità.
-2. **Traceability** — ogni scelta ambigua = domanda esplicita con data.
-3. **Test non-negoziabile** — nessun task chiuso senza unit + e2e + lint/type (§1.5).
-4. **Leggero** — 6 skill, 6 hook, 3 subagent, 3 MCP, 1 dashboard. Niente di più.
-5. **Conversazionale** — l'utente parla, non digita comandi (hook `intent`).
-6. **Claude-only** — via l'overhead tool-agnostic.
-7. **Self-contained** — Cerebro dentro il repo, Graphify via MCP nativo, DB read-only. Un solo install.
+1. **Spec-driven, not vibe-driven** — the document stays the source of truth.
+2. **Traceability** — any ambiguous choice = explicit question with a date.
+3. **Non-negotiable testing** — no task closed without unit + e2e + lint/type (§1.5).
+4. **Lightweight** — 6 skills, 6 hooks, 3 subagents, 3 MCP, 1 dashboard. Nothing more.
+5. **Conversational** — the user talks, doesn't type commands (`intent` hook).
+6. **Claude-only** — no tool-agnostic overhead.
+7. **Self-contained** — Cerebro inside the repo, Graphify via native MCP, DB read-only. One install.

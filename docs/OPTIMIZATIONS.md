@@ -1,70 +1,70 @@
-# LIMET 2.0 — Ottimizzazioni (filosofia mantenuta)
+# LIMET 2.0 — Optimizations (philosophy kept)
 
-LIMET 1.0 era corretto nella **filosofia** (spec-driven, traceability, test non-negoziabile) ma **pesante nell'esecuzione**. LIMET 2.0 mantiene la filosofia e ottimizza l'esecuzione. Non gonfiare: ogni ottimizzazione elimina attrito, non aggiunge complessità.
+LIMET 1.0 was right in **philosophy** (spec-driven, traceability, non-negotiable testing) but **heavy in execution**. LIMET 2.0 keeps the philosophy and optimizes the execution. Do not bloat: each optimization removes friction, not adds complexity.
 
 ## 1. Doc-heavy → skill-automated
 
-- **1.0**: 18 template .md che l'umano riempie a mano. Attrito = si salta la tracciabilità.
-- **2.0**: 6 skill. Claude genera i documenti, l'umano approva. Il documento resta la fonte di verità (§1.1) ma non è più un modulo da compilare.
+- **1.0**: 18 .md templates the human fills by hand. Friction = traceability gets skipped.
+- **2.0**: 6 skills. Claude generates the documents, the human approves. The document stays the source of truth (§1.1) but is no longer a module to compile.
 
 ## 2. Tool-agnostic → Claude-only
 
-- **1.0**: due edizioni (IT/EN) + compatibilità Copilot/Claude = overhead di manutenzione.
-- **2.0**: solo Claude Code. Via il doppio albero documentale e l'astrazione "tool-agnostic". (L'EN si può aggiungere dopo, se serve.)
+- **1.0**: two editions (IT/EN) + Copilot/Claude compatibility = maintenance overhead.
+- **2.0**: Claude Code only. Gone the double document tree and the "tool-agnostic" abstraction. (EN can be added later, if needed.)
 
 ## 3. Python/CLI → MCP
 
-- **1.0**: CEREBRO = skill-guida che orchestra script Python; GRAPHIFY = CLI.
-- **2.0**: CEREBRO avvolto in MCP (stessi script), Graphify via MCP nativo (`graphify-mcp`). Claude chiama `cerebro_search(...)` invece di lanciare `python query_qdrant.py`.
+- **1.0**: CEREBRO = guide skill that orchestrates Python scripts; GRAPHIFY = CLI.
+- **2.0**: CEREBRO wrapped in MCP (same scripts), Graphify via native MCP (`graphify-mcp`). Claude calls `cerebro_search(...)` instead of running `python query_qdrant.py`.
 
-## 4. Template manuali → hook-driven
+## 4. Manual templates → hook-driven
 
-- **1.0**: il change log (§1.4) e l'archivio si compilavano a mano.
-- **2.0**: `PostToolUse` appende al change log automaticamente; `Stop` ricorda l'archivio. Il lavoro noioso sparisce.
+- **1.0**: the change log (§1.4) and the archive were filled by hand.
+- **2.0**: `PostToolUse` appends to the change log automatically; `Stop` reminds about the archive. The boring work disappears.
 
-## 5. Regole da testo → enforcement
+## 5. Rules from text → enforcement
 
-- **1.0**: §1.3 (no build/test autonomi) e §1.5 (test non-negoziabile) erano *scritte* nel CLAUDE.md.
-- **2.0**: `PreToolUse` *blocca* i build/test; `limet-gate` *rifiuta* i task senza verifica. "Un'istruzione è una richiesta; un hook è enforcement."
+- **1.0**: §1.3 (no autonomous build/test) and §1.5 (non-negotiable testing) were *written* in CLAUDE.md.
+- **2.0**: `PreToolUse` *blocks* build/test; `limet-gate` *rejects* tasks without verification. "An instruction is a request; a hook is enforcement."
 
-## 6. Consolidamento: 18 → 6 skill
+## 6. Consolidation: 18 → 6 skills
 
-- **1.0**: un template per ogni artefatto = 18 documenti separati.
-- **2.0**: `/limet-new` genera tutto il ciclo insieme (proposal+spec+plan+task+test+e2e). I doc di supporto (glossary, conventions, analysis…) si generano a richiesta. Meno attrito, stessa tracciabilità.
+- **1.0**: one template per artifact = 18 separate documents.
+- **2.0**: `/limet-new` generates the whole cycle together (proposal+spec+plan+task+test+e2e). Support docs (glossary, conventions, analysis…) are generated on demand. Less friction, same traceability.
 
-## 7. Self-contained: un solo repo
+## 7. Self-contained: one repo
 
-- **1.0**: LIMET + CEREBRO + GRAPHIFY = tre cose separate da installare.
-- **2.0**: tutto in un unico repo. Cerebro e Graphify sono dentro `mcp/`. Un solo `claude plugin install` + un `docker-compose` per Qdrant/Ollama. Meno dipendenze, distribuzione pulita.
+- **1.0**: LIMET + CEREBRO + GRAPHIFY = three separate things to install.
+- **2.0**: everything in one repo. Cerebro and Graphify are inside `mcp/`. One `claude plugin install` + a `docker-compose` for Qdrant/Ollama. Fewer dependencies, clean distribution.
 
-## 8. Embedding a batch, non 1-alla-volta (fix lentezza ingestion)
+## 8. Batch embedding, not one-at-a-time (ingestion speed fix)
 
-- **1.0**: `ingest_docs.py` fa **un POST HTTP a Ollama per chunk** (`/api/embeddings`). Un PDF con 300 chunk = 300 round-trip → lentezza. **Non serve GPU**: `nomic-embed-text` è piccolo (~137M), gira su CPU.
-- **2.0**: **batch `/api/embed`** (lista di chunk in una sola chiamata) oppure **`fastembed`/ONNX in-process** (niente server Ollama). 10-50× più veloce, su CPU. Eventuale parsing PDF parallelizzato con `pypdfium2`.
+- **1.0**: `ingest_docs.py` does **one HTTP POST to Ollama per chunk** (`/api/embeddings`). A PDF with 300 chunks = 300 round-trips → slowness. **No GPU needed**: `nomic-embed-text` is small (~137M), runs on CPU.
+- **2.0**: **batch `/api/embed`** (list of chunks in one call) or **`fastembed`/ONNX in-process** (no Ollama server). 10-50× faster, on CPU. Optional parallel PDF parsing with `pypdfium2`.
 
-## 9. Parsing PDF/EPUB: pypdfium2 diretto + parallel (secondo collo di bottiglia)
+## 9. PDF/EPUB parsing: direct pypdfium2 + parallel (second bottleneck)
 
-- **1.0**: `doc_to_markdown.py` usa **pdfplumber** pagina per pagina (lento), e per ogni immagine renderizza a 150 DPI e salva PNG **in seriale**. È il secondo collo di bottiglia, dopo l'embedding 1-alla-volta.
+- **1.0**: `doc_to_markdown.py` uses **pdfplumber** page by page (slow), and for each image renders at 150 DPI and saves PNG **serially**. It is the second bottleneck, after the one-at-a-time embedding.
 - **2.0**:
-  - **`pypdfium2` diretto** per il testo (già dipendenza presente, molto più veloce di pdfplumber).
-  - **Parallelizzare le pagine** (`concurrent.futures`).
-  - Rendering immagini a risoluzione ridotta / solo se serve (non 150 DPI fisso per tutte).
+  - **Direct `pypdfium2`** for the text (dependency already present, much faster than pdfplumber).
+  - **Parallelize pages** (`concurrent.futures`).
+  - Image rendering at reduced resolution / only if needed (not a fixed 150 DPI for all).
 
-## Riepilogo per script (audit Cerebro completo)
+## Per-script summary (full Cerebro audit)
 
-| Script | Collo di bottiglia | Fix in 2.0 |
+| Script | Bottleneck | 2.0 fix |
 |---|---|---|
-| `ingest_docs.py` | embedding 1 chunk = 1 POST HTTP | batch `/api/embed` o fastembed/ONNX |
-| `doc_to_markdown.py` | pdfplumber lento + rendering immagini seriale | pypdfium2 diretto + parallel |
-| `query_qdrant.py` | ok (query singola + search Qdrant) | — |
-| `register_project.py` | ok (JSON leggero) | — |
-| `serve_images.py` | ok (server statico) | — |
+| `ingest_docs.py` | embedding 1 chunk = 1 HTTP POST | batch `/api/embed` or fastembed/ONNX |
+| `doc_to_markdown.py` | slow pdfplumber + serial image rendering | direct pypdfium2 + parallel |
+| `query_qdrant.py` | ok (single query + Qdrant search) | — |
+| `register_project.py` | ok (light JSON) | — |
+| `serve_images.py` | ok (static server) | — |
 
-## Cosa NON cambia (la filosofia)
+## What does NOT change (the philosophy)
 
-- Spec-driven, non vibe-driven (§1.1).
-- Traceability delle decisioni (§1.2).
-- Separazione scrittura/esecuzione (§1.3).
-- Test non-negoziabile (§1.5).
-- Leggero: 6 skill, 6 hook, 3 subagent, 3 MCP. Stop.
-- **Conversazionale** (come 1.0): l'utente parla, non digita comandi — l'hook `intent` rileva e avvia.
+- Spec-driven, not vibe-driven (§1.1).
+- Traceability of decisions (§1.2).
+- Separation of writing/execution (§1.3).
+- Non-negotiable testing (§1.5).
+- Lightweight: 6 skills, 6 hooks, 3 subagents, 3 MCP. Stop.
+- **Conversational** (like 1.0): the user talks, doesn't type commands — the `intent` hook detects and starts.

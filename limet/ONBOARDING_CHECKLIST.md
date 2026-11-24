@@ -1,64 +1,64 @@
 # LIMET 2.0 — Onboarding Checklist
 
-Passi per partire con LIMET su un progetto.
+Steps to start with LIMET on a project.
 
-## 1. Installa il plugin
+## 1. Install the plugin
 ```bash
-pip install -e .                    # dipendenze Python
+pip install -e .                    # Python dependencies
 claude plugin marketplace add ./
 claude plugin install limet
 claude plugin validate .            # non-strict
 ```
 
-## 2. Prepara l'infrastruttura (se serve)
+## 2. Prepare the infrastructure (if needed)
 - Qdrant: `docker run -d -p 6333:6333 qdrant/qdrant`
 - Ollama: `ollama pull nomic-embed-text`
 - Postgres: `docker run -d --name limet-postgres -e POSTGRES_USER=... -e POSTGRES_PASSWORD=... -e POSTGRES_DB=... -p 5432:5432 postgres:18-alpine3.23`
 
-## 3. Avvia la dashboard
+## 3. Launch the dashboard
 ```
 /limet-dashboard
 ```
 → http://127.0.0.1:8787
 
-Scegli la **lingua** col flag 🇮🇹/🇬🇧 in alto a destra (interfaccia + documenti prodotti).
+Choose the **language** with the 🇮🇹/🇬🇧 flag at the top right (interface + produced documents).
 
-## 4. Inizializza il progetto (Init)
-- nome progetto (combobox se esistente)
-- percorso docs
-→ register + graphify + ingestion Qdrant in un colpo.
-- Spunta **Workspace** se il progetto è multi-modulo (root + moduli in una collection).
+## 4. Initialize the project (Init)
+- project name (combo if existing)
+- docs path
+→ register + graphify + Qdrant ingestion in one go.
+- Check **Workspace** if the project is multi-module (root + modules in one collection).
 
-## 5. Configura il progetto (Setup)
-- seleziona progetto dalla combo
+## 5. Configure the project (Setup)
+- select the project from the combo
 - Qdrant / Ollama / DB
-- Salva → config.local.yaml
-- Test connessione DB.
+- Save → config.local.yaml
+- Test DB connection.
 
-## 5bis. Collega progetti (se interagiscono)
-- **Progetti** → "Collega progetti" → A e B → **Collega**.
-- La ricerca Qdrant in A copre anche B (e viceversa).
+## 5bis. Link projects (if they interact)
+- **Projects** → "Link projects" → A and B → **Link**.
+- Qdrant search in A covers B too (and vice versa).
 
-## 5ter. Analizza un progetto non documentato (opzionale)
-- Dashboard → **Analizza** → seleziona progetto → "Richiedi analisi".
-- In Claude Code su quel progetto: `/limet-analyze` → genera doc onboarding in `docs/`.
-- Re-index i doc quando vuoi.
+## 5ter. Analyze an undocumented project (optional)
+- Dashboard → **Analyze** → select project → "Request analysis".
+- In Claude Code on that project: `/limet-analyze` → generates onboarding docs in `docs/`.
+- Re-index the docs when you want.
 
-## 6. Ciclo di lavoro
+## 6. Work cycle
 ```
-/limet-new "feature X"    → genera i documenti
-/limet-task 1             → implementa (brief 2-3 righe)
-/limet-test               → piano + esecuzione test
-!bash scripts/run-tests.sh <comando>   → esegue test, esito in TEST_EXECUTION (log distrutto se OK)
-/limet-bug "errore Y"     → se serve
-/limet-archive            → archivia il lavoro verificato
+/limet-new "feature X"    → generates the documents
+/limet-task 1             → implement (2-3 line brief)
+/limet-test               → plan + test execution
+!bash scripts/run-tests.sh <command>   → runs tests, outcome in TEST_EXECUTION (log destroyed if OK)
+/limet-bug "error Y"     → if needed
+/limet-archive            → archives the verified work
 ```
 
-## 7. Verifica finale
-- `python -m pytest tests -v` → tutti verdi
-- `limet-gate` → OK su ogni task `done`
+## 7. Final verification
+- `python -m pytest tests -v` → all green
+- `limet-gate` → OK on every `done` task
 
-## Regole da ricordare
-- Mai build/test in autonomia.
-- Mai commit/push senza autorizzazione esplicita.
-- Ogni task `done` ha una strategia di verifica (unit + e2e + lint/type se configurati).
+## Rules to remember
+- Never build/test autonomously.
+- Never commit/push without explicit authorization.
+- Every `done` task has a verification strategy (unit + e2e + lint/type if configured).

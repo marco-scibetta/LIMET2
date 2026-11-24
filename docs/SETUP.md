@@ -1,150 +1,150 @@
 # LIMET 2.0 — Setup
 
-Guida di installazione e configurazione per i membri del team.
+Installation and configuration guide for team members.
 
-## Cosa è
+## What it is
 
-LIMET 2.0 è un plugin Claude Code per spec-driven engineering. Il repo stesso è il plugin e il marketplace: non serve pubblicarlo su alcun registry pubblico.
+LIMET 2.0 is a Claude Code plugin for spec-driven engineering. The repo itself is the plugin and the marketplace: no need to publish it on any public registry.
 
-Il plugin spedisce:
+The plugin ships:
 
-| Componente | Cosa | Obbligatorio? |
+| Component | What | Required? |
 |---|---|---|
-| 6 skill | `limet-new`, `limet-task`, `limet-test`, `limet-archive`, `limet-bug`, `limet-analyze` | Sì |
-| 1 comando | `/limet-dashboard` | Sì |
-| 3 agent | `limet-gate`, `limet-writer`, `limet-analyzer` | Sì |
-| 6 hook | resume, intento, guardrail, change log, pre-compattazione, reminder | No (vedi §4) |
-| 1 script | `run-tests.sh` (esegue test, log distrutto se OK) | No (vedi §4) |
-| 3 MCP | `cerebro` (RAG), `db` (SQL read-only), `graphify` (code KG) | No (vedi §3) |
+| 6 skills | `limet-new`, `limet-task`, `limet-test`, `limet-archive`, `limet-bug`, `limet-analyze` | Yes |
+| 1 command | `/limet-dashboard` | Yes |
+| 3 agents | `limet-gate`, `limet-writer`, `limet-analyzer` | Yes |
+| 6 hooks | resume, intent, guardrail, change log, pre-compact, reminder | No (see §4) |
+| 1 script | `run-tests.sh` (runs tests, log destroyed if OK) | No (see §4) |
+| 3 MCP | `cerebro` (RAG), `db` (read-only SQL), `graphify` (code KG) | No (see §3) |
 
-**Le skill funzionano anche senza MCP e senza hook.** MCP e hook sono componenti opzionali che arricchiscono il flusso.
+**The skills work even without MCP and without hooks.** MCP and hooks are optional components that enrich the flow.
 
 ---
 
-## 1. Requisiti base
+## 1. Base requirements
 
 - Claude Code CLI (`claude`) 2.x
-- Git + accesso al repo `marco-scibetta/LIMET2`
-- (solo per MCP) Python ≥ 3.10 — vedi §3
+- Git + access to the `marco-scibetta/LIMET2` repo
+- (only for MCP) Python ≥ 3.10 — see §3
 
 ---
 
-## 2. Installazione
+## 2. Installation
 
 ```bash
-# 1. Clona il repo
+# 1. Clone the repo
 git clone https://github.com/marco-scibetta/LIMET2
 cd LIMET2
 
-# 2. Passa al branch che contiene il plugin
+# 2. Check out the branch that contains the plugin
 git checkout dev
 
-# 3. Registra il repo come marketplace locale
+# 3. Register the repo as a local marketplace
 claude plugin marketplace add ./
 
-# 4. Installa il plugin
+# 4. Install the plugin
 claude plugin install limet@limet-marketplace
 ```
 
-Alternativa one-liner (dentro Claude Code, Claude Code ≥ 2.1.275):
+One-liner alternative (inside Claude Code, Claude Code ≥ 2.1.275):
 
 ```
 /plugin install limet --marketplace marco-scibetta/LIMET2
 ```
 
-> Nota: la one-liner clona il **branch default** del repo (oggi `main`). Se il plugin vive su `dev`, usa il flusso clone + `git checkout dev` sopra.
+> Note: the one-liner clones the repo's **default branch** (today `main`). If the plugin lives on `dev`, use the clone + `git checkout dev` flow above.
 
-### Verifica
+### Verify
 
-1. **Riavvia Claude Code** (le skill si caricano a inizio sessione).
-2. `claude plugin list` → deve comparire `limet@limet-marketplace` con stato `enabled`.
-3. Nel menu `/` → deve esserci `/limet-dashboard`.
-4. Chiedi in linguaggio naturale: *"voglio aggiungere una feature di login"* → parte il flusso LIMET (proposta → spec → plan → task → test → archive).
+1. **Restart Claude Code** (skills load at session start).
+2. `claude plugin list` → `limet@limet-marketplace` must appear with `enabled` status.
+3. In the `/` menu → `/limet-dashboard` must be there.
+4. Ask in natural language: *"I want to add a login feature"* → the LIMET flow starts (proposal → spec → plan → task → test → archive).
 
 ---
 
-## 3. Prerequisiti MCP (opzionali)
+## 3. MCP prerequisites (optional)
 
-I tre MCP sono **opzionali**. Se non li configuri, `claude` mostrerà errori di connessione per loro (come `graphify: Connection closed`) ma le skill restano pienamente funzionanti. Per disattivarli del tutto, vedi §6.
+The three MCP are **optional**. If you don't configure them, `claude` will show connection errors for them (like `graphify: Connection closed`) but the skills remain fully functional. To disable them entirely, see §6.
 
-### 3.1 Dipendenze Python
+### 3.1 Python dependencies
 
 ```bash
 pip install -e .
 ```
 
-Installa tutte le dipendenze elencate in `pyproject.toml` (qdrant-client, psycopg2-binary, fastapi, ecc.). Se fallisce, installa le dipendenze una a una dallo stesso file.
+Installs all the dependencies listed in `pyproject.toml` (qdrant-client, psycopg2-binary, fastapi, etc.). If it fails, install the dependencies one by one from the same file.
 
-### 3.2 `cerebro` — RAG su Qdrant
+### 3.2 `cerebro` — RAG on Qdrant
 
-Richiede due servizi in esecuzione:
+Requires two running services:
 
-| Servizio | Default | Override env |
+| Service | Default | Env override |
 |---|---|---|
 | Qdrant (vector DB) | `http://localhost:6333` | `QDRANT_URL` |
 | Ollama (embedding) | `http://localhost:11434` | `OLLAMA_URL` |
 
-Altri env opzionali: `EMBEDDING_MODEL` (default `nomic-embed-text`), `EMBEDDING_DIM` (default `768`).
+Other optional envs: `EMBEDDING_MODEL` (default `nomic-embed-text`), `EMBEDDING_DIM` (default `768`).
 
-Il modello di embedding deve essere caricato in Ollama (`ollama pull nomic-embed-text`). Un `.env` nella root del repo viene caricato automaticamente.
+The embedding model must be loaded in Ollama (`ollama pull nomic-embed-text`). A `.env` in the repo root is loaded automatically.
 
-### 3.3 `db` — SQL read-only
+### 3.3 `db` — read-only SQL
 
-Richiede PostgreSQL in esecuzione. **Non** legge env var: legge la sezione `db` da file di config nella root del plugin:
+Requires PostgreSQL running. Does **not** read env vars: it reads the `db` section from config files in the plugin root:
 
 ```yaml
-# config/config.yaml         (committato, valori condivisi)
+# config/config.yaml         (committed, shared values)
 db:
   host: localhost
   port: 5432
   database: mydb
   user: myuser
-  password: ""               # ← metti i secret in config.local.yaml, non qui
+  password: ""               # ← put secrets in config.local.yaml, not here
 
-# config/config.local.yaml   (git-ignorato, secret personali)
+# config/config.local.yaml   (git-ignored, personal secrets)
 db:
-  password: "la-mia-password"
+  password: "my-password"
 ```
 
-Campi: `host`, `port`, `database`, `user`, `password`, `row_limit` (default 100). Il server accetta **solo `SELECT`** (DDL/DML rifiutati).
+Fields: `host`, `port`, `database`, `user`, `password`, `row_limit` (default 100). The server accepts **only `SELECT`** (DDL/DML rejected).
 
-### 3.4 `graphify` — knowledge graph del codice
+### 3.4 `graphify` — code knowledge graph
 
-Richiede il binario `graphify-mcp` sul `PATH` (fornito dal pacchetto `graphifyy`).
-
----
-
-## 4. Hook su Windows
-
-I 6 hook sono script `.sh` (`hooks/*.sh`). Su Windows servono **Git Bash** o **WSL** per essere eseguiti. Se non disponibili, gli hook falliscono in silenzio: le skill continuano a funzionare, ma perdi l'auto-attivazione e il change log automatico.
-
-Lo script helper `scripts/run-tests.sh` (esecuzione test) è anch'esso `.sh` e richiede Git Bash/WSL.
-
-I log test transitori vanno in `limet/.test-logs/` (per-progetto): assicura che il `.gitignore` del progetto contenga `limet/.test-logs/` (lo aggiunge `/limet-new` al bootstrap).
-
-Da verificare sul primo uso: se il change log non si popola, controlla che Git Bash/WSL sia presente.
+Requires the `graphify-mcp` binary on the `PATH` (provided by the `graphifyy` package).
 
 ---
 
-## 5. Aggiornamento (dopo nuove feature)
+## 4. Hooks on Windows
+
+The 6 hooks are `.sh` scripts (`hooks/*.sh`). On Windows they need **Git Bash** or **WSL** to run. If unavailable, the hooks fail silently: the skills keep working, but you lose auto-activation and the automatic change log.
+
+The helper script `scripts/run-tests.sh` (test execution) is also `.sh` and requires Git Bash/WSL.
+
+Transient test logs go to `limet/.test-logs/` (per-project): make sure the project's `.gitignore` contains `limet/.test-logs/` (`/limet-new` adds it at bootstrap).
+
+To verify on first use: if the change log doesn't populate, check that Git Bash/WSL is present.
+
+---
+
+## 5. Update (after new features)
 
 ```bash
 claude plugin update limet@limet-marketplace
 ```
 
-Per un'installazione locale ("live", `Read from: <percorso repo>`), basta editare i file: il cambio è immediato, nessuna reinstall.
+For a local ("live", `Read from: <repo path>`) installation, just edit the files: the change is immediate, no reinstall.
 
 ---
 
-## 6. Disattivare gli MCP (se non ti servono)
+## 6. Disabling the MCP (if you don't need them)
 
-Se non vuoi gli errori di connessione MCP, disabilita i server:
+If you don't want the MCP connection errors, disable the servers:
 
 ```bash
-claude plugin disable limet@limet-marketplace   # disabilita tutto (anche skill)
+claude plugin disable limet@limet-marketplace   # disables everything (including skills)
 ```
 
-Oppure, per togliere solo gli MCP, rimuovi la sezione `mcpServers` dal manifest del plugin prima di installare (per i membri che non usano cerebro/db/graphify).
+Or, to remove only the MCP, remove the `mcpServers` section from the plugin manifest before installing (for members who don't use cerebro/db/graphify).
 
 ---
 
@@ -159,11 +159,11 @@ claude plugin marketplace remove limet-marketplace
 
 ## 8. Troubleshooting
 
-| Sintomo | Causa probabile | Fix |
+| Symptom | Likely cause | Fix |
 |---|---|---|
-| Skill non visibili dopo install | Claude Code non riavviato | Riavvia Claude Code |
-| `graphify: Connection closed` | `graphify-mcp` non su PATH | Installa `graphifyy` (§3.4) o ignora |
-| `cerebro` fallisce | Qdrant/Ollama spenti | Avvia i servizi (§3.2) |
-| `db` fallisce | PostgreSQL spento o config mancante | Controlla `config/config.yaml` (§3.3) |
-| Hook non partono (no change log) | Windows senza Git Bash/WSL | Installa Git Bash o WSL (§4) |
-| `claude plugin install` non trova `limet` | Marketplace non registrato | Riesegui `claude plugin marketplace add ./` |
+| Skills not visible after install | Claude Code not restarted | Restart Claude Code |
+| `graphify: Connection closed` | `graphify-mcp` not on PATH | Install `graphifyy` (§3.4) or ignore |
+| `cerebro` fails | Qdrant/Ollama off | Start the services (§3.2) |
+| `db` fails | PostgreSQL off or config missing | Check `config/config.yaml` (§3.3) |
+| Hooks don't fire (no change log) | Windows without Git Bash/WSL | Install Git Bash or WSL (§4) |
+| `claude plugin install` doesn't find `limet` | Marketplace not registered | Re-run `claude plugin marketplace add ./` |

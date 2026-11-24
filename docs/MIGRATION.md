@@ -1,41 +1,41 @@
-# LIMET 2.0 — Migrazione da 1.0
+# LIMET 2.0 — Migration from 1.0
 
-Come passare da un progetto che usa LIMET 1.0 a LIMET 2.0.
+How to move from a project using LIMET 1.0 to LIMET 2.0.
 
-## Cosa cambia per l'utente
+## What changes for the user
 
-| Azione | LIMET 1.0 | LIMET 2.0 |
+| Action | LIMET 1.0 | LIMET 2.0 |
 |---|---|---|
-| Attivare LIMET | `limet.ps1` / `limet.sh` | `claude plugin install limet` + `/limet-new` |
-| Nuova feature | riempire CHANGE_PROPOSAL + SPEC + PLAN + TASK_LIST a mano | `/limet-new <idea>` |
-| Implementare | riempire TASK + change log a mano | `/limet-task <n>` (change log automatico) |
-| Verificare | riempire TEST_PLAN + TEST_EXECUTION a mano | `/limet-test` |
-| Archiviare | spostare i file a mano | `/limet-archive` |
-| Contestualizzare | leggere il CLAUDE.md con blocchi CEREBRO/GRAPHIFY | MCP `cerebro` + `graphify` (tool nativi) |
+| Activate LIMET | `limet.ps1` / `limet.sh` | `claude plugin install limet` + `/limet-new` |
+| New feature | fill CHANGE_PROPOSAL + SPEC + PLAN + TASK_LIST by hand | `/limet-new <idea>` |
+| Implement | fill TASK + change log by hand | `/limet-task <n>` (automatic change log) |
+| Verify | fill TEST_PLAN + TEST_EXECUTION by hand | `/limet-test` |
+| Archive | move files by hand | `/limet-archive` |
+| Contextualize | read CLAUDE.md with CEREBRO/GRAPHIFY blocks | MCP `cerebro` + `graphify` (native tools) |
 
-## Passi di migrazione
+## Migration steps
 
-1. **Installa il plugin**: `claude plugin install limet`.
-2. **Sostituisci il vecchio CLAUDE.md**: togli i blocchi `<!-- CEREBRO:START/END -->` e `<!-- GRAPHIFY:START/END -->` (ora sono MCP), tieni le policy build/test/task/test.
-3. **I documenti 1.0 esistenti restano validi**: sono gli stessi artefatti (SPEC, PLAN, TASK_LIST…). LIMET 2.0 li legge e li aggiorna. Nessuna conversione necessaria.
-4. **Re-indicizza con CEREBRO**: se usavi il RAG, `cerebro_ingest(project)` per allineare.
-5. **Verifica Graphify**: se usavi il KG, assicurati che il server `graphify` MCP sia raggiungibile.
+1. **Install the plugin**: `claude plugin install limet`.
+2. **Replace the old CLAUDE.md**: remove the `<!-- CEREBRO:START/END -->` and `<!-- GRAPHIFY:START/END -->` blocks (now MCP), keep the build/test/task/test policies.
+3. **Existing 1.0 documents remain valid**: they are the same artifacts (SPEC, PLAN, TASK_LIST…). LIMET 2.0 reads and updates them. No conversion needed.
+4. **Re-index with CEREBRO**: if you used the RAG, `cerebro_ingest(project)` to align.
+5. **Verify Graphify**: if you used the KG, make sure the `graphify` MCP server is reachable.
 
-## Compatibilità
+## Compatibility
 
-- **I file** (`limet/`, i template già riempiti) → **compatibili al 100%**: LIMET 2.0 non cambia il formato dei documenti, cambia *chi li genera e chi li compila*.
-- **Le regole** (§1.1–§1.5) → invariare; cambia solo il meccanismo (testo → hook).
+- **The files** (`limet/`, the already-filled templates) → **100% compatible**: LIMET 2.0 does not change the document format, it changes *who generates them and who fills them*.
+- **The rules** (§1.1–§1.5) → unchanged; only the mechanism changes (text → hook).
 
-## Cosa NON serve migrare
+## What does NOT need migrating
 
-- Gli script `limet.ps1`/`limet.sh` → sostituiti dal plugin.
-- La skill-guida CEREBRO → sostituita dal MCP `cerebro` (stessi script, **spostati dentro** `mcp/cerebro/`).
-- Il CLI Graphify → sostituito dal MCP `graphify` (nativo `graphify-mcp`, package `graphifyy`).
+- The `limet.ps1`/`limet.sh` scripts → replaced by the plugin.
+- The CEREBRO guide skill → replaced by the MCP `cerebro` (same scripts, **moved inside** `mcp/cerebro/`).
+- The Graphify CLI → replaced by the MCP `graphify` (native `graphify-mcp`, package `graphifyy`).
 
 ## Self-contained
 
-LIMET 2.0 è **un solo repo**: niente `<repo-cerebro>` esterno. Cerebro e DB vivono in `mcp/`, Graphify è un MCP nativo (`graphify-mcp`). Restano esterni solo Qdrant + Ollama + Postgres (infra).
+LIMET 2.0 is **one repo**: no external `<cerebro-repo>`. Cerebro and DB live in `mcp/`, Graphify is a native MCP (`graphify-mcp`). Only Qdrant + Ollama + Postgres stay external (infra).
 
 ## Rollback
 
-Se qualcosa non va: disinstalla il plugin (`claude plugin uninstall limet`) e torni a LIMET 1.0 (i documenti non sono toccati).
+If something goes wrong: uninstall the plugin (`claude plugin uninstall limet`) and you are back to LIMET 1.0 (the documents are untouched).

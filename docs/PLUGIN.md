@@ -1,11 +1,11 @@
 # LIMET 2.0 — Plugin
 
-LIMET 2.0 è un **plugin Claude Code** distribuibile: `skills/` + `agents/` + `hooks/` + `.mcp.json` + manifest.
+LIMET 2.0 is a distributable **Claude Code plugin**: `skills/` + `agents/` + `hooks/` + `.mcp.json` + manifest.
 
-## Struttura del plugin
+## Plugin structure
 
 ```
-limet/                          ← UNICO repo self-contained
+limet/                          ← SINGLE self-contained repo
 ├── .claude-plugin/
 │   └── plugin.json            ← manifest (name=limet, version, description)
 ├── skills/
@@ -13,10 +13,12 @@ limet/                          ← UNICO repo self-contained
 │   ├── limet-task/SKILL.md
 │   ├── limet-test/SKILL.md
 │   ├── limet-archive/SKILL.md
-│   └── limet-bug/SKILL.md
+│   ├── limet-bug/SKILL.md
+│   └── limet-analyze/SKILL.md
 ├── agents/
 │   ├── limet-writer.md
-│   └── limet-gate.md
+│   ├── limet-gate.md
+│   └── limet-analyzer.md
 ├── hooks/
 │   ├── hooks.json
 │   ├── resume.sh
@@ -25,16 +27,16 @@ limet/                          ← UNICO repo self-contained
 │   ├── changelog.sh
 │   ├── precompact.sh
 │   └── reminder.sh
-├── .mcp.json                 ← cerebro + graphify (nativo) + db
-├── mcp/                      ← cerebro e db DENTRO il repo
-│   ├── cerebro/              (RAG: server.py + scripts register/ingest/query)
-│   └── db/                   (DB: server.py, legge config.yaml/config.local.yaml)
+├── .mcp.json                 ← cerebro + graphify (native) + db
+├── mcp/                      ← cerebro and db INSIDE the repo
+│   ├── cerebro/              (RAG: server.py + register/ingest/query scripts)
+│   └── db/                   (DB: server.py, reads config.yaml/config.local.yaml)
 ├── config/                   ← config.yaml + config.local.yaml + loader.py
-├── .gitignore                ← include config.local.yaml (mai nel repo)
-├── CLAUDE.md                 ← policy always-on
+├── .gitignore                ← includes config.local.yaml (never in the repo)
+├── CLAUDE.md                 ← always-on policy
 └── docs/                     ← manual, onboarding
 
-> Infra runtime (Qdrant + Ollama): **nativi di default** (binario Qdrant + installer Ollama), no Docker. `docker-compose.yml` solo come *opzione* per chi preferisce la riproducibilità.
+> Runtime infra (Qdrant + Ollama): **native by default** (Qdrant binary + Ollama installer), no Docker. `docker-compose.yml` only as an *option* for those who prefer reproducibility.
 ```
 
 ## `plugin.json`
@@ -49,21 +51,21 @@ limet/                          ← UNICO repo self-contained
 }
 ```
 
-- `name` = namespace delle skill (`/limet-new`, ecc.).
-- Le skill `user-invocable` diventano comandi `/limet-new`, `/limet-task`, …
+- `name` = skills namespace (`/limet-new`, etc.).
+- `user-invocable` skills become the `/limet-new`, `/limet-task`, … commands.
 
-## Distribuzione
+## Distribution
 
-1. **Marketplace proprio** (repo git): aggiungi `.claude-plugin/marketplace.json` con `source: "./"`. L'utente fa:
+1. **Own marketplace** (git repo): add `.claude-plugin/marketplace.json` with `source: "./"`. The user runs:
    `claude plugin marketplace add <repo>` → `claude plugin install limet@<marketplace>`.
-2. **Directory Anthropic** (opzionale, più tardi): submission + scan automatico.
+2. **Anthropic directory** (optional, later): submission + automatic scan.
 
-## Dev locale
+## Local dev
 
-- Sviluppo standalone in `.claude/` del progetto, poi migrazione a plugin quando stabile.
-- `--plugin-dir ./limet` per test locale + `/reload-plugins` tra le modifiche.
+- Standalone development in the project's `.claude/`, then migration to a plugin once stable.
+- `--plugin-dir ./limet` for local testing + `/reload-plugins` between changes.
 - `claude plugin validate --strict ./limet` in CI.
 
-## Nota path
+## Path note
 
-Nel plugin, tutti i path interni usano `${CLAUDE_PLUGIN_ROOT}/...` (mai path assoluti).
+In the plugin, all internal paths use `${CLAUDE_PLUGIN_ROOT}/...` (never absolute paths).

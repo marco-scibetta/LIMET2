@@ -1,63 +1,63 @@
-# LIMET 2.0 — Indice master
+# LIMET 2.0 — Master index
 
-> Ordine di lettura dei file del plugin e mappa rapida "voglio fare X → vai a Y".
-> Da aprire per primo quando ci si avvicina a LIMET 2.0.
+> Reading order of the plugin files and a quick "I want to do X → go to Y" map.
+> Open first when approaching LIMET 2.0.
 
-## 1. Prima di tutto: orientamento
+## 1. First: orientation
 
-| # | Documento | Percorso | Perché leggerlo |
-| - | --------- | -------- | --------------- |
-| 1 | README del repository (bilingue) | `../README.md` | Panoramica IT/EN e comando di install |
-| 2 | Manuale completo del framework | `FRAMEWORK_MANUAL.md` | Architettura, ciclo di vita, regole binding |
-| 3 | Checklist di onboarding | `ONBOARDING_CHECKLIST.md` | Passi per partire su un progetto |
-| 4 | Guida Setup (SPA, IT/EN) | `../guides/it/limet-setup.html` · `../guides/en/limet-setup.html` | Avvio dashboard + Qdrant/Ollama/Postgres (Docker e locale) + config |
-| 5 | Guida Project Init (SPA, IT/EN) | `../guides/it/limet-project-init.html` · `../guides/en/limet-project-init.html` | Tre colonne, documenti, pagine dashboard, multi-modulo, link progetti |
-| 6 | Guida Workflow (SPA, IT/EN) | `../guides/it/workflow.html` · `../guides/en/workflow.html` | Come creare un progetto, una feature, gestire un bug |
+| # | Document | Path | Why read it |
+| - | -------- | ---- | ----------- |
+| 1 | Repository README (English) | `../README.md` | Overview and install command |
+| 2 | Full framework manual | `FRAMEWORK_MANUAL.md` | Architecture, lifecycle, binding rules |
+| 3 | Onboarding checklist | `ONBOARDING_CHECKLIST.md` | Steps to start on a project |
+| 4 | Setup guide (SPA, IT/EN) | `../guides/it/limet-setup.html` · `../guides/en/limet-setup.html` | Dashboard startup + Qdrant/Ollama/Postgres (Docker and local) + config |
+| 5 | Project Init guide (SPA, IT/EN) | `../guides/it/limet-project-init.html` · `../guides/en/limet-project-init.html` | Three columns, documents, dashboard pages, multi-module, linked projects |
+| 6 | Workflow guide (SPA, IT/EN) | `../guides/it/workflow.html` · `../guides/en/workflow.html` | How to create a project, a feature, handle a bug |
 
-## 2. Componenti del plugin
+## 2. Plugin components
 
-| Componente | Percorso | Ruolo |
-| ---------- | -------- | ----- |
-| Skill (6) | `skills/limet-{new,task,test,bug,archive,analyze}/SKILL.md` | Ciclo di vita + analisi progetto (`analyze`) |
-| Hook (6) | `hooks/{resume,intent,guardrail,changelog,precompact,reminder}.sh` + `hooks/hooks.json` | resume ciclo, intento, blocco build/commit/distruttivi, change log, stato pre-compattazione, reminder |
-| Subagent (3) | `agents/{limet-writer,limet-gate,limet-analyzer}.md` | scrittura documenti, validazione §1.5 + drift, analisi progetto |
-| MCP (3) | `mcp/{cerebro,graphify,db}/` | RAG documentale (Qdrant), knowledge graph codice, SQL read-only |
-| Dashboard | `dashboard/` | init / progetti / re-index / setup / analizza su :8787 |
-| Comandi | `commands/{limet-dashboard,limet-dashboard-stop}.md` | `/limet-dashboard`, `/limet-dashboard-stop` |
-| Script (1) | `scripts/run-tests.sh` | esegue i test, esito compatto in TEST_EXECUTION, log distrutto se OK |
+| Component | Path | Role |
+| --------- | ---- | ---- |
+| Skills (6) | `skills/limet-{new,task,test,bug,archive,analyze}/SKILL.md` | Lifecycle + project analysis (`analyze`) |
+| Hooks (6) | `hooks/{resume,intent,guardrail,changelog,precompact,reminder}.sh` + `hooks/hooks.json` | cycle resume, intent, build/commit/destructive block, change log, pre-compact state, reminder |
+| Subagents (3) | `agents/{limet-writer,limet-gate,limet-analyzer}.md` | document writing, §1.5 validation + drift, project analysis |
+| MCP (3) | `mcp/{cerebro,graphify,db}/` | document RAG (Qdrant), code knowledge graph, read-only SQL |
+| Dashboard | `dashboard/` | init / projects / re-index / setup / analyze on :8787 |
+| Commands | `commands/{limet-dashboard,limet-dashboard-stop}.md` | `/limet-dashboard`, `/limet-dashboard-stop` |
+| Script (1) | `scripts/run-tests.sh` | runs tests, compact outcome in TEST_EXECUTION, log destroyed if OK |
 
-## 3. Configurazione (per-progetto)
+## 3. Configuration (per-project)
 
-| File | Percorso | Ruolo |
-| ---- | -------- | ----- |
-| Default | `config/config.yaml` | qdrant/ollama/db per progetto, senza segreti |
-| Override + segreti | `config/config.local.yaml` | gitignored (password) |
-| Loader condiviso | `config/loader.py` | deep-merge config.yaml ← config.local.yaml |
-| Lingua | `config/config.yaml` → `language` | `it`/`en` per i documenti prodotti |
+| File | Path | Role |
+| ---- | ---- | ---- |
+| Default | `config/config.yaml` | qdrant/ollama/db per project, no secrets |
+| Override + secrets | `config/config.local.yaml` | gitignored (password) |
+| Shared loader | `config/loader.py` | deep-merge config.yaml ← config.local.yaml |
+| Language | `config/config.yaml` → `language` | `it`/`en` for the produced documents |
 
-## 4. Documenti generati dal ciclo
+## 4. Documents generated by the cycle
 
-In `limet/changes/<data-slug>/` (poi `limet/archive/<slug>/`):
+In `limet/changes/<data-slug>/` (then `limet/archive/<slug>/`):
 `CHANGE_PROPOSAL` · `SPEC` · `PLAN` · `TASK_LIST` · `TEST_PLAN` · `E2E_VERIFICATION` ·
 `DECISIONS` · `TEST_EXECUTION` · `BUG_REPORT` · `ARCHIVE_ENTRY`.
 
-## 5. Documentazione tecnica del progetto LIMET
+## 5. LIMET project technical documentation
 
 `docs/ARCHITECTURE.md` · `docs/SKILLS.md` · `docs/HOOKS.md` · `docs/MCP.md` ·
 `docs/SUBAGENTS.md` · `docs/PLUGIN.md` · `docs/DASHBOARD.md` · `docs/SETUP.md` ·
 `docs/MIGRATION.md` · `docs/OPTIMIZATIONS.md`.
 
-## 6. Riferimento rapido
+## 6. Quick reference
 
-- **Nuova feature** → `/limet-new "feature"` (genera i documenti)
-- **Implementare un task** → `/limet-task N` (brief + implementazione + change log)
-- **Testare** → `/limet-test` (piano) + `!bash scripts/run-tests.sh <comando>` (esecuzione, esito in TEST_EXECUTION)
-- **Segnalare un bug** → `/limet-bug "descrizione"`
-- **Archiviare** → `/limet-archive` (solo lavoro verificato)
-- **Analizzare un progetto** → dashboard Analizza → `/limet-analyze`
+- **New feature** → `/limet-new "feature"` (generates the documents)
+- **Implement a task** → `/limet-task N` (brief + implementation + change log)
+- **Test** → `/limet-test` (plan) + `!bash scripts/run-tests.sh <command>` (execution, outcome in TEST_EXECUTION)
+- **Report a bug** → `/limet-bug "description"`
+- **Archive** → `/limet-archive` (only verified work)
+- **Analyze a project** → dashboard Analyze → `/limet-analyze`
 - **Dashboard** → `/limet-dashboard` → http://127.0.0.1:8787
 
-## 7. Template
+## 7. Templates
 
-I template dei documenti sono **inline nelle skill** (`skills/limet-*/SKILL.md`).
-I vecchi template 1.0 in file separati (`limet/templates/`) sono stati rimossi.
+The document templates are **inline in the skills** (`skills/limet-*/SKILL.md`).
+The old 1.0 templates in separate files (`limet/templates/`) were removed.
