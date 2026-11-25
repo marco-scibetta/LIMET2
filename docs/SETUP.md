@@ -11,7 +11,7 @@ The plugin ships:
 | Component | What | Required? |
 |---|---|---|
 | 6 skills | `limet-new`, `limet-task`, `limet-test`, `limet-archive`, `limet-bug`, `limet-analyze` | Yes |
-| 1 command | `/limet-dashboard` | Yes |
+| 1 dashboard | `python dashboard/run.py` (launch script) | Yes |
 | 3 agents | `limet-gate`, `limet-writer`, `limet-analyzer` | Yes |
 | 6 hooks | resume, intent, guardrail, change log, pre-compact, reminder | No (see §4) |
 | 1 script | `run-tests.sh` (runs tests, log destroyed if OK) | No (see §4) |
@@ -58,7 +58,7 @@ One-liner alternative (inside Claude Code, Claude Code ≥ 2.1.275):
 
 1. **Restart Claude Code** (skills load at session start).
 2. `claude plugin list` → `limet@limet-marketplace` must appear with `enabled` status.
-3. In the `/` menu → `/limet-dashboard` must be there.
+3. In the `/` menu the 6 skills (`limet-new`, `limet-task`, `limet-test`, `limet-bug`, `limet-archive`, `limet-analyze`) must be there.
 4. Ask in natural language: *"I want to add a login feature"* → the LIMET flow starts (proposal → spec → plan → task → test → archive).
 
 ---

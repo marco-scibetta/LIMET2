@@ -23,7 +23,6 @@ limet/                              ← SINGLE plugin (self-contained)
 ├── skills/    → /limet-new, /limet-task, /limet-test, /limet-archive, /limet-bug, /limet-analyze
 ├── agents/    → limet-writer, limet-gate, limet-analyzer
 ├── hooks/     → intent (UserPromptSubmit), guardrail, changelog, reminder
-├── commands/  → /limet-dashboard, /limet-dashboard-stop
 ├── .mcp.json  → cerebro + graphify (native graphify-mcp) + db
 ├── mcp/
 │   ├── cerebro/                    (RAG: scripts + MCP server)

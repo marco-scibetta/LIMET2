@@ -1,6 +1,6 @@
 # LIMET 2.0
 
-Spec-driven engineering for Claude Code. Lifecycle: `limet-new` → `limet-task` → `limet-test` → `limet-archive`; `limet-bug` for bugs. (Skills, non slash command: `/limet-dashboard` è l'unico comando slash.)
+Spec-driven engineering for Claude Code. Lifecycle: `limet-new` → `limet-task` → `limet-test` → `limet-archive`; `limet-bug` for bugs. (Skills only — no slash commands; the dashboard is a script: `python dashboard/run.py`.)
 
 ## Binding rules
 

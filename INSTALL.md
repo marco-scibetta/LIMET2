@@ -29,7 +29,7 @@ Skills available after install:
 - `limet-bug` — bug report
 - `limet-analyze` — analyze an undocumented project
 
-Slash command: `/limet-dashboard` (launch the dashboard on :8787).
+Dashboard (ops UI): launch with `python dashboard/run.py` — builds the frontend if needed, serves API + UI on :8787, and opens the browser.
 
 ## Update (after new features)
 

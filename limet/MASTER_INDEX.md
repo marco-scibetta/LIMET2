@@ -23,7 +23,6 @@
 | Subagents (3) | `agents/{limet-writer,limet-gate,limet-analyzer}.md` | document writing, §1.5 validation + drift, project analysis |
 | MCP (3) | `mcp/{cerebro,graphify,db}/` | document RAG (Qdrant), code knowledge graph, read-only SQL |
 | Dashboard | `dashboard/` | init / projects / re-index / setup / analyze on :8787 |
-| Commands | `commands/{limet-dashboard,limet-dashboard-stop}.md` | `/limet-dashboard`, `/limet-dashboard-stop` |
 | Script (1) | `scripts/run-tests.sh` | runs tests, compact outcome in TEST_EXECUTION, log destroyed if OK |
 
 ## 3. Configuration (per-project)
@@ -55,7 +54,7 @@ In `limet/changes/<data-slug>/` (then `limet/archive/<slug>/`):
 - **Report a bug** → `/limet-bug "description"`
 - **Archive** → `/limet-archive` (only verified work)
 - **Analyze a project** → dashboard Analyze → `/limet-analyze`
-- **Dashboard** → `/limet-dashboard` → http://127.0.0.1:8787
+- **Dashboard** → `python dashboard/run.py` → http://127.0.0.1:8787
 
 ## 7. Templates
 

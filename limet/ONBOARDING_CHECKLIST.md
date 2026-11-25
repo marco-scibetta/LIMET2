@@ -17,7 +17,7 @@ claude plugin validate .            # non-strict
 
 ## 3. Launch the dashboard
 ```
-/limet-dashboard
+python dashboard/run.py
 ```
 → http://127.0.0.1:8787
 

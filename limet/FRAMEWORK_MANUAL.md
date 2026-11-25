@@ -25,7 +25,6 @@ claude plugin validate .    # non-strict: the root CLAUDE.md warning is by desig
 | **Subagents** (3) | `limet-writer` (writes docs), `limet-gate` (validates §1.5 + drift), `limet-analyzer` (analyzes project → `docs/` docs) |
 | **MCP** (3) | `cerebro` (Qdrant RAG), `graphify` (code knowledge graph), `db` (read-only SQL) |
 | **Dashboard** | init / projects / re-index / setup / analyze (per-project config) on :8787 |
-| **Commands** | `/limet-dashboard` (launch), `/limet-dashboard-stop` (stop) |
 
 ## Lifecycle
 

@@ -25,8 +25,7 @@ React (Vite) ──► REST API ◄── Claude MCP
 The FastAPI backend **also serves the built frontend** (`dist/`): one process, one command.
 
 ```bash
-python dashboard/run.py     # builds if needed + starts on :8787
-/limet-dashboard            # equivalent slash command
+python dashboard/run.py     # builds if needed, starts on :8787, opens the browser
 ```
 
 ## Pages (6)

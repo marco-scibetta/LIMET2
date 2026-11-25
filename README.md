@@ -10,7 +10,7 @@ A spec-driven method for building software with AI agents, built natively for **
 - **Full lifecycle.** `proposal → spec → plan → task → test → archive`, each step tracked.
 - **Quality enforced, not hoped for.** No task is marked *done* without a verification strategy. Every file change is logged automatically by a hook.
 - **Three columns.** Qdrant for documents, Graphify for the code graph, spec-driven as the method that ties them together.
-- **Native Claude Code.** Skills, hooks, subagents, MCP servers, a dashboard and slash commands.
+- **Native Claude Code.** Skills, hooks, subagents, MCP servers, and a dashboard.
 
 ## Install
 
@@ -31,7 +31,6 @@ claude plugin validate .   # non-strict (the root CLAUDE.md warning is by design
 | `/limet-bug` | Structured bug report |
 | `/limet-archive` | Archive the finished, verified change |
 | `/limet-analyze` | Analyze an undocumented project → onboarding docs in `docs/` |
-| `/limet-dashboard` | Launch the dashboard on http://127.0.0.1:8787 |
 
 ## Where to start
 

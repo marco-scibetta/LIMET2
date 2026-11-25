@@ -213,26 +213,37 @@ def _registry():
         return {}
 
 
-@app.get("/api/status")
-def status():
+def _reachable(url: str, timeout: float = 2.0) -> bool:
     import urllib.request
 
-    cfg = _load_config()
+    # Windows: `localhost` risolve prima `::1` (IPv6) e si blocca ~2s se il servizio
+    # ascolta solo su IPv4. Forza 127.0.0.1 per il loopback.
+    url = url.replace("localhost", "127.0.0.1")
+    try:
+        req = urllib.request.Request(url, method="GET")
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            r.read()
+        return True
+    except Exception:
+        return False
+
+
+@app.get("/api/status")
+def status():
+    from concurrent.futures import ThreadPoolExecutor
+
     qdrant_url = (_DEFAULT_PROJECT.get("qdrant") or {}).get("url", "http://localhost:6333").rstrip("/")
     ollama_url = (_DEFAULT_PROJECT.get("ollama") or {}).get("url", "http://localhost:11434").rstrip("/")
 
-    def reachable(url):
-        try:
-            req = urllib.request.Request(url, method="GET")
-            with urllib.request.urlopen(req, timeout=2) as r:
-                r.read()
-            return True
-        except Exception:
-            return False
+    with ThreadPoolExecutor(max_workers=2) as ex:
+        f_q = ex.submit(_reachable, qdrant_url + "/collections")
+        f_o = ex.submit(_reachable, ollama_url + "/api/tags")
+        qdrant_ok = f_q.result()
+        ollama_ok = f_o.result()
 
     return {
-        "qdrant": reachable(qdrant_url + "/collections"),
-        "ollama": reachable(ollama_url + "/api/tags"),
+        "qdrant": qdrant_ok,
+        "ollama": ollama_ok,
         "projects": sorted(_registry().keys()),
     }
 

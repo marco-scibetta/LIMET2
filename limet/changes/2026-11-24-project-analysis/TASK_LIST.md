@@ -97,3 +97,7 @@
 | —    | `hooks\changelog.sh` | modified | (auto) | (da completare) | (da verificare) |
 | —    | `docs\MCP.md` | created | (auto) | (to complete) | (to verify) |
 | —    | `docs\MIGRATION.md` | created | (auto) | (to complete) | (to verify) |
+| —    | `dashboard\run.py` | modified | (auto) | (to complete) | (to verify) |
+| —    | `CLAUDE.md` | modified | (auto) | (to complete) | (to verify) |
+| —    | `guides\en\limet-setup.html` | modified | (auto) | (to complete) | (to verify) |
+| —    | `guides\it\limet-setup.html` | modified | (auto) | (to complete) | (to verify) |
